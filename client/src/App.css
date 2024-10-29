@@ -4,3 +4,80 @@
   padding: 2rem;
   text-align: center;
 }
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f6f5f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  margin: -20px 0 50px;
+}
+
+h1 {
+  font-weight: bold;
+  margin: 0;
+}
+
+button {
+  border-radius: 20px;
+  border: 1px solid #18608a;
+  background-color: #18608a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 12px 45px;
+}
+
+form {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  text-align: center;
+}
+
+input {
+  background-color: #eee;
+  border: none;
+  padding: 12px 15px;
+  margin: 8px 0;
+  width: 100%;
+}
+.sign-in-container {
+  width: 50%;
+  z-index: 2;
+}
+.sign-up-container {
+  position: absolute;
+  top: 20%; 
+  left: 50%; 
+  opacity: 1;
+   
+  width: 50%;
+  z-index: 5;
+}
+
+.switch-btn {
+  background: transparent;
+  border: 1px solid #18608a;
+  color: #18608a;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-left: 28%;
+  
+  cursor: pointer;
+}
+.switch-btn.Login{
+  margin-left: 32%;
+}
+.switch-btn {
+  display: none;
+}
