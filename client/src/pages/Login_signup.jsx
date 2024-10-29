@@ -141,6 +141,12 @@ const handleLogin = async (e) => {
           placeholder='Enter Your Password'
           />
           <button type='submit'>REGISTER</button>
+          <h5>or</h5>
+                    <div className="google-login">
+                        <button className="google-login-button" onClick={handleGoogleLogin}>
+                            Sign-In with Google
+                        </button>
+                    </div>
         </form>
         <button className='switch-btn Login' onClick={switchToSignIn}>Go to Login</button>
       </div>
