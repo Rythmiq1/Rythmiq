@@ -10,7 +10,8 @@ function Login_signup() {
     const switchToSignUp = () => {
         setIsSignInActive(false);
     };
-    const[signupInfo,setSignupInfo]=useState({
+
+  const[signupInfo,setSignupInfo]=useState({
       name:'',
       email:'',
       password:''
@@ -18,9 +19,12 @@ function Login_signup() {
   const handleChange=(e)=>{
     const {name,value}=e.target;
     console.log(name,value);
+    const copySignupInfo = {...signupInfo };
+        copySignupInfo[name] = value;
+        setSignupInfo(copySignupInfo);
 }
-console.log('signupInfo->',signupInfo)
-const handleSignup = async (e) => {
+  console.log('signupInfo->',signupInfo)
+  const handleSignup = async (e) => {
     e.preventDefault();
     const { name, email, password } = signupInfo;
     if (!name || !email || !password) {
@@ -35,7 +39,20 @@ const handleSignup = async (e) => {
         },
         body:JSON.stringify(signupInfo)
     })
-    
+    const result = await response.json();
+            const { success, message, error } = result;
+            if (success) {
+                handleSuccess(message);
+                setTimeout(() => {
+                    setIsSignInActive(true);
+                }, 1000)
+            } else if (error) {
+                const details = error?.details[0].message;
+                handleError(details);
+            } else if (!success) {
+                handleError(message);
+            }
+            console.log(result);
 }
     catch(err){
         const result=await response.json();
