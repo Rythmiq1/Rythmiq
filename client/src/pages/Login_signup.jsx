@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { handleError } from '../utils/Error';
+import { useNavigate } from 'react-router-dom';
+import { handleError ,handleSuccess} from '../utils/Error';
 import '../App.css';
 function Login_signup() {
+  const navigate = useNavigate();
+  
   const [isSignInActive, setIsSignInActive] = useState(true);
 
     const switchToSignIn = () => {
@@ -25,7 +28,8 @@ function Login_signup() {
         setSignupInfo(copySignupInfo);
 }
   console.log('signupInfo->',signupInfo)
-  const handleSignup = async (e) => {
+
+const handleSignup = async (e) => {
     e.preventDefault();
     const { name, email, password } = signupInfo;
     if (!name || !email || !password) {
@@ -94,7 +98,7 @@ const handleLogin = async (e) => {
               localStorage.setItem('token',jwtToken);
               localStorage.setItem('loggedInUser',name);
               setTimeout(() => {
-                  setIsSignInActive(false);
+                  navigate('/home')
               }, 1000)
           } else if (error) {
               const details = error?.details[0].message;
