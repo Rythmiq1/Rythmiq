@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { handleError ,handleSuccess} from '../utils/Error';
 import '../App.css';
+import { ToastContainer } from 'react-toastify';
 function Login_signup() {
   const navigate = useNavigate();
   
@@ -182,7 +183,8 @@ const handleLogin = async (e) => {
                         <button className="ghost" id="signUp" onClick={switchToSignUp}>GO TO Register</button>
                     </div>
                 </div>
-            </div>
+         </div>
+         <ToastContainer/> 
     </div>
   )
 }
