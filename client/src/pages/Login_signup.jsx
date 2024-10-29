@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { handleError ,handleSuccess} from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
+import "../pages/login.css"
 function Login_signup() {
   const navigate = useNavigate();
   
@@ -15,6 +16,10 @@ function Login_signup() {
     const switchToSignUp = () => {
         setIsSignInActive(false);
     };
+
+    const loginwithgoogle=()=>{
+      window.open("http://localhost:8080/auth/google/callback","_self")
+    }
 
   const[signupInfo,setSignupInfo]=useState({
       name:'',
@@ -141,12 +146,6 @@ const handleLogin = async (e) => {
           placeholder='Enter Your Password'
           />
           <button type='submit'>REGISTER</button>
-          <h5>or</h5>
-                    <div className="google-login">
-                        <button className="google-login-button" onClick={handleGoogleLogin}>
-                            Sign-In with Google
-                        </button>
-                    </div>
         </form>
         <button className='switch-btn Login' onClick={switchToSignIn}>Go to Login</button>
       </div>
@@ -171,6 +170,8 @@ const handleLogin = async (e) => {
           value={loginInfo.password}
           />
           <button type='submit'>Login</button>
+          <button className='login-with-google-btn' onClick={loginwithgoogle}
+      >SIGN IN WITH GOOGLE</button>
         </form>
         <button className='switch-btn' onClick={switchToSignUp}>Go to Register</button>
         </div>

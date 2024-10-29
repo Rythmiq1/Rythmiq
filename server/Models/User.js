@@ -13,9 +13,12 @@ const UserSchema=new Schema({
   },
   password:{
     type:String,
-    required:true,
-  }
-});
+    //required:true,
+  },
+  googleId:String,
+  image:String,
+
+},{timestamps:true});
 
 const UserModel=mongoose.model('users',UserSchema);
 module.exports=UserModel;
