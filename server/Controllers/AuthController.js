@@ -41,6 +41,7 @@ const login = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(403).json({ message: errorMsg, success: false });
         }
+        //playload
         const jwtToken = jwt.sign(
             { email: user.email, _id: user._id },
             process.env.JWT_SECRET,
