@@ -274,3 +274,32 @@ input {
 .switch-btn {
   display: none;
 }
+/* src/pages/GenreSelector.css */
+
+.select-genres-container {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.genres-list {
+  margin-bottom: 20px;
+}
+
+.genres-list label {
+  display: block;
+  margin: 5px 0;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}

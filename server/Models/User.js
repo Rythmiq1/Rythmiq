@@ -16,7 +16,7 @@ const UserSchema = new Schema({
     },
     googleId: String,
     image: String,
-    interests: { // Ensure interests is defined
+    interests: { 
         type: [String], // Array of strings
         default: [],
     },
