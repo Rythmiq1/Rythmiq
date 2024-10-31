@@ -31,93 +31,98 @@ function Login_signup() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSignupInfo(prevState => ({ ...prevState, [name]: value }));
+    const copySignupInfo = { ...signupInfo };
+    copySignupInfo[name] = value;
+    setSignupInfo(copySignupInfo);
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
     const { name, email, password } = signupInfo;
-  
     if (!name || !email || !password) {
-      return handleError('All fields are required');
+        return handleError('All fields are required');
     }
-  
     try {
-      const url = "http://localhost:8080/auth/signup";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(signupInfo)
-      });
-  
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error("Signup failed:", errorMessage);
-        throw new Error(errorMessage);
-      }
-  
-      const result = await response.json();
-      const { success, message, error, jwtToken, userId } = result; // Assume userId is returned in the response
-  
-      if (success) {
-        handleSuccess(message);
-        localStorage.setItem('token', jwtToken);
-        localStorage.setItem('loggedInUser', name);
-        localStorage.setItem('userId', userId); // Store user ID
-        navigate('/genre');
-      } else if (error) {
-        const details = error?.details[0]?.message;
-        handleError(details);
-      } else {
-        handleError(message);
-      }
+        const url = "http://localhost:8080/auth/signup";
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(signupInfo)
+        });
+        
+        const result = await response.json();
+        const { success, message, jwtToken, id, name, error } = result;
+
+        if (success) {
+            handleSuccess(message);
+
+            // Store user data in localStorage on successful signup
+            localStorage.setItem('token', jwtToken);
+            localStorage.setItem('loggedInUser', name);
+            localStorage.setItem('userId', id);
+
+            setTimeout(() => {
+                navigate('/genre')
+            }, 1000);
+        } else if (error) {
+            const details = error?.details[0]?.message;
+            handleError(details || message);
+        } else {
+            handleError(message);
+        }
+        console.log(result);
     } catch (err) {
-      console.error("Signup error:", err);
-      handleError(err.message);
+        handleError(err.toString());
+        console.error('Error during signup:', err);
     }
-  };
-  
-  const handleLogin = async (e) => {
+};
+
+const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = loginInfo;
-    
     if (!email || !password) {
-      return handleError('All fields are required');
+        return handleError('All fields are required');
     }
-  
     try {
-      const url = "http://localhost:8080/auth/login";
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginInfo)
-      });
-  
-      const result = await response.json();
-      const { success, message, jwtToken, name, userId, error } = result; // Assume userId is returned in the response
-  
-      if (success) {
-        handleSuccess(message);
-        localStorage.setItem('token', jwtToken);
-        localStorage.setItem('loggedInUser', name);
-        localStorage.setItem('userId', userId); // Store user ID
+        const url = "http://localhost:8080/auth/login";
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginInfo)
+        });
 
-      } else if (error) {
-        const details = error?.details[0]?.message;
-        handleError(details);
-      } else {
-        handleError(message);
-      }
+        const result = await response.json();
+        const { success, message, jwtToken, id, name, error } = result;
+
+        if (success) {
+            handleSuccess(message);
+
+            // Store user data in localStorage on successful login
+            localStorage.setItem('token', jwtToken);
+            localStorage.setItem('loggedInUser', name);
+            localStorage.setItem('userId', id);
+
+            setTimeout(() => {
+                navigate('/home'); // Navigate to home page after login
+            }, 1000);
+        } else if (error) {
+            const details = error?.details[0]?.message;
+            handleError(details || message);
+        } else {
+            handleError(message);
+        }
+        console.log(result);
     } catch (err) {
-      handleError(err);
+        handleError(err.toString());
+        console.error('Error during login:', err);
     }
-  };
-  
-  
+};
+
+
 
   const [loginInfo, setLoginInfo] = useState({
     email: '',
@@ -126,7 +131,9 @@ function Login_signup() {
 
   const handleLChange = (e) => {
     const { name, value } = e.target;
-    setLoginInfo(prevState => ({ ...prevState, [name]: value }));
+    const copyLoginInfo = { ...loginInfo };
+    copyLoginInfo[name] = value;
+    setLoginInfo(copyLoginInfo);
   };
 
   
@@ -196,7 +203,7 @@ function Login_signup() {
           </div>
         </div>
       </div>
-
+      
       <ToastContainer />
 
       {showGenrePopup && ( // Render the genre selection popup if it is to be shown
