@@ -1,44 +1,17 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import logo from "../assets/images/Rhythmiq-bg.ico";
-import IconText from '../components/IconText';
-
-function Home() {
-  const [loggedInUser, setLoggedInUser] = useState('');
-
-  useEffect(() => {
-    setLoggedInUser(localStorage.getItem('loggedInUser'));
-  }, []);
-
-  return (
-    <div className='h-screen w-screen flex'>
-      {loggedInUser}
-      
-      {/* Left Part */}
-      <div className='h-screen w-1/5 bg-black '>
-        <div className='logoDiv'>
-          <img src={logo} alt="logo" className='w-200 h-100' />
-        </div>
-        <IconText iconName="home" displayText="Home" />
-        <IconText iconName="search" displayText="Search" />
-        <IconText iconName="library_music" displayText="Library" />
-      </div>
-
-      {/* Right Part */}
-      <div className='h-screen w-4/5 bg-gray-100'>
-        {/* Content goes here */}
-      </div>
-    </div>
-=======
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function Home() {
   const [userdata, setUserdata] = useState({});
   const [loggedInUser, setLoggedInUser] = useState('');
+  const location = useLocation(); 
 
   useEffect(() => {
-    // Fetch user data
+
+    const storedUser = localStorage.getItem('loggedInUser');
+    setLoggedInUser(storedUser);
+
     const getUser = async () => {
       try {
         const response = await axios.get("http://localhost:8080/login/success", {
@@ -50,10 +23,20 @@ function Home() {
       }
     };
 
-    // Get logged-in user from localStorage
-    setLoggedInUser(localStorage.getItem('loggedInUser'));
-    getUser(); // Call the function to fetch user data
-  }, []);
+  
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token'); 
+    const name = params.get('name');
+
+
+    if (token && name) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('loggedInUser', name);
+      console.log("User logged in via Google:", name); 
+    }
+
+    getUser();
+  }, [location]);
 
   return (
     <>
@@ -64,7 +47,7 @@ function Home() {
               <li><NavLink to="/">Home</NavLink></li>
               {Object.keys(userdata).length > 0 ? (
                 <>
-                  <li>{userdata.displayName}</li>
+                  <li>{userdata.displayName || loggedInUser}</li>
                   <li><NavLink to="/dashboard">Dashboard</NavLink></li>
                   <li>Logout</li>
                   <li><img src="/circle.png" alt="User Avatar" /></li>
@@ -78,7 +61,7 @@ function Home() {
       </header>
       <div>Home  Welcome {loggedInUser}</div>
     </>
->>>>>>> sneha
+
   );
 }
 
