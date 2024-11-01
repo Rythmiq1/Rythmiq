@@ -63,7 +63,9 @@ function Home() {
     const params = new URLSearchParams(location.search);
     const token = params.get('token'); 
     const name = params.get('name');
-
+    const handleSignUpClick = () => {
+      navigate('/login?signin=false'); // Ensure this parameter is correct
+    };
     // Log token and name to confirm they are being received
     console.log("Token from URL:", token);
     console.log("Name from URL:", name);
@@ -149,32 +151,50 @@ function Home() {
 
       <div className="h-screen w-4/5 bg-app-black overflow-auto">
         <div className="navbar flex items-center justify-end w-full h-1/10 bg-black bg-opacity-30 text-white px-6 space-x-6">
-          <div className="flex items-center space-x-4">
-            <TextWithHover displayText="Premium" />
-            <TextWithHover displayText="Support" />
-            <TextWithHover displayText="Download" />
-          </div>
+          
           <div className="h-6 border-l-2 border-gray-400"></div>
           {/* <div className="flex items-center space-x-4">
             <TextWithHover displayText="Sign up" />
             <button className="bg-white text-black font-bold px-4 py-1 
             rounded-full hover:bg-gray-200 transition">Log In</button>
           </div> */}
-          <div className="flex items-center space-x-4">
-      
-      <button
-              className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-              onClick={() => navigate("/login")}  >
-              Sign Up
-            </button>
-      
-         
-            <button
-              className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-              onClick={() => navigate("/login")}  >
-              Log In
-            </button>
-          </div>
+          <div className="navbar flex items-center justify-end w-full h-1/10 bg-black bg-opacity-30 text-white px-6 space-x-6">
+  <div className="flex items-center space-x-4">
+    <TextWithHover displayText="Premium" />
+    <TextWithHover displayText="Support" />
+    <TextWithHover displayText="Download" />
+  </div>
+  <div className="h-6 border-l-2 border-gray-400"></div>
+  <div className="flex items-center space-x-4">
+    {loggedInUser ? (
+      <>
+        <span className="text-white">Welcome, {loggedInUser}!</span>
+        <button
+          className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </>
+    ) : (
+      <>
+        <button
+        className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+        onClick={() => navigate("/login?signin=true")} // Navigate to signup form
+      >
+        Sign Up
+      </button>
+        <button
+          className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+          onClick={() => navigate("/login")}
+        >
+          Log In
+        </button>
+      </>
+    )}
+  </div>
+</div>
+
 
 
 
