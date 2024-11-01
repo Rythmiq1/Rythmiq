@@ -100,11 +100,7 @@ passport.deserializeUser((user, done) => {
 app.get('/auth/google',passport.authenticate('google',
   {scope: ['profile', 'email']}));
 
-<<<<<<< Updated upstream
-  app.get("/auth/google/callback", 
-=======
 app.get("/auth/google/callback", 
->>>>>>> Stashed changes
     passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
     async (req, res) => {
         if (req.user) {
@@ -121,20 +117,6 @@ app.get("/auth/google/callback",
     }
 );
 
-<<<<<<< Updated upstream
-
-app.get("/login/success",async(req,res)=>{
-    //console.log("reqqqq",req.user)
-
-    if(req.user)
-    {
-      res.status(200).json(
-        {
-          message:"Uer Login",
-          user:req.user
-        }
-      )
-=======
 app.get("/login/success", async (req, res) => {
     if (req.user) {
         res.status(200).json({
@@ -145,14 +127,8 @@ app.get("/login/success", async (req, res) => {
         res.status(400).json({
             message: "User Not Login"
         });
->>>>>>> Stashed changes
     }
-    else{
-      res.status(400).json({
-        message:"User Not Login"
-
-      })
-    }
+    
 
 })
 
