@@ -17,8 +17,12 @@ const UserSchema=new Schema({
   },
   googleId:String,
   image:String,
-  
+  interests: { 
+    type: [String], // Array of strings
+    default: [],
+},
+
 },{timestamps:true});
 
-const UserModel=mongoose.model('users',UserSchema);
-module.exports=UserModel;
+const UserModel = mongoose.model('users', UserSchema);
+module.exports = UserModel;
