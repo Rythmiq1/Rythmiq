@@ -17,7 +17,7 @@ const UserSchema=new Schema({
   },
   googleId:String,
   image:String,
-
+  
 },{timestamps:true});
 
 const UserModel=mongoose.model('users',UserSchema);
