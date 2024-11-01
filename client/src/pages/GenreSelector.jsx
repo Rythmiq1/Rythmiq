@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const genres = [
     { name: 'Lata Mangeshkar', image: 'https://static.toiimg.com/thumb/msid-89386079,imgsize-36578,width-900,height-1200,resizemode-6/89386079.jpg' },
@@ -16,6 +17,7 @@ const genres = [
 const GenreSelector = ({ userId }) => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate(); // Initialize useNavigate
 
     useEffect(() => {
         if (!userId) {
@@ -62,6 +64,7 @@ const GenreSelector = ({ userId }) => {
 
             const data = await response.json(); 
             console.log('Success:', data);
+            navigate('/home'); // Navigate to home page on success
         } catch (error) {
             console.error('Error updating interests:', error.message);
         }
