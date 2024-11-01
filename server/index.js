@@ -17,6 +17,8 @@ const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const Userdb=require("./Models/User")
 
 const jwt = require('jsonwebtoken');
+const albumRouter = require('./Routes/albumRouter.js');
+const songRouter = require('./Routes/songRoute.js');
 const app = express();
 app.get('/ping',(req,res)=>{
   res.send('pong');
@@ -40,6 +42,9 @@ app.get('/ping',(req,res)=>{
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
+
+app.use("/song",songRoutes);
+app.use("/album",albumRouter);
 
 app.use('/auth',AuthRouter)
 
