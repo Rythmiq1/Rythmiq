@@ -1,4 +1,4 @@
-const { addSong, listSong } = require("../Controllers/songController.js");
+const { addSong, listSong ,removeSong} = require("../Controllers/songController.js");
 const express = require("express");
 const upload = require("../Middlewares/multer.js");
 
@@ -16,5 +16,5 @@ songRouter.post("/add", upload.fields([
 ]), addSong);
 
 songRouter.get("/list", listSong);
-
+songRouter.post("/remove", removeSong);
 module.exports = songRouter;
