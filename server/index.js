@@ -93,12 +93,13 @@ app.get("/auth/google/callback",
         name: req.user.name
       }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-      return res.redirect(`http://localhost:5173/home?token=${token}&name=${encodeURIComponent(req.user.name)}`);
+      return res.redirect(`http://localhost:5173/genre?token=${token}&name=${encodeURIComponent(req.user.name)}&userId=${req.user._id}`);
     } else {
       res.redirect("http://localhost:5173/login");
     }
   }
 );
+
 
 app.get("/login/success", async (req, res) => {
   if (req.user) {
