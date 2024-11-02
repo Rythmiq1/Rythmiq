@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const UserModel = require("../Models/User");
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import UserModel from "../Models/User.js";
 
 const signup = async (req, res) => {
     try {
@@ -14,9 +14,7 @@ const signup = async (req, res) => {
             });
         }
 
-
         const hashedPassword = await bcrypt.hash(password, 10);
-        
 
         const newUser = new UserModel({ name, email, password: hashedPassword });
         await newUser.save(); // User saved
@@ -65,7 +63,6 @@ const login = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        // Respond with success message, token, and user ID
         res.status(200).json({
             message: "Login successful",
             success: true,
@@ -82,7 +79,6 @@ const login = async (req, res) => {
         });
     }
 }
-
 
 const selectGenres = async (req, res) => {
     try {
@@ -132,8 +128,6 @@ const selectGenres = async (req, res) => {
     }
 };
 
-module.exports = {
-    signup,
-    login,
-    selectGenres
-};
+
+
+export { signup, login, selectGenres };

@@ -1,7 +1,6 @@
 // src/components/Modal.jsx
 
 import React from 'react';
-// import './Modal.css'; // You can style your modal in this CSS file
 
 const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
@@ -10,7 +9,7 @@ const Modal = ({ isOpen, onClose, children }) => {
         <div className="modal-overlay">
             <div className="modal-content">
                 <button className="modal-close" onClick={onClose}>
-                    &times; {/* Close button */}
+                    &times; 
                 </button>
                 {children}
             </div>

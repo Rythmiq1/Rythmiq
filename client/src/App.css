@@ -1,9 +1,14 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Add this CSS to your styles.css or a similar file */
+.scrollbar-hide {
+  overflow: auto;
 }
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+
 * {
   box-sizing: border-box;
 }
@@ -31,8 +36,10 @@ button {
   font-size: 12px;
   font-weight: bold;
   padding: 12px 45px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
 }
-
 
 button:active {
   transform: scale(0.95);
@@ -58,6 +65,17 @@ form {
   text-align: center;
 }
 
+.image-upload-input {
+  
+  color: transparent;
+}
+
+.image-upload-input::after {
+  
+  content: "Select profile picture";
+  color: #000; 
+}
+
 input {
   background-color: #eee;
   border: none;
@@ -65,6 +83,7 @@ input {
   margin: 8px 0;
   width: 100%;
 }
+
 .container {
   background-color: #ffffff;
   border-radius: 10px;
@@ -85,12 +104,16 @@ input {
   transition: transform 0.6s ease-in-out;
 }
 
-
 .sign-in-container {
   width: 50%;
   z-index: 2;
 }
-
+.sign-in-container h5{
+  margin: 0;
+  padding-top: 8px;
+  margin-left: 5px; 
+  margin-right: 5px;
+}
 .container.right-panel-active .sign-in-container {
   transform: translateX(100%);
 }
@@ -104,7 +127,27 @@ input {
   width: 50%;
   z-index: 5;
 }
+.google-login {
+  margin-top: 10px; 
+  display: flex;
+  align-items: center;
+}
 
+.google-login-button {
+  background-color: rgb(142, 18, 18);
+  border: none;
+  padding: 12px 12px 12px;
+  margin: 8px 40px;
+  
+  border-radius: 5%;
+  justify-content: space-around;
+  cursor: pointer;
+}
+
+
+.google-login-button:hover {
+  background-color: #ff5757; 
+}
 .container .right-panel-active .sign-up-container {
   transform: translateX(100%);
   opacity: 1;
@@ -274,32 +317,78 @@ input {
 .switch-btn {
   display: none;
 }
-/* src/pages/GenreSelector.css */
+@media only screen and (max-width: 768px) {
+  .container {
+      border-radius: 0;
+      box-shadow: none;
+      width: 100%;
+      
+  }
 
-.select-genres-container {
-  padding: 20px;
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
+  .overlay-container {
+      display: none;
+  }
+  .switch-btn {
+      display: block;
+  }
+  .form-container {
+      position: relative;
+      top: 38px;
+      left: auto;
+      transform: none;
+      width: 100%;
+  }
+
+  .sign-in-container, .sign-up-container {
+      width: 100%;
+  }
+
+  .overlay-panel {
+      width: 100%;
+      transform: none;
+  }
+
+  .overlay-right {
+      transform: none;
+  }
 }
 
-.genres-list {
-  margin-bottom: 20px;
-}
-
-.genres-list label {
-  display: block;
-  margin: 5px 0;
-}
-
-button {
-  padding: 10px 15px;
-  background-color: #4CAF50; /* Green */
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
+.login-with-google-btn 
+{
+    transition: background-color .3s, box-shadow .3s;
+    cursor: pointer;
+    margin-top: 20px;
+      
+    padding: 12px 16px 12px 42px;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
+    
+    color: #757575;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+    
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: 12px 11px;
+    
+    &:hover {
+      box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
+    }
+    
+    &:active {
+      background-color: #eeeeee;
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 
+        0 -1px 0 rgba(0, 0, 0, .04),
+        0 2px 4px rgba(0, 0, 0, .25),
+        0 0 0 3px #c8dafc;
+    }
+  
+  }
+ 

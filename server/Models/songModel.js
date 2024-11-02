@@ -1,35 +1,31 @@
-const mongoose=require('mongoose');
+import mongoose from 'mongoose';
 
-
-const songSchema=new mongoose.Schema
-({
-  name:{
-    type:String,
-    required:true,
+const songSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
   },
-  desc:{
-    type:String,
-    required:true,
+  desc: {
+    type: String,
+    required: true,
   },
-  album:{
-    type:String,
-    required:true,
+  album: {
+    type: String,
+    required: false,
   },
-  image:{
-    type:String,
-    required:true,
+  image: {
+    type: String,
+    required: true,
   },
-  file:{
-    type:String,
-    required:true,
+  file: {
+    type: String,
+    required: true,
   },
-  duration:{
-    type:String,
-    required:true,
+  duration: {
+    type: String,
+    required: false,
   }
-  
 });
 
-const songModel = mongoose.models.song || mongoose.model("song",songSchema);
-module.exports=songModel;
-
+const SongModel = mongoose.models.Song || mongoose.model("Song", songSchema);
+export default SongModel;

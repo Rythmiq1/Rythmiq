@@ -1,95 +1,92 @@
-const cloudinary = require("cloudinary").v1;
-const songModel = require("../Models/songModel");
-const math = require('mathjs');
 
-
+import songModel from '../Models/songModel.js';
+import { uploadOnCloudinary } from '../config/cloudinary.js';
 const addSong = async (req, res) => {
     try {
-        const name = req.body.name;
-        const desc = req.body.desc;
-        const album = req.body.album;
-        const audioFile = req.files.audio[0];
-        const imageFile = req.files.image[0];
-        //calculate time in minutes:seconds
-        const duration =`${math.floor(audioUpload.duration/60)}:${math.floor(audioUpload.duration%60)}`
+        const { name, desc, album } = req.body; 
+        const audioFile = req.files.audio[0]; 
+        const imageFile = req.files.image[0]; 
+        if (!audioFile || !imageFile) {
+            return res.status(400).json({
+                success: false,
+                message: "Audio and image files are required."
+            });
+        }
+        const audioUpload = await uploadOnCloudinary(audioFile.path);
+        const imageUpload = await uploadOnCloudinary(imageFile.path);
 
-        // Upload all files to Cloudinary
-        const audioUpload = await cloudinary.uploader.upload(audioFile.path, {
-            resource_type: "video"
-        });
-
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
-            resource_type: "image"
-        });
-
-        const songData={
-            name,
-            desc,
-            album,
-            image:imageUpload.secure_url,
-            file:audioUpload.secure_url,
-            duration
+        if (!audioUpload || !imageUpload) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to upload files to Cloudinary."
+            });
         }
 
-        const song=songModel(songData);
-        //saving data in Database
-        await song.save();
+        const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`;
 
-        res.json({
-            success:true,
-            message:"Song Added Successfully",
-        });
-
-        console.log(name, desc, album, audioUpload, imageUpload);
         
-        // Send a response if needed
-        res.status(200).json({ message: "Song uploaded successfully", audioUpload, imageUpload });
-    }
-     catch (error) 
-     {
-        console.error(error);
-        res.status(500).send("An error occurred while uploading the song.");
+        const songData = {
+            name,
+            desc,
+            album: album || "No Album",
+            image: imageUpload.secure_url,
+            file: audioUpload.secure_url,
+            duration
+        };
+
+        // Save the song to the database
+        const newSong = new songModel(songData);
+        await newSong.save();
+
+        // Log the saved song for debugging
+        console.log("Saved Song:", newSong);
+
+        // Respond with success message
+        res.status(201).json({
+            success: true,
+            message: "Song added successfully.",
+            songId: newSong._id,
+            data: newSong
+        });
+    } catch (err) {
+        console.error("Error adding song:", err);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error."
+        });
     }
 };
+
+
 
 const listSong = async (req, res) => {
-    try{
-        //getting all the data from song model
+
+    try {
+
         const allSongs = await songModel.find({});
-        res.json({
-            success:true,
-            songs:allSongs
-        });
-    }
-    catch(error)
-    {
-        res.json(
-            {
-                success:false,
-                message:"Error Occured while listing all songs"
-            }
-        )
-    }
-};
+        res.json({ success: true, songs: allSongs });
 
+    } catch (error) {
 
-const removeSong = async(req,res)=>{
-    try{
-        const songId = req.body.id;
-        await songModel.findByIdAndDelete(songId);
-        res.json({
-            success:true,
-            message:"Song Removed Successfully"
-            });
+        res.json({ success: false });
+        
+    }
 
-    }
-    catch(error)
-    {
-        res.json({
-            success:false,
-            message:"Error occured while removing song"
-            });
-    }
 }
 
-module.exports = { addSong, listSong ,removeSong};
+const removeSong = async (req, res) => {
+
+    try {
+
+        await songModel.findByIdAndDelete(req.body.id);
+        res.json({ success: true, message: "Song Remove" });
+
+    } catch (error) {
+
+        res.json({ success: false });
+        
+    }
+
+}
+
+export { addSong, listSong, removeSong }

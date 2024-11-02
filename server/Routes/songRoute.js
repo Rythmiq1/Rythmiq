@@ -1,6 +1,6 @@
-const { addSong, listSong ,removeSong} = require("../Controllers/songController.js");
-const express = require("express");
-const upload = require("../Middlewares/multer.js");
+import { addSong, listSong, removeSong } from "../Controllers/songController.js";
+import express from "express";
+import {upload} from "../Middlewares/multer.js";
 
 const songRouter = express.Router();
 
@@ -17,4 +17,5 @@ songRouter.post("/add", upload.fields([
 
 songRouter.get("/list", listSong);
 songRouter.post("/remove", removeSong);
-module.exports = songRouter;
+
+export default songRouter;

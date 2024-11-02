@@ -1,82 +1,88 @@
-const cloudinary = require("cloudinary").v2;
-const albumModel= require("../Models/albumModel.js")
+import { uploadOnCloudinary } from '../config/cloudinary.js';
+import albumModel from "../Models/albumModel.js";
 
-const addAlbum = async(req,res)=>{
-    try{
+const addAlbum = async (req, res) => {
+    try {
+        const { name, desc, bgColour } = req.body; 
+        const imageFile = req.file; 
 
-        const name = req.body.name;
-        const desc=req.body.desc;
-        const bgColour=req.body.bgColour;
-        const imageFile=req.file;
-        //uploading img in cloudinary
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
-            resource_type:"image"
-        });
+        if (!imageFile) {
+            return res.status(400).json({
+                success: false,
+                message: "Image file is required."
+            });
+        }
 
-        const albumData={
+        // Uploading image to Cloudinary
+        const imageUpload = await uploadOnCloudinary(imageFile.path);
+        
+        if (!imageUpload) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to upload image to Cloudinary."
+            });
+        }
+
+        // Prepare the album data
+        const albumData = {
             name,
             desc,
             bgColour,
-            image:imageUpload.secure_url,
-        }
+            image: imageUpload.secure_url,
+        };
 
-        //storing data in Database
-        const album =albumModel(albumData);
-        await album.save();
+        // Storing data in the database
+        const newAlbum = new albumModel(albumData);
+        await newAlbum.save();
 
-        res.json({
-            sucess:true,
-            message:"Album Added Successfully",
-        })
+        // Log the saved album for debugging
+        console.log("Saved Album:", newAlbum);
+
+        // Respond with success message
+        res.status(201).json({
+            success: true,
+            message: "Album added successfully.",
+            albumId: newAlbum._id,
+            data: newAlbum
+        });
+    } catch (error) {
+        console.error("Error adding album:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error."
+        });
     }
-    catch(error)
-    {
-        console.log(error);
-        res.json({
-            sucess:false,
-            message:"cant add album",
-        })
+};
 
-    }
-}
 
-const listAlbum = async(req,res)=>{
-    try{
-        //getting all the data
+const listAlbum = async (req, res) => {
+    try {
+        // Getting all the data
         const allAlbums = await albumModel.find({});
         res.json({
-            sucess:true,
-            albums:allAlbums
-        })
-    }
-    catch(error)
-    {
+            success: true,
+            albums: allAlbums
+        });
+    } catch (error) {
         res.json({
-            success:false
-        })
+            success: false
+        });
     }
-}
+};
 
-const removeAlbum=async(req,res)=>{
-    try{
-
+const removeAlbum = async (req, res) => {
+    try {
         await albumModel.findByIdAndDelete(req.body.id);
         res.json({
-            sucess:true,
-            message:"Album Removed Successfully",
-        })
-    }
-    catch(error)
-    {
+            success: true,
+            message: "Album Removed Successfully",
+        });
+    } catch (error) {
         res.json({
-            sucess:false,
-            message:"Couldnt remove album",
-        })
+            success: false,
+            message: "Couldn't remove album",
+        });
     }
-    
+};
 
-    
-}
-
-
-module.exports = { addAlbum, listAlbum ,removeAlbum};
+export { addAlbum, listAlbum, removeAlbum };

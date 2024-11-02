@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { handleError, handleSuccess } from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
-import "../pages/login.css";
 import GenreSelectionPopup from './GenreSelector'; // Import the new popup component
 
 function Login_signup() {
   const navigate = useNavigate();
+  const location = useLocation(); // Use location to access query parameters
   const [isSignInActive, setIsSignInActive] = useState(true);
   const [showGenrePopup, setShowGenrePopup] = useState(false); // State for genre popup
+  
+  // Check for query parameters to determine which form to show
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const signIn = params.get('signin');
+    if (signIn === 'true') {
+      setIsSignInActive(false); // Show the login form
+    } else {
+      setIsSignInActive(true); // Show the signup form
+    }
+  }, [location.search]);
 
   const switchToSignIn = () => {
     setIsSignInActive(true);
@@ -79,6 +90,18 @@ function Login_signup() {
     }
 };
 
+const [loginInfo, setLoginInfo] = useState({
+    email: '',
+    password: ''
+});
+
+const handleLChange = (e) => {
+    const { name, value } = e.target;
+    const copyLoginInfo = { ...loginInfo };
+    copyLoginInfo[name] = value;
+    setLoginInfo(copyLoginInfo);
+};
+
 const handleLogin = async (e) => {
     e.preventDefault();
     const { email, password } = loginInfo;
@@ -122,22 +145,6 @@ const handleLogin = async (e) => {
     }
 };
 
-
-
-  const [loginInfo, setLoginInfo] = useState({
-    email: '',
-    password: ''
-  });
-
-  const handleLChange = (e) => {
-    const { name, value } = e.target;
-    const copyLoginInfo = { ...loginInfo };
-    copyLoginInfo[name] = value;
-    setLoginInfo(copyLoginInfo);
-  };
-
-  
-
   return (
     <div className={`container ${isSignInActive ? '' : 'right-panel-active'}`} id="container">
       <div className={`form-container sign-up-container ${isSignInActive ? 'hidden' : ''}`}>
@@ -161,7 +168,7 @@ const handleLogin = async (e) => {
             name='password'
             placeholder='Enter Your Password'
           />
-          <button type='submit'>REGISTER</button>
+          <button id='signUp-btn' type='submit'>REGISTER</button>
         </form>
         <button className='switch-btn Login' onClick={switchToSignIn}>Go to Login</button>
       </div>
@@ -183,10 +190,10 @@ const handleLogin = async (e) => {
             placeholder="PASSWORD"
             value={loginInfo.password}
           />
-          <button type='submit'>Login</button>
+          <button id='signIn-btn' type='submit'>Login</button>
           <button className='login-with-google-btn' onClick={loginwithgoogle}>SIGN IN WITH GOOGLE</button>
         </form>
-        <button className='switch-btn' onClick={switchToSignUp}>Go to Register</button>
+        <button className='switch-btn Login' onClick={switchToSignUp}>Go to Register</button>
       </div>
 
       <div className="overlay-container">
