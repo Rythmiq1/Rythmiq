@@ -11,7 +11,7 @@ const songSchema = new mongoose.Schema({
   },
   album: {
     type: String,
-    required: true,
+    required: false,
   },
   image: {
     type: String,

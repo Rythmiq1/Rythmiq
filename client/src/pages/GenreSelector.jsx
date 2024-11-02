@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const genres = [
     { name: 'Lata Mangeshkar', image: 'https://static.toiimg.com/thumb/msid-89386079,imgsize-36578,width-900,height-1200,resizemode-6/89386079.jpg' },
@@ -17,11 +17,25 @@ const genres = [
 const GenreSelector = ({ userId }) => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate(); // Initialize useNavigate
+    const [loading, setLoading] = useState(false); // Loading state
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const name = urlParams.get('name');
+        const userId = urlParams.get('userId');
+
+        if (token && name && userId) {
+            localStorage.setItem('token', token);
+            localStorage.setItem('loggedInUser', name);
+            localStorage.setItem('userId', userId);
+            console.log("Login successful!");
+        }
+    }, []);
 
     useEffect(() => {
         if (!userId) {
-            console.error("User ID is not available. Please log in.");
             setErrorMessage("User ID is not available. Please log in.");
         } else {
             setErrorMessage('');
@@ -36,15 +50,18 @@ const GenreSelector = ({ userId }) => {
 
     const handleSubmit = async () => {
         const token = localStorage.getItem('token');
-        console.log('Retrieved token:', token);
-
         if (!token) {
             console.error('Token not found in local storage');
             return;
         }
 
+        if (selectedGenres.length === 0) {
+            setErrorMessage('Please select at least one genre.');
+            return;
+        }
+
+        setLoading(true); // Start loading
         const requestBody = { genreIds: selectedGenres };
-        console.log('Submitting genres:', requestBody);
 
         try {
             const response = await fetch('http://localhost:8080/auth/select-genres', {
@@ -62,11 +79,14 @@ const GenreSelector = ({ userId }) => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json(); 
+            const data = await response.json();
             console.log('Success:', data);
-            navigate('/home'); // Navigate to home page on success
+            navigate('/home');
         } catch (error) {
             console.error('Error updating interests:', error.message);
+            setErrorMessage('An error occurred while submitting your genres.'); // User-friendly message
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
 
@@ -103,9 +123,11 @@ const GenreSelector = ({ userId }) => {
             </div>
             <button 
                 onClick={handleSubmit} 
-                className="mt-6 block mx-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                className={`mt-6 block mx-auto px-4 py-2 rounded-lg transition 
+                    ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
+                disabled={loading} // Disable button when loading
             >
-                Submit Genres
+                {loading ? 'Submitting...' : 'Submit Genres'}
             </button>
         </div>
     );

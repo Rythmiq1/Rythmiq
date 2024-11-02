@@ -63,7 +63,6 @@ const login = async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        // Respond with success message, token, and user ID
         res.status(200).json({
             message: "Login successful",
             success: true,
@@ -84,6 +83,7 @@ const login = async (req, res) => {
 const selectGenres = async (req, res) => {
     try {
         const { genreIds } = req.body;
+
         if (!Array.isArray(genreIds) || genreIds.length < 3) {
             return res.status(400).json({
                 success: false,
@@ -91,20 +91,21 @@ const selectGenres = async (req, res) => {
             });
         }
 
-        const userId = req.user._id; 
+        // Attempt to get the userId from both possible fields
+        const userId = req.user.userId || req.user._id; 
+
         if (!userId) {
             return res.status(403).json({
                 success: false,
                 message: "User ID not found in request."
             });
         }
+
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId, 
             { interests: genreIds },
-            { new: true, useFindAndModify: false } // Ensuring you get the updated document
+            { new: true, useFindAndModify: false }
         );
-
-        console.log("Updated User Document after update:", updatedUser);
 
         if (!updatedUser) {
             return res.status(404).json({
@@ -112,6 +113,7 @@ const selectGenres = async (req, res) => {
                 message: "User not found."
             });
         }
+
         res.status(200).json({
             success: true,
             message: "Genres selected successfully",
@@ -125,5 +127,7 @@ const selectGenres = async (req, res) => {
         });
     }
 };
+
+
 
 export { signup, login, selectGenres };

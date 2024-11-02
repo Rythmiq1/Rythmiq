@@ -22,14 +22,13 @@ const addSong = async (req, res) => {
             });
         }
 
-        // Calculate duration
         const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`;
 
-        // Prepare the song data
+        
         const songData = {
             name,
             desc,
-            album,
+            album: album || "No Album",
             image: imageUpload.secure_url,
             file: audioUpload.secure_url,
             duration
