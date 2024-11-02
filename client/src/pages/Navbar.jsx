@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import TextWithHover from '../components/TextWithHover';
+import arrow_right from "../assets/right_arrow.png";
+import arrow_left from "../assets/left_arrow.png";
 
 function Navbar() {
-  const [loggedInUser, setLoggedInUser] = useState('');
-  const [userdata, setUserdata] = useState({});
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('loggedInUser') || '');
+  const [userdata, setUserdata] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,14 +19,9 @@ function Navbar() {
       localStorage.setItem('token', token);
       localStorage.setItem('loggedInUser', name);
       setLoggedInUser(name);
-    } else {
-      const storedUser = localStorage.getItem('loggedInUser');
-      if (storedUser) {
-        setLoggedInUser(storedUser);
-      }
     }
 
-    const getUser = async () => {
+    const fetchUserData = async () => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
@@ -36,56 +32,64 @@ function Navbar() {
           setUserdata(response.data.user);
         } catch (error) {
           console.error('Error fetching user data:', error);
+          handleLogout();
         }
       }
     };
 
-    getUser();
+    fetchUserData();
   }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('loggedInUser');
     setLoggedInUser('');
-    setUserdata({});
+    setUserdata(null);
+    navigate('/login');
   };
 
   return (
-    <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
-      <div className="h-6 border-l-2 border-gray-400"></div>
-      <div className="flex items-center space-x-4">
-        <TextWithHover displayText="Premium" />
-        <TextWithHover displayText="Support" />
-        <TextWithHover displayText="Download" />
+    <div>
+      <div className=' flex justify-between items-center font-semibold text-white mt-10'>
+        <div className='flex items-center gap-2'>
+          <img
+            onClick={() => navigate(-1)}
+            className='w-8 bg-black p-2 rounded-2xl cursor-pointer'
+            src={arrow_left}
+            alt="Back"
+          />
+          <img
+            onClick={() => navigate(1)}
+            className='w-8 bg-black p-2 rounded-2xl cursor-pointer'
+            src={arrow_right}
+            alt="Forward"
+          />
+        </div>
+        <div className='flex items-center gap-4'>
+          <p className='bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer'>
+           Sign Up
+          </p>
+        
+          {loggedInUser ? (
+            <div className='flex items-center gap-2'>
+              <p className='bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center'>
+                {loggedInUser[0].toUpperCase()}
+              </p>
+              <button onClick={handleLogout} className='bg-red-500 text-white px-3 py-1 rounded-2xl'>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <p onClick={() => navigate('/login')} className='bg-purple-500 text-black w-20 h-7 rounded-full flex items-center justify-center'>
+              Login
+            </p>
+          )}
+        </div>
       </div>
-      <div className="h-6 border-l-2 border-gray-400"></div>
-      <div className="flex items-center space-x-4">
-        {loggedInUser ? (
-          <>
-            <span className="text-white">Welcome, {loggedInUser}!</span>
-            <button
-              className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-              onClick={() => navigate("/login?signin=true")}
-            >
-              Sign Up
-            </button>
-            <button
-              className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-              onClick={() => navigate("/login")}
-            >
-              Log In
-            </button>
-          </>
-        )}
+      <div className='flex items-center gap-2 mt-4'>
+        <p className='bg-white text-black px-4 py-1 rounded-2xl cursor-pointer'>All</p>
+        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer text-white'>Music</p>
+        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer text-white'>Podcasts</p>
       </div>
     </div>
   );

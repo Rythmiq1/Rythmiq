@@ -3,10 +3,11 @@ import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { albumsData, assets, songsData } from '../assets/assets';
 import Logo from '../assets/images/Rhythmiq-bg.ico';
-
 const DisplayAlbum = () => {
   const { id } = useParams(); 
+  console.log(id);
   const albumData = albumsData[id];
+  console.log(albumData);
 
   return (
     <div>

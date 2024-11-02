@@ -5,9 +5,6 @@ import GenreSelectionPopup from './pages/GenreSelector';
 import Display from './pages/Display';
 import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
-import Navbar from './pages/Navbar';
-import AlbumItem from './pages/AlbumItem';
-import DisplayAlbum from './pages/DisplayAlbum';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -34,13 +31,10 @@ const App = () => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
-                            <Navbar />
                             <Routes>
-                               <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-                               <Route path="/home" element={<Display />} />
-                               <Route path="/g" element={<AlbumItem />} />
-                               <Route path="/home/album/:id" element={<DisplayAlbum />} /> {/* Update route here */}
-</Routes>
+                                <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+                                <Route path="/home/*" element={<Display />} /> {/* Nested routes under /home */}
+                            </Routes>
                         </div>
                         <MusicPlayer />
                     </div>
