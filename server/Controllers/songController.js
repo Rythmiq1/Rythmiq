@@ -1,56 +1,61 @@
-const cloudinary = require("cloudinary").v1;
+const cloudinary = require("../config/cloudinary").v2;
 const songModel = require("../Models/songModel");
 const math = require('mathjs');
 
 
 const addSong = async (req, res) => {
     try {
-        const name = req.body.name;
-        const desc = req.body.desc;
-        const album = req.body.album;
-        const audioFile = req.files.audio[0];
+        // Extract the song details and files
+        const { name, desc, album } = req.body;
+        const audioFile = req.files.audio[0]; // Ensure files exist
         const imageFile = req.files.image[0];
-        //calculate time in minutes:seconds
-        const duration =`${math.floor(audioUpload.duration/60)}:${math.floor(audioUpload.duration%60)}`
 
-        // Upload all files to Cloudinary
+        if (!audioFile || !imageFile) {
+            return res.status(400).send("Both audio and image files are required.");
+        }
+
+        // Log the files to check they are being received correctly
+        console.log("Received files:", req.files);
+
+        // Upload audio to Cloudinary
         const audioUpload = await cloudinary.uploader.upload(audioFile.path, {
-            resource_type: "video"
+            resource_type: "video", // Audio files are treated as video in Cloudinary
         });
 
+        // Upload image to Cloudinary
         const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
-            resource_type: "image"
+            resource_type: "image",
         });
 
-        const songData={
+        // Calculate duration if needed (make sure to handle the audio file appropriately)
+        // Assuming you have a way to get the duration here; replace this with your logic.
+        const duration = "0:00"; // Replace with actual logic
+
+        // Prepare song data for saving to DB
+        const songData = {
             name,
             desc,
             album,
-            image:imageUpload.secure_url,
-            file:audioUpload.secure_url,
-            duration
-        }
+            image: imageUpload.secure_url,
+            file: audioUpload.secure_url,
+            duration,
+        };
 
-        const song=songModel(songData);
-        //saving data in Database
+        // Save the song to your database (assuming you have a songModel)
+        const song = new songModel(songData);
         await song.save();
 
-        res.json({
-            success:true,
-            message:"Song Added Successfully",
+        res.status(200).json({
+            success: true,
+            message: "Song Added Successfully",
         });
 
-        console.log(name, desc, album, audioUpload, imageUpload);
-        
-        // Send a response if needed
-        res.status(200).json({ message: "Song uploaded successfully", audioUpload, imageUpload });
-    }
-     catch (error) 
-     {
-        console.error(error);
+    } catch (error) {
+        console.error("Error in addSong:", error);
         res.status(500).send("An error occurred while uploading the song.");
     }
 };
+
 
 const listSong = async (req, res) => {
     try{

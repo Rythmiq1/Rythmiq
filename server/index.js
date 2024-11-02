@@ -24,21 +24,6 @@ app.get('/ping',(req,res)=>{
   res.send('pong');
 })
 
-
-
-
-// // Connect to Cloudinary
-// connectCloudinary().then(() => {
-//     console.log("Connected to Cloudinary");
-
-//     // Start the server after Cloudinary is connected
-//     app.listen(PORT, () => {
-//         console.log(`Server is running on port ${PORT}`);
-//     });
-// }).catch(error => {
-//     console.error("Error connecting to Cloudinary:", error);
-// });
-
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
@@ -47,7 +32,7 @@ app.use("/song",songRoutes);
 app.use("/album",albumRouter);
 
 app.use('/auth',AuthRouter)
-
+app.use(express.urlencoded({ extended: true }));
 app.use(session({
     secret: process.env.CLIENT_SECRET,
     resave: false,
