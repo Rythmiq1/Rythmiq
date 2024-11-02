@@ -1,18 +1,15 @@
-const multer = require("multer");
+import multer from "multer";
 
 const storage = multer.diskStorage({
-    destination: function (req, file, callback) {
-        callback(null, 'uploads/'); // Specify the destination folder
+    destination: function (req, file, cb) {
+      cb(null, "./public/temp")
     },
-    filename: function (req, file, callback) {
-        callback(null, Date.now() + '-' + file.originalname); // Use timestamp for unique file name
+    filename: function (req, file, cb) {
+      
+      cb(null, file.originalname)
     }
-});
-
-// Allow all file types
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 10000000 }, // Set a file size limit (10MB for example)
-}).any(); // Use .any() to accept any file type
-
-module.exports = upload;
+  })
+  
+export const upload = multer({ 
+    storage, 
+})
