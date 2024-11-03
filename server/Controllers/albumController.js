@@ -1,6 +1,6 @@
 import { uploadOnCloudinary } from '../config/cloudinary.js';
 import albumModel from "../Models/albumModel.js";
-
+import Song from '../Models/songModel.js';
 const addAlbum = async (req, res) => {
     try {
         const { name, desc, bgColour } = req.body; 
@@ -57,18 +57,32 @@ const addAlbum = async (req, res) => {
 
 const listAlbum = async (req, res) => {
     try {
-        // Getting all the data
+        // Fetch all albums from the database
         const allAlbums = await albumModel.find({});
-        res.json({
+
+        // Check if albums were found
+        if (allAlbums.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No albums found."
+            });
+        }
+
+        // Respond with success message and the albums
+        res.status(200).json({
             success: true,
+            message: "Albums retrieved successfully.",
             albums: allAlbums
         });
     } catch (error) {
-        res.json({
-            success: false
+        console.error("Error fetching albums:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error while fetching albums."
         });
     }
 };
+
 
 const removeAlbum = async (req, res) => {
     try {
@@ -84,5 +98,31 @@ const removeAlbum = async (req, res) => {
         });
     }
 };
+const getAlbumById = async (req, res) => {
+    try {
+        const albumId = req.params.albumId;
+        const album = await albumModel.findById(albumId);
 
-export { addAlbum, listAlbum, removeAlbum };
+        if (!album) {
+            return res.status(404).json({ message: 'Album not found' });
+        }
+
+        // Fetch all songs associated with this album
+        const songs = await Song.find({ album: albumId });
+
+        res.json({
+            album,
+            songs,
+        });
+    } catch (error) {
+        console.error("Error fetching album:", error);
+        res.status(500).json({
+            message: "Error fetching album",
+            error: error.message,
+        });
+    }
+};
+
+  
+
+export { addAlbum, listAlbum, removeAlbum ,getAlbumById};
