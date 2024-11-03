@@ -23,6 +23,7 @@ const MusicPlayer = () => {
   });
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0); // State to hold duration
+  const [currentTime, setCurrentTime] = useState(0); // State for current time
   const audioRef = useRef(null); // Create a ref to the audio element
 
   const handlePlayPause = () => {
@@ -41,9 +42,50 @@ const MusicPlayer = () => {
     }
   };
 
+  // Update current time as the audio plays
+  useEffect(() => {
+    const updateCurrentTime = () => {
+      if (audioRef.current) {
+        setCurrentTime(audioRef.current.currentTime);
+      }
+    };
+
+    // Set interval to update current time
+    let intervalId;
+    if (isPlaying) {
+      intervalId = setInterval(updateCurrentTime, 1000); // Update every second
+    }
+
+    // Clean up interval on unmount or when playback state changes
+    return () => clearInterval(intervalId);
+  }, [isPlaying]);
+
   // Optional: Update the play state if the audio ends
   const handleAudioEnd = () => {
     setIsPlaying(false);
+    setCurrentTime(0); // Reset current time when the song ends
+  };
+
+  // Calculate the width of the green line based on current time
+  const currentProgress = (currentTime / duration) * 100;
+
+  // Function to handle click on progress line
+  const handleProgressClick = (e) => {
+    const progressBar = e.currentTarget;
+    const clickX = e.clientX - progressBar.getBoundingClientRect().left;
+    const newTime = (clickX / progressBar.clientWidth) * duration; // Calculate the new time
+    audioRef.current.currentTime = newTime; // Set audio current time
+    if (!isPlaying) {
+      audioRef.current.play(); // Play if it was paused
+      setIsPlaying(true);
+    }
+  };
+
+  // Function to format time in minutes:seconds
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
   return (
@@ -77,11 +119,14 @@ const MusicPlayer = () => {
         </div>
 
         <div className='flex items-center gap-5'>
-          <p className="text-white">1:06</p>
-          <div className='w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer'>
-            <hr className='h-1 border-none w-0 bg-green-800 rounded-full' />
+          <p className="text-white">{formatTime(currentTime)}</p>
+          <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
+            {/* White line */}
+            <hr className='h-1 border-none bg-gray-300 rounded-full' style={{ width: '80%' }} />
+            {/* Green line */}
+            <hr className='h-0.5 border-none bg-green-800 rounded-full' style={{ width: `${currentProgress}%` }} />
           </div>
-          <p className="text-white">{duration ? duration.toFixed(2) : "0:00"}</p>
+          <p className="text-white">{formatTime(duration)}</p>
         </div>
       </div>
 
