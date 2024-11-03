@@ -13,62 +13,63 @@ import volume from "../assets/volume.png";
 import mini_player from "../assets/mini-player.png";
 import zoom from "../assets/zoom.png";
 import rhythmiq from "../assets/images/Rhythmiq.png";
-import exampleSong from '../assets/deewani.mp3'; // Path to your audio file
 
-const MusicPlayer = () => {
-  const [currentSong, setCurrentSong] = useState({
-    title: 'Current Song Title',
-    image: rhythmiq,
-    audio: exampleSong, // Include the audio source
-  });
+const MusicPlayer = ({ currentSong }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0); // State to hold duration
-  const audioRef = useRef(null); // Create a ref to the audio element
-
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef(null);
   const handlePlayPause = () => {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(error => {
+        console.error("Error playing audio:", error);
+      });
     }
-    setIsPlaying(!isPlaying); // Toggle the play state
+    setIsPlaying(!isPlaying);
   };
-
-  // Update duration when metadata is loaded
   const handleMetadataLoaded = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
   };
-
-  // Optional: Update the play state if the audio ends
   const handleAudioEnd = () => {
     setIsPlaying(false);
   };
-
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+  useEffect(() => {
+    console.log("Current Song:", currentSong);
+    if (currentSong && audioRef.current) {
+      audioRef.current.src = currentSong.file; 
+      audioRef.current.load(); 
+      setIsPlaying(false); 
+    }
+  }, [currentSong]);
   return (
     <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
-      {/* Audio Element */}
-      <audio 
-        ref={audioRef} 
-        src={currentSong.audio} 
-        onEnded={handleAudioEnd} 
-        onLoadedMetadata={handleMetadataLoaded} // Load duration
-      />
-
-      {/* Current Song Image */}
+      {currentSong && (
+        <audio 
+          ref={audioRef} 
+          onEnded={handleAudioEnd} 
+          onLoadedMetadata={handleMetadataLoaded} 
+          onTimeUpdate={handleTimeUpdate} 
+        />
+      )}
       <div className='absolute left-4 top-4'>
-        <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong.image} alt={currentSong.title} />
+        <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong ? currentSong.image : rhythmiq} alt={currentSong ? currentSong.title : "No song playing"} />
       </div>
-      
-      {/* Left Side */}
       <div className='flex flex-col items-center gap-1'>
         <div className='flex gap-4'>
           <img className='w-4 cursor-pointer' src={shuffle} alt='shuffle' />
           <img className='w-4 cursor-pointer' src={prev} alt='previous' />
           <img 
             className='w-4 cursor-pointer' 
-            src={isPlaying ? pause : play} // Use appropriate pause icon
+            src={isPlaying ? pause : play} 
             alt='play' 
             onClick={handlePlayPause}
           />
@@ -77,15 +78,13 @@ const MusicPlayer = () => {
         </div>
 
         <div className='flex items-center gap-5'>
-          <p className="text-white">1:06</p>
+          <p className="text-white">{formatTime(currentTime)}</p>
           <div className='w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer'>
-            <hr className='h-1 border-none w-0 bg-green-800 rounded-full' />
+            <hr className='h-1 border-none w-0 bg-green-800 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }} />
           </div>
-          <p className="text-white">{duration ? duration.toFixed(2) : "0:00"}</p>
+          <p className="text-white">{duration ? formatTime(duration) : "0:00"}</p>
         </div>
       </div>
-
-      {/* Right Side */}
       <div className='hidden lg:flex items-center gap-2 opacity-75'>
         <img className='w-4' src={plays} alt='plays' />
         <img className='w-4' src={mic} alt='mic' />
@@ -98,6 +97,11 @@ const MusicPlayer = () => {
       </div>
     </div>
   );
+};
+const formatTime = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 };
 
 export default MusicPlayer;

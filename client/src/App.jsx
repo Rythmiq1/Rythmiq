@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login_signup from './pages/Login_signup';
 import GenreSelectionPopup from './pages/GenreSelector';
@@ -6,16 +6,13 @@ import Display from './pages/Display';
 import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
-import AlbumItem from './pages/AlbumItem';
 import AlbumPage from './pages/AlbumPage';
-import LikedSongs from './pages/LikedSongs'
-
+import LikedSongs from './pages/LikedSongs';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
-    const location = useLocation(); // Get current location
-
-    // Determine if we should render App1 or App2 based on the current route
+    const location = useLocation();
+    const [currentSong, setCurrentSong] = useState(null); 
     const isAuthRoute = location.pathname === '/login' || location.pathname === '/genre';
 
     return (
@@ -23,7 +20,6 @@ const App = () => {
             {isAuthRoute ? (
                 <div className="App1">
                     <Routes>
-                        {/* Redirect to home or login based on userId */}
                         <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login_signup />} />
                         <Route path="/genre" element={<GenreSelectionPopup userId={userId} />} />
@@ -38,18 +34,19 @@ const App = () => {
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
-                                
                                 <Route 
                                     path="/" 
                                     element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} 
                                 />
                                 <Route path="/home" element={<Display />} />
-                                <Route path="/album-p/:id" element={<AlbumPage/>} />
-                                <Route path="/liked-songs" element={<LikedSongs/>} />
-                               
+                                <Route 
+                                    path="/album-p/:id" 
+                                    element={<AlbumPage setCurrentSong={setCurrentSong} />} 
+                                />
+                                <Route path="/liked-songs" element={<LikedSongs />} />
                             </Routes>
                         </div>
-                        <MusicPlayer />
+                        <MusicPlayer currentSong={currentSong} />
                     </div>
                 </div>
             )}
