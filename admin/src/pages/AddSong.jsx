@@ -21,18 +21,21 @@ const AddSong = () => {
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
-        const response = await axios.get(`${url}/album/list`); // Adjust the URL according to your API
+        const response = await axios.get(`${url}/album/list`); // Correct endpoint for albums
+        console.log(response); // Log the entire response
+    
         if (response.data.success) {
-          setAlbumData(response.data.albums); // Assuming the API returns an array of albums
+          setAlbumData(response.data.albums); // Set album data
         } else {
-          toast.error("Failed to load albums");
+          toast.error("Failed to fetch albums.");
         }
       } catch (error) {
-        toast.error("Error occurred while fetching albums");
+        console.error("Fetch albums error:", error); // Log the error object
+        toast.error("An error occurred while fetching albums.");
       }
     };
     
-    fetchAlbums();
+    fetchAlbums(); // Call fetchAlbums to load album data
   }, []);
 
   const onSubmitHandler = async (e) => {
@@ -45,13 +48,14 @@ const AddSong = () => {
       formData.append("desc", desc);
       formData.append("image", image);
       formData.append("audio", song);
-      formData.append("album", album);
+      formData.append("album", album); // Include the album ID
 
-      // Calling API
+      // Calling API to add song
       const response = await axios.post(`${url}/song/add`, formData);
 
       if (response.data.success) {
-        toast.success("Song Added");
+        toast.success("Song Added Successfully"); // Display success toast
+        // Reset form fields
         setName("");
         setDesc("");
         setAlbum("none");
@@ -61,6 +65,7 @@ const AddSong = () => {
         toast.error("Something went wrong");
       }
     } catch (error) {
+      console.error("Error occurred while adding song:", error); // Log the error
       toast.error("Error Occurred");
     } finally {
       setLoading(false);
@@ -115,7 +120,7 @@ const AddSong = () => {
           <select onChange={(e) => setAlbum(e.target.value)} value={album} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]'>
             <option value="none">None</option>
             {albumData.map((albumItem) => (
-              <option key={albumItem.id} value={albumItem.id}>{albumItem.name}</option>
+              <option key={albumItem._id} value={albumItem._id}>{albumItem.name}</option>
             ))}
           </select>
         </div>
