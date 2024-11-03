@@ -11,10 +11,18 @@ function Sidebar() {
         <img src={logo} alt="logo" className="w-40 h-auto cursor-pointer" />
       </div>
 
-      {/* Navigation Section */}
+  
       <div className="py-5 space-y-4">
-        <IconText iconName="home" displayText="Home" active />
-        <IconText iconName="search" displayText="Search" />
+      
+        <Link to="/home"> {/* Wrap IconText with Link for navigation */}
+          <IconText iconName="home" displayText="Home" active/>
+        </Link>
+
+        <Link to="/search"> {/* Wrap IconText with Link for navigation */}
+          <IconText iconName="search" displayText="Search"/>
+        </Link>
+
+        {/* <IconText iconName="search" displayText="Search" /> */}
         <IconText iconName="library_music" displayText="Your Library" />
       </div>
 

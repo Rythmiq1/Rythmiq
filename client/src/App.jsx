@@ -8,6 +8,7 @@ import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
 import AlbumPage from './pages/AlbumPage';
 import LikedSongs from './pages/LikedSongs';
+import Search from './pages/Search'
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -44,6 +45,7 @@ const App = () => {
                                     element={<AlbumPage setCurrentSong={setCurrentSong} />} 
                                 />
                                 <Route path="/liked-songs" element={<LikedSongs />} />
+                                <Route path="/search" element={<Search />} />
                             </Routes>
                         </div>
                         <MusicPlayer currentSong={currentSong} />
