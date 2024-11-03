@@ -7,6 +7,7 @@ import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
 import AlbumItem from './pages/AlbumItem';
+import AlbumPage from './pages/AlbumPage';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -41,7 +42,7 @@ const App = () => {
                                     element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} 
                                 />
                                 <Route path="/home" element={<Display />} />
-                                <Route path="/g" element={<AlbumItem/>} />
+                                <Route path="/album-p/:id" element={<AlbumPage/>} />
                             </Routes>
                         </div>
                         <MusicPlayer />
