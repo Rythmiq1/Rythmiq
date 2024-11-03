@@ -1,48 +1,63 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-
-const focusCardsData = [
-  { 
-    id: 1,
-    title: "Peaceful Piano",
-    description: "Relax and indulge with beautiful piano pieces",
-    imgUrl: "https://images.unsplash.com/photo-1730135974091-c6e8349db0a3?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  },
-  { 
-    id: 2,
-    title: "Deep Focus",
-    description: "Keep calm and focus with ambient and post-rock",
-    imgUrl: "https://plus.unsplash.com/premium_photo-1682125853703-896a05629709?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  },
-  { 
-    id: 3,
-    title: "Instrumental Study",
-    description: "Instrumental beats to help you concentrate",
-    imgUrl: "https://images.unsplash.com/photo-1458560871784-56d23406c091?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  },
-  { 
-    id: 4,
-    title: "Lofi Beats",
-    description: "Chilled Lofi beats for studying or relaxing",
-    imgUrl: "https://images.unsplash.com/photo-1465821185615-20b3c2fbf41b?q=80&w=1898&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  },
-  { 
-    id: 5,
-    title: "Nature Sounds",
-    description: "Connect with nature to focus and unwind",
-    imgUrl: "https://media.istockphoto.com/id/483495210/photo/concert-crowd.jpg?s=2048x2048&w=is&k=20&c=tZG4ZBYp7ohE4Qwa-SA8CzGPjdmd4UTmnnVNr1X39go="
-  }
-];
-
-const SpotifyPlaylistCardsData = [...focusCardsData];
 
 function Display() {
   const navigate = useNavigate();
+  const [playlistsData, setPlaylistsData] = useState([]); // For playlists
+  const [songsData, setSongsData] = useState([]); // For songs
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch both playlists and songs data
+    const fetchPlaylists = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/album/list');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (Array.isArray(data.albums)) {
+          setPlaylistsData(data.albums); // Set playlists data
+        } else {
+          throw new Error('Data fetched for playlists is not an array');
+        }
+      } catch (error) {
+        console.error("Error fetching playlists:", error);
+        setError(error.message);
+      }
+    };
+
+    const fetchSongs = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/song/list');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (Array.isArray(data.songs)) {
+          setSongsData(data.songs); // Set songs data
+        } else {
+          throw new Error('Data fetched for songs is not an array');
+        }
+      } catch (error) {
+        console.error("Error fetching songs:", error);
+        setError(error.message);
+      }
+    };
+
+    // Execute both fetch operations
+    Promise.all([fetchPlaylists(), fetchSongs()]).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div>
-      <PlayListView titleText={"Focus"} cardData={focusCardsData}/>
-      <PlayListView titleText={"Spotify Playlist"} cardData={SpotifyPlaylistCardsData}/>
-      <PlayListView titleText={"Sound Of India"} cardData={focusCardsData}/>
+      <PlayListView titleText={"Playlist"} cardData={playlistsData} />
+      <PlayListView titleText={"Songs available"} cardData={songsData} />
+      <PlayListView titleText={"Sound Of India"} cardData={songsData} />
     </div>
   );
 }
@@ -53,11 +68,11 @@ const PlayListView = ({ titleText, cardData }) => {
       <div className='text-2xl font-semibold mb-5'>{titleText}</div>
       <div className='w-full flex overflow-x-auto space-x-4 scrollbar-hide'>
         {cardData.map((item) => (
-          <NavLink to={`/home/album/${item.id}`} key={item.id}>
+          <NavLink to={`/album-p/${item._id}`} key={item._id}> {/* Changed here */}
             <Card 
-              title={item.title}
-              description={item.description} 
-              imgUrl={item.imgUrl}
+              name={item.name} 
+              desc={item.desc} 
+              image={item.image} 
             />
           </NavLink>
         ))}
@@ -66,13 +81,13 @@ const PlayListView = ({ titleText, cardData }) => {
   );
 };
 
-const Card = ({ title, description, imgUrl }) => {
+const Card = ({ name, desc, image }) => {
   return (
     <div className='bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg hover:bg-opacity-50 transition duration-200 scrollbar-hide'>
-      <img src={imgUrl} alt={title} className='w-full h-40 object-cover rounded-md' />
+      <img src={image} alt={name} className='w-full h-40 object-cover rounded-md' />
       <div className='mt-2'>
-        <h3 className='text-lg font-semibold text-white'>{title}</h3>
-        <p className='text-gray-400'>{description}</p>
+        <h3 className='text-lg font-semibold text-white'>{name}</h3>
+        <p className='text-gray-400'>{desc}</p>
       </div>
     </div>
   );

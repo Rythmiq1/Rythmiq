@@ -1,17 +1,28 @@
-
+import Album from '../Models/albumModel.js';
 import songModel from '../Models/songModel.js';
 import { uploadOnCloudinary } from '../config/cloudinary.js';
 const addSong = async (req, res) => {
     try {
         const { name, desc, album } = req.body; 
-        const audioFile = req.files.audio[0]; 
-        const imageFile = req.files.image[0]; 
+        const audioFile = req.files.audio ? req.files.audio[0] : null; 
+        const imageFile = req.files.image ? req.files.image[0] : null; 
+
         if (!audioFile || !imageFile) {
             return res.status(400).json({
                 success: false,
                 message: "Audio and image files are required."
             });
         }
+
+        // Check if the album exists
+        const albumExists = await Album.findById(album);
+        if (!albumExists) {
+            return res.status(404).json({
+                success: false,
+                message: "Album not found."
+            });
+        }
+
         const audioUpload = await uploadOnCloudinary(audioFile.path);
         const imageUpload = await uploadOnCloudinary(imageFile.path);
 
@@ -24,11 +35,11 @@ const addSong = async (req, res) => {
 
         const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`;
 
-        
+        // Create song data with album reference
         const songData = {
             name,
             desc,
-            album: album || "No Album",
+            album, // Use the album ID here
             image: imageUpload.secure_url,
             file: audioUpload.secure_url,
             duration
@@ -38,10 +49,8 @@ const addSong = async (req, res) => {
         const newSong = new songModel(songData);
         await newSong.save();
 
-        // Log the saved song for debugging
         console.log("Saved Song:", newSong);
 
-        // Respond with success message
         res.status(201).json({
             success: true,
             message: "Song added successfully.",
@@ -49,7 +58,7 @@ const addSong = async (req, res) => {
             data: newSong
         });
     } catch (err) {
-        console.error("Error adding song:", err);
+        console.error("Error adding song:", err); // Log full error
         res.status(500).json({
             success: false,
             message: "Internal server error."
@@ -58,21 +67,16 @@ const addSong = async (req, res) => {
 };
 
 
-
 const listSong = async (req, res) => {
-
     try {
-
-        const allSongs = await songModel.find({});
+        // Populate the 'album' field when fetching songs
+        const allSongs = await songModel.find({}).populate('album'); 
         res.json({ success: true, songs: allSongs });
-
     } catch (error) {
-
+        console.error("Error fetching songs:", error);
         res.json({ success: false });
-        
     }
-
-}
+};
 
 const removeSong = async (req, res) => {
 
