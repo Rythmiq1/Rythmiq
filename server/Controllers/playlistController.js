@@ -1,6 +1,9 @@
-import Playlist from '../Models/PlaylistModel.js'; // Ensure this is the correct path to your model
+// Controllers/playlistController.js
+import Playlist from '../Models/PlaylistModel.js';
+import UserModel from '../Models/User.js'; // Import the User model
 
-const createPlaylist = async (req, res) => {
+// Function to create a playlist
+export const createPlaylist = async (req, res) => {
     try {
         const { name, description, songs } = req.body;
 
@@ -22,6 +25,14 @@ const createPlaylist = async (req, res) => {
 
         await newPlaylist.save();
 
+        // After creating the playlist, add the playlist ID to the user's createdPlaylists
+        const userId = req.user.userId || req.user._id; // Get user ID from request
+        await UserModel.findByIdAndUpdate(
+            userId,
+            { $addToSet: { createdPlaylists: newPlaylist._id } }, // Add the playlist ID
+            { new: true }
+        );
+
         res.status(201).json({
             success: true,
             message: "Playlist created successfully",
@@ -37,4 +48,23 @@ const createPlaylist = async (req, res) => {
     }
 };
 
-export { createPlaylist };
+// Function to get playlists created by the user
+export const getUserPlaylists = async (req, res) => {
+    try {
+        const userId = req.user.userId || req.user._id; // Get user ID from request
+
+        const user = await UserModel.findById(userId).populate('createdPlaylists'); // Populate createdPlaylists
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User playlists retrieved successfully",
+            playlists: user.createdPlaylists,
+        });
+    } catch (error) {
+        console.error("Error retrieving user playlists:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};

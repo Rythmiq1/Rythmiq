@@ -12,4 +12,5 @@ router.post('/select-genres', ensureAuthenticated, selectGenres);
 router.post('/like-song', ensureAuthenticated, addLikedSong);
 router.get('/get-liked', ensureAuthenticated, getLikedSongs);
 router.delete('/delete-like-song',ensureAuthenticated,removeLikedSong);
+
 export default router;

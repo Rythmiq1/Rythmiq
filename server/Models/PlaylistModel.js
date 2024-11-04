@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const playlistSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
-  songs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }], // reference to the Song model
+  songs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }], 
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
