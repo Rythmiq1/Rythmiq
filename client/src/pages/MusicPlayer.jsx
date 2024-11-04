@@ -18,7 +18,10 @@ const MusicPlayer = ({ currentSong }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [currentVolume, setCurrentVolume] = useState(1); // Volume state
   const audioRef = useRef(null);
+
+  // Function to play/pause the audio
   const handlePlayPause = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -29,19 +32,27 @@ const MusicPlayer = ({ currentSong }) => {
     }
     setIsPlaying(!isPlaying);
   };
+
+  // When metadata is loaded, set the duration
   const handleMetadataLoaded = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
   };
+
+  // When audio ends, reset play state
   const handleAudioEnd = () => {
     setIsPlaying(false);
   };
+
+  // Update the current time as the audio plays
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
     }
   };
+
+  // Update audio source when the song changes
   useEffect(() => {
     console.log("Current Song:", currentSong);
     if (currentSong && audioRef.current) {
@@ -50,6 +61,36 @@ const MusicPlayer = ({ currentSong }) => {
       setIsPlaying(false); 
     }
   }, [currentSong]);
+
+  // Function to handle progress bar click
+  const handleProgressClick = (e) => {
+    const progressBar = e.currentTarget;
+    const clickX = e.clientX - progressBar.getBoundingClientRect().left; // Get click position
+    const newTime = (clickX / progressBar.clientWidth) * duration; // Calculate new time
+    audioRef.current.currentTime = newTime; // Set audio's current time to the new time
+    setCurrentTime(newTime); // Update state to reflect the new time
+    if (!isPlaying) {
+      audioRef.current.play(); // Play if it was paused
+      setIsPlaying(true);
+    }
+  };
+
+  // Function to handle volume clicks
+  const handleVolumeClick = (e) => {
+    const volumeBar = e.currentTarget;
+    const clickX = e.clientX - volumeBar.getBoundingClientRect().left;
+    const newVolume = clickX / volumeBar.clientWidth;
+    audioRef.current.volume = newVolume;
+    setCurrentVolume(newVolume); // Update the volume state
+  };
+
+  // Optional: Handle volume scroll events
+  const handleVolumeScroll = (e) => {
+    const newVolume = Math.min(Math.max(currentVolume + (e.deltaY > 0 ? -0.05 : 0.05), 0), 1); // Increment/decrement volume
+    audioRef.current.volume = newVolume; // Set new volume
+    setCurrentVolume(newVolume); // Update state
+  };
+
   return (
     <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
@@ -79,8 +120,9 @@ const MusicPlayer = ({ currentSong }) => {
 
         <div className='flex items-center gap-5'>
           <p className="text-white">{formatTime(currentTime)}</p>
-          <div className='w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer'>
-            <hr className='h-1 border-none w-0 bg-green-800 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }} />
+          <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
+            <div className='h-1 bg-gray-300 rounded-full'></div>
+            <div className='h-1 bg-green-800 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
           </div>
           <p className="text-white">{duration ? formatTime(duration) : "0:00"}</p>
         </div>
@@ -91,13 +133,20 @@ const MusicPlayer = ({ currentSong }) => {
         <img className='w-4' src={queue} alt='queue' />
         <img className='w-4' src={speaker} alt='speaker' />
         <img className='w-4' src={volume} alt='volume' />
-        <div className='w-20 bg-slate-50 h-1 rounded'></div>
+        <div className='relative w-20 h-1 bg-slate-50 rounded cursor-pointer' 
+          onClick={handleVolumeClick} onWheel={handleVolumeScroll}
+        >
+          <div className='absolute top-0 left-0 h-full bg-green-800 rounded' 
+            style={{ width: `${currentVolume * 100}%` }}></div>
+        </div>
         <img className='w-4' src={mini_player} alt='mini player' />
         <img className='w-4' src={zoom} alt='zoom' />
       </div>
     </div>
   );
 };
+
+
 const formatTime = (seconds) => {
   const minutes = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);

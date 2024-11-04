@@ -9,6 +9,7 @@ import Navbar from './pages/Navbar';
 import AlbumPage from './pages/AlbumPage';
 import LikedSongs from './pages/LikedSongs';
 import CreatePlaylist from './pages/CreatePlaylist';
+import Search from './pages/Search'
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -46,6 +47,7 @@ const App = () => {
                                 />
                                 <Route path="/liked-songs" element={<LikedSongs />} />
                                 <Route path='/playlist' element={<CreatePlaylist/>} />
+                                <Route path="/search" element={<Search />} />
                             </Routes>
                         </div>
                         <MusicPlayer currentSong={currentSong} />
