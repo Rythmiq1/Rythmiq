@@ -1,45 +1,68 @@
 import React, { useState, useEffect } from 'react';
 
-const LikedSongs = () => {
-  // Sample liked songs data with images and descriptions
+const LikedSongs = ({ onSongSelect }) => {
   const [likedSongs, setLikedSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const playSong = (song) => {
+    console.log("Selected Song:", song); 
+    onSongSelect(song); 
+  };
+
+
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-4 py-1 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
 
   useEffect(() => {
-    // Simulate fetching liked songs
-    const fetchLikedSongs = () => {
-      // Sample data for demonstration
-      const sampleLikedSongs = [
-        { 
-          id: 1, 
-          title: 'Song One', 
-          artist: 'Artist A', 
-          imageUrl: 'https://via.placeholder.com/100', // Sample image URL
-          description: 'A beautiful song that lifts your spirits.' 
-        },
-        { 
-          id: 2, 
-          title: 'Song Two', 
-          artist: 'Artist B', 
-          imageUrl: 'https://via.placeholder.com/100', // Sample image URL
-          description: 'An energetic tune that makes you dance.' 
-        },
-        { 
-          id: 3, 
-          title: 'Song Three', 
-          artist: 'Artist C', 
-          imageUrl: 'https://via.placeholder.com/100', // Sample image URL
-          description: 'A mellow track perfect for relaxation.' 
-        },
-      ];
-      setLikedSongs(sampleLikedSongs);
+    const fetchLikedSongs = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/auth/get-liked', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${localStorage.getItem('token')}` // or however you're storing the token
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch liked songs.');
+        }
+
+        const data = await response.json();
+        setLikedSongs(data.data); // assuming 'data' field contains liked songs array
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchLikedSongs();
   }, []);
 
-  const handlePlayClick = (title) => {
+  const handlePlayClick = (title) => 
+  {
     console.log(`Playing ${title}`);
+    
   };
+
+  if (loading) {
+    return (
+      <div className="liked-songs-container p-5">
+        <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
+        <p className="text-white">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="liked-songs-container p-5">
+        <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
+        <p className="text-white">Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="liked-songs-container p-5">
@@ -49,21 +72,23 @@ const LikedSongs = () => {
       ) : (
         <ul>
           {likedSongs.map((song) => (
-            <li key={song.id} className="flex items-center justify-between border-b py-2 text-white">
+            <li key={song._id} className="flex items-center justify-between border-b py-2 text-white">
               <div className="flex items-center">
-                <img src={song.imageUrl} alt={song.title} className="w-16 h-16 mr-4" /> {/* Song image */}
+                <img src={song.image} alt={song.name} className="w-16 h-16 mr-4" />
                 <div className="flex-1">
-                  <span className="font-semibold">{song.title} - {song.artist}</span>
-                  <p className="text-sm">{song.description}</p> {/* Song description */}
+                  <span className="font-semibold">{song.name} - {song.artist}</span>
+                  <p className="text-sm">{song.desc}</p>
                 </div>
               </div>
-              <button 
-                onClick={() => handlePlayClick(song.title)} 
+              {/* <button
+                onClick={() => handlePlayClick(song.name)}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200"
-                aria-label={`Play ${song.title}`} 
-              >
-               
-                <span className="text-lg">&#9658;</span> 
+                aria-label={`Play ${song.name}`}>
+                  <span className="text-lg">&#9658;</span>
+              </button> */}
+
+              <button className={buttonStyling} onClick={() => playSong(song)} aria-label={`Play ${song.name}`}> 
+              <span className="text-lg">&#9658;</span>
               </button>
             </li>
           ))}

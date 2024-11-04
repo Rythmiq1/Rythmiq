@@ -23,6 +23,8 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
 
+  
+
   // Function to play/pause the audio
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -76,6 +78,7 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
         console.error("Error playing audio:", error);
       }); // Automatically play the audio
     }
+    setIsPlaying(true);
   }, [currentSong]);
 
   // Function to handle progress bar click

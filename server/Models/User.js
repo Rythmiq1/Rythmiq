@@ -19,9 +19,16 @@ const UserSchema = new Schema({
   googleId: String,
   image: String,
   interests: {
-    type: [String], // Array of strings
+    type: [String],
     default: [],
   },
+  likedSongs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Song",
+    },
+  ],
+  createdPlaylists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }],
 }, { timestamps: true });
 
 const UserModel = mongoose.model('users', UserSchema);

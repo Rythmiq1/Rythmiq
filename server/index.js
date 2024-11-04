@@ -6,7 +6,7 @@ import session from 'express-session';
 import passport from 'passport';
 import { Strategy as OAuth2Strategy } from 'passport-google-oauth2';
 import jwt from 'jsonwebtoken';
-
+import playlistRouter from './Routes/playlistRouter.js';
 // Import your routes and models
 import AuthRouter from './Routes/AuthRouter.js';
 import songRoutes from './Routes/songRoute.js';
@@ -77,7 +77,7 @@ passport.deserializeUser((user, done) => {
 app.get('/ping', (req, res) => {
   res.send('pong');
 });
-
+app.use("/playlist",playlistRouter)
 app.use("/song", songRoutes);
 app.use("/album", albumRouter);
 app.use('/auth', AuthRouter);

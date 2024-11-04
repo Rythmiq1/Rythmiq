@@ -40,6 +40,7 @@ const Search = ({ onSongSelect }) => {
   };
 
   const playSong = (song) => {
+    console.log("Selected Song:", song); 
     onSongSelect(song); 
   };
 
@@ -81,7 +82,7 @@ const Search = ({ onSongSelect }) => {
 
               <button className={buttonStyling} onClick={() => playSong(song)}> 
               <FaPlay className="text-lg" />
-    </button>
+              </button>
 
 
 

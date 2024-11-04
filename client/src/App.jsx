@@ -8,9 +8,9 @@ import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
 import AlbumPage from './pages/AlbumPage';
 import LikedSongs from './pages/LikedSongs';
-import Search from './pages/Search';
+import Search from './pages/Search'
+import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
-
 const App = () => {
     const userId = localStorage.getItem('userId');
     const location = useLocation();
@@ -39,8 +39,9 @@ const App = () => {
                                 <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                                 <Route path="/home" element={<Display />} />
                                 <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={setCurrentSong} />} />
-                                <Route path="/liked-songs" element={<LikedSongs />} />
+                                <Route path="/liked-songs" element={<LikedSongs onSongSelect={setCurrentSong} />} />
                                 <Route path="/search" element={<Search onSongSelect={setCurrentSong} />} /> 
+                                <Route path='/playlist' element={<CreatePlaylist/>} />
                                 <Route path="/history" element={<History/>} />
                             </Routes>
                         </div>

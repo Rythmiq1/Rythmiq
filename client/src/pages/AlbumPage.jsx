@@ -2,22 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import MusicPlayer from './MusicPlayer'; // Import MusicPlayer component
+import MusicPlayer from './MusicPlayer';
+import axios from 'axios';
 
-const AlbumPage = ({ setCurrentSong }) => { // Keep prop as is for now
+const AlbumPage = ({ setCurrentSong }) => {
     const { id } = useParams();
     const [album, setAlbum] = useState(null);
     const [songs, setSongs] = useState([]);
+    const [likedSongs, setLikedSongs] = useState([]); // List of liked song IDs
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentSong, setCurrentSongState] = useState(null); // Use different name for state setter
+    const [currentSong, setCurrentSongState] = useState(null);
 
+    // Fetch album data
     useEffect(() => {
         const fetchAlbum = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/album/${id}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
+
                 const data = await response.json();
                 if (data.album && Array.isArray(data.songs)) {
                     setAlbum(data.album);
@@ -30,34 +33,33 @@ const AlbumPage = ({ setCurrentSong }) => { // Keep prop as is for now
                 setLoading(false);
             }
         };
+
         fetchAlbum();
+        fetchLikedSongs();
     }, [id]);
 
-    const handleLikeSong = async (songId) => {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-            alert('Please log in to like a song.');
-            return;
-        }
+    // Fetch liked songs
+    const fetchLikedSongs = async () => {
         try {
-            const response = await fetch('http://localhost:8080/liked-songs', {
-                method: 'POST',
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8080/auth/get-liked', {
                 headers: {
-                    'Content-Type': 'application/json',
+                    Authorization: token,
                 },
-                body: JSON.stringify({ userId, songId }),
             });
-            if (!response.ok) throw new Error('Failed to like song');
-            toast.success('Song liked!');
+            if (response.data && response.data.success) {
+                setLikedSongs(response.data.data.map(song => song._id)); // Update liked songs list
+            }
         } catch (error) {
-            console.error('Error liking song:', error);
-            toast.error('Failed to like song');
+            console.error('Error fetching liked songs:', error);
+            toast.error('Failed to fetch liked songs');
         }
     };
 
+    // Handle song selection
     const handleSelectSong = (song) => {
-        setCurrentSong(song); // Use the prop to set the current song in the parent
-        setCurrentSongState(song); // Update local state for MusicPlayer
+        setCurrentSong(song);
+        setCurrentSongState(song);
     };
 
     if (loading) return <div className="text-white text-xl">Loading...</div>;
@@ -76,8 +78,9 @@ const AlbumPage = ({ setCurrentSong }) => { // Keep prop as is for now
                                     <Card 
                                         key={song._id} 
                                         song={song} 
-                                        onLike={() => handleLikeSong(song._id)} 
+                                        isLiked={likedSongs.includes(song._id)} // Pass liked status based on fetched liked songs
                                         onSelect={() => handleSelectSong(song)} 
+                                        onToggleLike={() => fetchLikedSongs()} 
                                     />
                                 ))
                             ) : (
@@ -85,7 +88,7 @@ const AlbumPage = ({ setCurrentSong }) => { // Keep prop as is for now
                             )}
                         </div>
                     </div>
-                    {currentSong && <MusicPlayer song={currentSong} />} {/* Pass the currentSong to MusicPlayer */}
+                    {currentSong && <MusicPlayer song={currentSong} />}
                 </>
             ) : (
                 <p className="text-white text-lg">No album data available.</p>
@@ -94,12 +97,57 @@ const AlbumPage = ({ setCurrentSong }) => { // Keep prop as is for now
     );
 };
 
-const Card = ({ song, onLike, onSelect }) => {
-    const [liked, setLiked] = useState(false);
+const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
+    const [liked, setLiked] = useState(isLiked);
 
-    const handleLike = () => {
-        setLiked(!liked);
-        onLike();
+    useEffect(() => {
+        setLiked(isLiked); // Update local liked state based on prop
+    }, [isLiked]);
+
+    // Define the handleLike function
+    const handleLike = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('User is not authenticated. Please log in.');
+                return;
+            }
+
+            const headers = { Authorization: token };
+            const songId = { songId: song._id };
+            let response;
+
+            if (liked) {
+                response = await axios.delete(
+                    'http://localhost:8080/auth/delete-like-song',
+                    { data: songId, headers }
+                );
+                setLiked(false);
+                onToggleLike(true);
+            } else {
+                response = await axios.post(
+                    'http://localhost:8080/auth/like-song',
+                    songId,
+                    { headers }
+                );
+                setLiked(true);
+                onToggleLike(false);
+            }
+
+            if (response.data.success) {
+                toast.success(response.data.message);
+            } else {
+                toast.error(response.data.message || 'Unexpected response from server');
+            }
+
+        } catch (error) {
+            console.error('Error liking/unliking song:', error);
+            if (error.response) {
+                toast.error(`Error: ${error.response.data?.message || 'Unexpected error occurred'}`);
+            } else {
+                toast.error('Network error or server down.');
+            }
+        }
     };
 
     return (
@@ -111,7 +159,11 @@ const Card = ({ song, onLike, onSelect }) => {
                     <p className='text-gray-400'>{song.desc}</p>
                     <p className='text-gray-400'>Duration: {song.duration}</p>
                 </div>
-                <button onClick={handleLike} className='mt-4 text-2xl' style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <button 
+                    onClick={(e) => { e.stopPropagation(); handleLike(); }} 
+                    className='mt-4 text-2xl' 
+                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                >
                     <span role="img" aria-label="heart" className={`transition duration-200 ${liked ? 'text-red-500' : 'text-gray-400'}`}>
                         {liked ? '❤️' : '🤍'}
                     </span>
