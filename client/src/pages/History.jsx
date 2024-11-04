@@ -16,7 +16,7 @@ const History = () => {
       {sampleHistory.length > 0 ? (
         sampleHistory.map((song, index) => (
           <div key={index} className="flex justify-between items-center bg-gray-700 p-2 rounded mb-2">
-            <div className="flex items-center ml-10">
+            <div className="flex items-center ml-5">
               <FaPlay className="text-white cursor-pointer mr-10" /> 
               <p className="text-white">{song.name}</p>
             </div>

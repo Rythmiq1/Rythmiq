@@ -15,7 +15,7 @@ import zoom from "../assets/zoom.png";
 import rhythmiq from "../assets/images/Rhythmiq.png";
 import mute from "../assets/mute.png";
 
-const MusicPlayer = ({ currentSong }) => {
+const MusicPlayer = ({ currentSong, onSongChange })  => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -110,10 +110,7 @@ const MusicPlayer = ({ currentSong }) => {
   return (
     <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
-        <audio 
-          ref={audioRef} 
-          onEnded={handleAudioEnd} 
-          onLoadedMetadata={handleMetadataLoaded} 
+        <audio ref={audioRef} onEnded={handleAudioEnd} onLoadedMetadata={handleMetadataLoaded} 
           onTimeUpdate={handleTimeUpdate} 
         />
       )}

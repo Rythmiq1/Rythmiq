@@ -14,6 +14,7 @@ function Sidebar() {
   
       <div className="py-5 space-y-4">
       
+      
         <Link to="/home"> 
           <IconText iconName="home" displayText="Home" active/>
         </Link>
@@ -53,8 +54,13 @@ function Sidebar() {
             </p>
           ))}
         </div>
+
+
+       
       </div>
     </div>
+
+    
   );
 }
 
