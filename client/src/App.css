@@ -391,4 +391,8 @@ input {
     }
   
   }
- 
+ .btn-s{
+  border: transparent;
+  justify-content: right;
+  background-color: transparent;
+ }

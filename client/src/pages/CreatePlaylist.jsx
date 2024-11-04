@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+
 const CreatePlaylist = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -71,35 +72,35 @@ const CreatePlaylist = () => {
   };
 
   return (
-    <div className="w-full h-screen p-8  bg-black rounded-lg shadow-lg mt-10 text-white">
-      <h2 className="text-xl font-bold text-center mb-6">Create Your Playlist</h2>
+    <div className="w-full h-screen p-8 bg-gray-800 rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl">
+      <h2 className="text-2xl font-bold text-center mb-6">Create Your Playlist</h2>
       
-      <div className="mb-4">
+      <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Playlist Name</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-700 bg-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400"
+          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400 transition-transform duration-200"
           placeholder="Enter playlist name"
         />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-700 bg-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400"
+          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400 transition-transform duration-200"
           placeholder="Enter a short description"
           rows="2"
         ></textarea>
       </div>
 
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">Add Songs</label>
+      <div className="mb-6">
+        <label className="block text-sm font-medium mb-1 ">Add Songs</label>
         <select
-          className="w-full px-3 py-2 border border-gray-700 bg-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 text-white"
+          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white transition-colors duration-200 cursor-pointer"
           onChange={(e) => addSong(e.target.value)}
           defaultValue=""
         >
@@ -112,17 +113,20 @@ const CreatePlaylist = () => {
         </select>
       </div>
 
-      <div className="mb-4">
+      <div className="w-1/5 mb-6">
         <label className="block text-sm font-medium mb-1">Selected Songs</label>
-        <ul className="space-y-1">
+        <ul className="space-y-2">
           {selectedSongs.map((song) => (
-            <li key={song._id} className="flex items-center justify-between bg-gray-800 p-2 rounded">
+            <li
+              key={song._id}
+              className="drop-shadow-2xl flex items-center justify-between  rounded-lg transition-transform duration-200 hover:scale-105 shadow-lg"
+            >
               <span className="text-sm">{song.name}</span>
               <button
                 onClick={() => removeSong(song._id)}
-                className="text-red-500 hover:text-red-700 focus:outline-none"
+                className="btn-s font-semibold"
               >
-                Remove
+                X
               </button>
             </li>
           ))}
@@ -131,7 +135,7 @@ const CreatePlaylist = () => {
 
       <button
         onClick={submitPlaylist}
-        className="w-full py-2 bg-gray-700 text-white font-semibold rounded hover:bg-gray-600 transition-colors duration-200"
+        className="drop-shadow-2xl w-3/5 py-2 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 transform hover:scale-105"
       >
         Create Playlist
       </button>
