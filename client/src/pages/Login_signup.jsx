@@ -70,9 +70,9 @@ function Login_signup() {
             handleSuccess(message);
 
             // Store user data in localStorage on successful signup
-            localStorage.setItem('token', jwtToken);
-            localStorage.setItem('loggedInUser', name);
-            localStorage.setItem('userId', id);
+            sessionStorage.setItem('token', jwtToken);
+            sessionStorage.setItem('loggedInUser', name);
+            sessionStorage.setItem('userId', id);
 
             setTimeout(() => {
                 navigate('/genre')
@@ -125,9 +125,9 @@ const handleLogin = async (e) => {
             handleSuccess(message);
 
             // Store user data in localStorage on successful login
-            localStorage.setItem('token', jwtToken);
-            localStorage.setItem('loggedInUser', name);
-            localStorage.setItem('userId', id);
+            sessionStorage.setItem('token', jwtToken);
+            sessionStorage.setItem('loggedInUser', name);
+            sessionStorage.setItem('userId', id);
 
             setTimeout(() => {
                 navigate('/home'); // Navigate to home page after login

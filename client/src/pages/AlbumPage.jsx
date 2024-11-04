@@ -41,7 +41,7 @@ const AlbumPage = ({ setCurrentSong }) => {
     // Fetch liked songs
     const fetchLikedSongs = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             const response = await axios.get('http://localhost:8080/auth/get-liked', {
                 headers: {
                     Authorization: token,
@@ -107,7 +107,7 @@ const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     // Define the handleLike function
     const handleLike = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) {
                 toast.error('User is not authenticated. Please log in.');
                 return;

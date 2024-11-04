@@ -54,13 +54,16 @@ const MusicPlayer = ({ currentSong }) => {
 
   // Update audio source when the song changes
   useEffect(() => {
-    console.log("Current Song:", currentSong);
     if (currentSong && audioRef.current) {
-      audioRef.current.src = currentSong.file; 
-      audioRef.current.load(); 
-      setIsPlaying(false); 
+      audioRef.current.src = currentSong.file;
+      audioRef.current.load();
+      setIsPlaying(false);
+      audioRef.current.play().catch((error) => {
+        console.error("Playback failed:", error);
+      });
     }
   }, [currentSong]);
+  
 
   // Function to handle progress bar click
   const handleProgressClick = (e) => {
@@ -95,11 +98,13 @@ const MusicPlayer = ({ currentSong }) => {
     <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
         <audio 
-          ref={audioRef} 
-          onEnded={handleAudioEnd} 
-          onLoadedMetadata={handleMetadataLoaded} 
-          onTimeUpdate={handleTimeUpdate} 
-        />
+        ref={audioRef} 
+        onEnded={handleAudioEnd} 
+        onLoadedMetadata={handleMetadataLoaded} 
+        onTimeUpdate={handleTimeUpdate} 
+        preload="auto" 
+      />
+      
       )}
       <div className='absolute left-4 top-4'>
         <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong ? currentSong.image : rhythmiq} alt={currentSong ? currentSong.title : "No song playing"} />

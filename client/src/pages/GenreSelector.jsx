@@ -27,9 +27,9 @@ const GenreSelector = ({ userId }) => {
         const userId = urlParams.get('userId');
 
         if (token && name && userId) {
-            localStorage.setItem('token', token);
-            localStorage.setItem('loggedInUser', name);
-            localStorage.setItem('userId', userId);
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('loggedInUser', name);
+            sessionStorage.setItem('userId', userId);
             console.log("Login successful!");
         }
     }, []);
@@ -49,7 +49,7 @@ const GenreSelector = ({ userId }) => {
     };
 
     const handleSubmit = async () => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (!token) {
             console.error('Token not found in local storage');
             return;

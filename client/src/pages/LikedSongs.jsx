@@ -12,7 +12,7 @@ const LikedSongs = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${localStorage.getItem('token')}` // or however you're storing the token
+            'Authorization': `${sessionStorage.getItem('token')}` // or however you're storing the token
           }
         });
 

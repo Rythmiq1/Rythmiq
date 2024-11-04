@@ -13,20 +13,21 @@ function Navbar() {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     const name = params.get('name');
-
+    const id = params.get('userId');
     if (token && name) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('loggedInUser', name);
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('loggedInUser', name);
+      sessionStorage.setItem('userId', id);
       setLoggedInUser(name);
     } else {
-      const storedUser = localStorage.getItem('loggedInUser');
+      const storedUser = sessionStorage.getItem('loggedInUser');
       if (storedUser) {
         setLoggedInUser(storedUser);
       }
     }
 
     const getUser = async () => {
-      const storedToken = localStorage.getItem('token');
+      const storedToken = sessionStorage.getItem('token');
       if (storedToken) {
         try {
           const response = await axios.get("http://localhost:8080/login/success", {
@@ -44,8 +45,9 @@ function Navbar() {
   }, [location]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('UserId');
     setLoggedInUser('');
     setUserdata({});
   };
