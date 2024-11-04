@@ -14,29 +14,32 @@ function Sidebar() {
   
       <div className="py-5 space-y-4">
       
-        <Link to="/home"> {/* Wrap IconText with Link for navigation */}
+        <Link to="/home"> 
           <IconText iconName="home" displayText="Home" active/>
         </Link>
 
-        <Link to="/search"> {/* Wrap IconText with Link for navigation */}
+        <Link to="/search"> 
           <IconText iconName="search" displayText="Search"/>
         </Link>
 
-        {/* <IconText iconName="search" displayText="Search" /> */}
+       
         <IconText iconName="library_music" displayText="Your Library" />
       </div>
 
-      {/* Additional Options */}
+      
       <div className="pt-5 space-y-2">
         <IconText iconName="library_add" displayText="Create Playlist" />
-        <Link to="/liked-songs"> {/* Wrap IconText with Link for navigation */}
+        <Link to="/liked-songs"> 
           <IconText iconName="favorite" displayText="Liked Songs" />
+        </Link>
+        <Link to="/history" className="text-white flex items-center p-2 rounded">
+      <IconText iconName="history" displayText="History" />
         </Link>
       </div>
 
-      {/* Language and Footer Links */}
+     
       <div className="px-5 pb-5">
-        {/* Language Selector */}
+  
         <div className="flex items-center border border-gray-100 text-white w-3/4 rounded-full px-2 py-1
          hover:border-white cursor-pointer transition-colors duration-200">
           <IconText iconName="public" displayText="English" />

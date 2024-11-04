@@ -13,6 +13,7 @@ import volume from "../assets/volume.png";
 import mini_player from "../assets/mini-player.png";
 import zoom from "../assets/zoom.png";
 import rhythmiq from "../assets/images/Rhythmiq.png";
+import mute from "../assets/mute.png";
 
 const MusicPlayer = ({ currentSong }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -20,6 +21,7 @@ const MusicPlayer = ({ currentSong }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [currentVolume, setCurrentVolume] = useState(1); // Volume state
   const audioRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(false);
 
   // Function to play/pause the audio
   const handlePlayPause = () => {
@@ -37,6 +39,17 @@ const MusicPlayer = ({ currentSong }) => {
   const handleMetadataLoaded = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
+    }
+  };
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.volume = currentVolume; // Restore previous volume
+      }else {
+        audioRef.current.volume = 0; // Mute the audio
+      }
+      setIsMuted(!isMuted); // Toggle mute state
     }
   };
 
@@ -58,7 +71,10 @@ const MusicPlayer = ({ currentSong }) => {
     if (currentSong && audioRef.current) {
       audioRef.current.src = currentSong.file; 
       audioRef.current.load(); 
-      setIsPlaying(false); 
+      setIsPlaying(true); // Automatically set isPlaying to true
+      audioRef.current.play().catch(error => {
+        console.error("Error playing audio:", error);
+      }); // Automatically play the audio
     }
   }, [currentSong]);
 
@@ -104,7 +120,7 @@ const MusicPlayer = ({ currentSong }) => {
       <div className='absolute left-4 top-4'>
         <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong ? currentSong.image : rhythmiq} alt={currentSong ? currentSong.title : "No song playing"} />
       </div>
-      <div className='flex flex-col items-center gap-1'>
+      <div className='flex flex-col items-center gap-1 ml-20'>
         <div className='flex gap-4'>
           <img className='w-4 cursor-pointer' src={shuffle} alt='shuffle' />
           <img className='w-4 cursor-pointer' src={prev} alt='previous' />
@@ -122,30 +138,39 @@ const MusicPlayer = ({ currentSong }) => {
           <p className="text-white">{formatTime(currentTime)}</p>
           <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
             <div className='h-1 bg-gray-300 rounded-full'></div>
-            <div className='h-1 bg-green-800 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+            <div className='h-1 bg-gray-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+            
+            <div
+              className="absolute w-3 h-3 bg-gray-600 rounded-full"
+              style={{ left: `${(currentTime / duration) * 100}%`, top: '-1px', transform: 'translateX(-50%)' }} // Adjust 'top' to align with the progress line
+            ></div>
           </div>
           <p className="text-white">{duration ? formatTime(duration) : "0:00"}</p>
         </div>
       </div>
       <div className='hidden lg:flex items-center gap-2 opacity-75'>
-        <img className='w-4' src={plays} alt='plays' />
-        <img className='w-4' src={mic} alt='mic' />
-        <img className='w-4' src={queue} alt='queue' />
-        <img className='w-4' src={speaker} alt='speaker' />
-        <img className='w-4' src={volume} alt='volume' />
+        {/* <img className='w-4' src={plays} alt='plays' /> */}
+        {/* <img className='w-4' src={mic} alt='mic' />
+        <img className='w-4' src={queue} alt='queue' /> */}
+        {/* <img className='w-4' src={speaker} alt='speaker' /> */}
+        <img className='w-4 cursor-pointer ml-10' src={isMuted ? mute : volume} alt='volume' onClick={toggleMute} />
+
+        
+        
         <div className='relative w-20 h-1 bg-slate-50 rounded cursor-pointer' 
-          onClick={handleVolumeClick} onWheel={handleVolumeScroll}
-        >
-          <div className='absolute top-0 left-0 h-full bg-green-800 rounded' 
-            style={{ width: `${currentVolume * 100}%` }}></div>
-        </div>
-        <img className='w-4' src={mini_player} alt='mini player' />
-        <img className='w-4' src={zoom} alt='zoom' />
+            onClick={handleVolumeClick} onWheel={handleVolumeScroll}>
+        <div className='absolute top-0 left-0 h-full bg-gray-400 rounded' style={{ width: `${currentVolume * 100}%` }}></div>
+        <div className="absolute w-3 h-3 bg-gray-500 rounded-full"
+          style={{ left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}>
+      </div>
+      </div>
+{/* 
+        <img className='w-4' src={mini_player} alt='mini player' /> */}
+        <img className='w-4 ml-10 mr-7' src={zoom} alt='zoom' />
       </div>
     </div>
   );
 };
-
 
 const formatTime = (seconds) => {
   const minutes = Math.floor(seconds / 60);
