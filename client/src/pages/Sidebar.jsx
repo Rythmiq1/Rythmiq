@@ -13,15 +13,18 @@ function Sidebar() {
 
       {/* Navigation Section */}
       <div className="py-5 space-y-4">
-        <IconText iconName="home" displayText="Home" active />
+       <Link to="/home"> <IconText iconName="home" displayText="Home" active />
+       </Link>
         <IconText iconName="search" displayText="Search" />
         <IconText iconName="library_music" displayText="Your Library" />
       </div>
 
       {/* Additional Options */}
       <div className="pt-5 space-y-2">
+        <Link to="/playlist">
         <IconText iconName="library_add" displayText="Create Playlist" />
-        <Link to="/liked-songs"> {/* Wrap IconText with Link for navigation */}
+        </Link>
+        <Link to="/liked-songs">
           <IconText iconName="favorite" displayText="Liked Songs" />
         </Link>
       </div>
