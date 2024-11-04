@@ -6,6 +6,7 @@ const playlistSchema = new mongoose.Schema({
   description: { type: String },
   songs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }], 
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  image: { type: String }, 
 }, { timestamps: true });
 
 const Playlist = mongoose.model('Playlist', playlistSchema);

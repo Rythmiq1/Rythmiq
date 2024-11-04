@@ -1,35 +1,51 @@
-// Controllers/playlistController.js
 import Playlist from '../Models/PlaylistModel.js';
-import UserModel from '../Models/User.js'; // Import the User model
+import UserModel from '../Models/User.js';
+import { uploadOnCloudinary } from '../config/cloudinary.js'; 
 
-// Function to create a playlist
 export const createPlaylist = async (req, res) => {
     try {
-        const { name, description, songs } = req.body;
+        const { name, description } = req.body;
+        const songs = req.body.songs;
+        const imageFile = req.file;
 
-        // Validate the request body
-        if (!name || !songs || !Array.isArray(songs) || songs.length === 0) {
+
+        const songArray = Array.isArray(songs) ? songs : [songs]; 
+
+        if (!name || !songArray || songArray.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: "Playlist name and songs are required.",
             });
         }
 
-        // Create the playlist
+        if (!imageFile) {
+            return res.status(400).json({
+                success: false,
+                message: "Image file is required.",
+            });
+        }
+
+        const imageUpload = await uploadOnCloudinary(imageFile.path);
+        if (!imageUpload) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to upload image to Cloudinary.",
+            });
+        }
+
         const newPlaylist = new Playlist({
             name,
             description,
-            songs,
-            createdBy: req.user.id, // Assuming you're using some auth middleware
+            songs: songArray, 
+            image: imageUpload.secure_url,
+            createdBy: req.user.id,
         });
 
         await newPlaylist.save();
-
-        // After creating the playlist, add the playlist ID to the user's createdPlaylists
-        const userId = req.user.userId || req.user._id; // Get user ID from request
+        const userId = req.user.userId || req.user._id; 
         await UserModel.findByIdAndUpdate(
             userId,
-            { $addToSet: { createdPlaylists: newPlaylist._id } }, // Add the playlist ID
+            { $addToSet: { createdPlaylists: newPlaylist._id } },
             { new: true }
         );
 
@@ -39,21 +55,21 @@ export const createPlaylist = async (req, res) => {
             playlist: newPlaylist,
         });
     } catch (error) {
-        console.error("Error creating playlist:", error); // Log the error for debugging
+        console.error("Error creating playlist:", error);
         res.status(500).json({
             success: false,
             message: "Failed to create playlist",
-            error: error.message, // Send the error message for more details
+            error: error.message,
         });
     }
 };
 
-// Function to get playlists created by the user
+
 export const getUserPlaylists = async (req, res) => {
     try {
-        const userId = req.user.userId || req.user._id; // Get user ID from request
+        const userId = req.user.userId || req.user._id; 
 
-        const user = await UserModel.findById(userId).populate('createdPlaylists'); // Populate createdPlaylists
+        const user = await UserModel.findById(userId).populate('createdPlaylists');
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
@@ -66,5 +82,19 @@ export const getUserPlaylists = async (req, res) => {
     } catch (error) {
         console.error("Error retrieving user playlists:", error);
         res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+export const getPlaylistById = async (req, res) => {
+    const { playlistId } = req.params;
+    try {
+        const playlist = await Playlist.findById(playlistId).populate('songs'); // Assuming 'songs' is a reference field
+        if (!playlist) {
+            return res.status(404).json({ success: false, message: 'Playlist not found' });
+        }
+        res.status(200).json({ success: true, playlist });
+    } catch (error) {
+        console.error('Error fetching playlist:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

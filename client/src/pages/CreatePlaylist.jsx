@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
-
+import upload_area from '../assets/upload_area.png';
 const CreatePlaylist = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedSongs, setSelectedSongs] = useState([]);
   const [availableSongs, setAvailableSongs] = useState([]);
+  const [image, setImage] = useState(null); // State for image file
 
   useEffect(() => {
     const fetchSongs = async () => {
@@ -36,24 +36,29 @@ const CreatePlaylist = () => {
   };
 
   const submitPlaylist = async () => {
-    if (!name || selectedSongs.length === 0) {
-      toast.error('Please enter a name and add at least one song.');
+    if (!name || selectedSongs.length === 0 || !image) {
+      toast.error('Please enter a name, add at least one song, and upload an image.');
       return;
     }
 
-    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    const token = sessionStorage.getItem('token'); // Assuming the token is stored in localStorage
+
+    const formData = new FormData(); // Use FormData to send both text and file
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('image', image);
+    selectedSongs.forEach((song) => {
+      formData.append('songs', song._id); // Append each song ID
+    });
 
     try {
       const response = await axios.post(
         'http://localhost:8080/playlist/create',
-        {
-          name,
-          description,
-          songs: selectedSongs.map((song) => song._id),
-        },
+        formData,
         {
           headers: {
-            Authorization: token, 
+            Authorization: token,
+            'Content-Type': 'multipart/form-data', // Set content type for FormData
           },
         }
       );
@@ -63,6 +68,7 @@ const CreatePlaylist = () => {
         setName('');
         setDescription('');
         setSelectedSongs([]);
+        setImage(null); // Reset image after successful submission
       } else {
         toast.error(response.data.message || 'Failed to create playlist.');
       }
@@ -72,9 +78,19 @@ const CreatePlaylist = () => {
   };
 
   return (
-    <div className="w-full h-screen p-8 bg-gray-800 rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl">
+    <div className="w-full h-screen p-8 bg-gray-800 rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl overflow-y-auto max-h-[calc(110vh-200px)]">
       <h2 className="text-2xl font-bold text-center mb-6">Create Your Playlist</h2>
       
+      {/* Image Upload Section */}
+      <div className='flex flex-col gap-4 mb-6'>
+        <p>Upload Image</p>
+        <input onChange={(e) => setImage(e.target.files[0])} type="file" id='image' accept='image/*' hidden />
+        <label htmlFor="image">
+          <img src={image ? URL.createObjectURL(image) : upload_area} className='w-24 cursor-pointer' alt="Upload Image" />
+        </label>
+      </div>
+  
+      {/* Playlist Name Section */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Playlist Name</label>
         <input
@@ -85,7 +101,8 @@ const CreatePlaylist = () => {
           placeholder="Enter playlist name"
         />
       </div>
-
+  
+      {/* Description Section */}
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Description</label>
         <textarea
@@ -96,9 +113,10 @@ const CreatePlaylist = () => {
           rows="2"
         ></textarea>
       </div>
-
+  
+      {/* Add Songs Section */}
       <div className="mb-6">
-        <label className="block text-sm font-medium mb-1 ">Add Songs</label>
+        <label className="block text-sm font-medium mb-1">Add Songs</label>
         <select
           className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white transition-colors duration-200 cursor-pointer"
           onChange={(e) => addSong(e.target.value)}
@@ -112,14 +130,15 @@ const CreatePlaylist = () => {
           ))}
         </select>
       </div>
-
+  
+      {/* Selected Songs Section */}
       <div className="w-1/5 mb-6">
         <label className="block text-sm font-medium mb-1">Selected Songs</label>
         <ul className="space-y-2">
           {selectedSongs.map((song) => (
             <li
               key={song._id}
-              className="drop-shadow-2xl flex items-center justify-between  rounded-lg transition-transform duration-200 hover:scale-105 shadow-lg"
+              className="drop-shadow-2xl flex items-center justify-between rounded-lg transition-transform duration-200 hover:scale-105 shadow-lg"
             >
               <span className="text-sm">{song.name}</span>
               <button
@@ -132,7 +151,8 @@ const CreatePlaylist = () => {
           ))}
         </ul>
       </div>
-
+  
+      {/* Create Playlist Button */}
       <button
         onClick={submitPlaylist}
         className="drop-shadow-2xl w-3/5 py-2 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 transform hover:scale-105"
@@ -141,6 +161,6 @@ const CreatePlaylist = () => {
       </button>
     </div>
   );
-};
+};  
 
 export default CreatePlaylist;
