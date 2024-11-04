@@ -27,6 +27,7 @@ const songSchema = new mongoose.Schema({
     type: String,
     required: false,
   }
+  
 });
 
 const Song = mongoose.models.Song || mongoose.model("Song", songSchema);

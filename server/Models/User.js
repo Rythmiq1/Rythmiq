@@ -22,6 +22,12 @@ const UserSchema = new Schema({
     type: [String], // Array of strings
     default: [],
   },
+  likedSongs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Song", 
+    },
+  ],
 }, { timestamps: true });
 
 const UserModel = mongoose.model('users', UserSchema);
