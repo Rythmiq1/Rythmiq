@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
-const LikedSongs = () => {
+const LikedSongs = ({ onSongSelect }) => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const playSong = (song) => {
+    console.log("Selected Song:", song); 
+    onSongSelect(song); 
+  };
+
+
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-4 py-1 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
 
   useEffect(() => {
     const fetchLikedSongs = async () => {
@@ -32,8 +40,10 @@ const LikedSongs = () => {
     fetchLikedSongs();
   }, []);
 
-  const handlePlayClick = (title) => {
+  const handlePlayClick = (title) => 
+  {
     console.log(`Playing ${title}`);
+    
   };
 
   if (loading) {
@@ -70,12 +80,15 @@ const LikedSongs = () => {
                   <p className="text-sm">{song.desc}</p>
                 </div>
               </div>
-              <button
+              {/* <button
                 onClick={() => handlePlayClick(song.name)}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200"
-                aria-label={`Play ${song.name}`}
-              >
-                <span className="text-lg">&#9658;</span>
+                aria-label={`Play ${song.name}`}>
+                  <span className="text-lg">&#9658;</span>
+              </button> */}
+
+              <button className={buttonStyling} onClick={() => playSong(song)} aria-label={`Play ${song.name}`}> 
+              <span className="text-lg">&#9658;</span>
               </button>
             </li>
           ))}

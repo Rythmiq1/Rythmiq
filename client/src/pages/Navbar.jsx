@@ -3,7 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import TextWithHover from '../components/TextWithHover';
 
+
 function Navbar() {
+
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+
+
   const [loggedInUser, setLoggedInUser] = useState('');
   const [userdata, setUserdata] = useState({});
   const location = useLocation();
@@ -66,12 +71,14 @@ function Navbar() {
           {loggedInUser ? (
             <>
               <span className="text-white">Welcome, {loggedInUser}!</span>
-              <button
+              {/* <button
                 className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+                onClick={handleLogout}>Logout</button> */}
+
+
+          <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
+
+
             </>
           ) : (
             <>

@@ -8,11 +8,11 @@ import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
 import AlbumPage from './pages/AlbumPage';
 import LikedSongs from './pages/LikedSongs';
-import CreatePlaylist from './pages/CreatePlaylist';
 import Search from './pages/Search'
 import LibraryPage from './pages/LibraryPage';
 import PlaylistPage from './pages/PlaylistPage';
-
+import CreatePlaylist from './pages/CreatePlaylist';
+import History from './pages/History';
 const App = () => {
     const userId = localStorage.getItem('userId');
     const location = useLocation();
@@ -38,24 +38,20 @@ const App = () => {
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
-                                <Route 
-                                    path="/" 
-                                    element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} 
-                                />
+                                <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                                 <Route path="/home" element={<Display />} />
-                                <Route 
-                                    path="/album-p/:id" 
-                                    element={<AlbumPage setCurrentSong={setCurrentSong} />} 
-                                />
-                                <Route path="/liked-songs" element={<LikedSongs />} />
+                                <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={setCurrentSong} />} />
+                                <Route path="/liked-songs" element={<LikedSongs onSongSelect={setCurrentSong} />} />
+                                <Route path="/search" element={<Search onSongSelect={setCurrentSong} />} /> 
                                 <Route path='/playlist' element={<CreatePlaylist/>} />
                                 <Route path="/search" element={<Search />} />
                                 <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong}/>} />
                                 <Route path="/playlist/:id" element={<PlaylistPage  setCurrentSong={setCurrentSong}/>} />
+                                <Route path="/history" element={<History/>} />
                             </Routes>
                         </div>
-                        <MusicPlayer currentSong={currentSong} />
                     </div>
+                    <MusicPlayer currentSong={currentSong} />
                 </div>
             )}
         </div>
