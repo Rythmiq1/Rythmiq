@@ -20,8 +20,9 @@ function Sidebar() {
           <IconText iconName="search" displayText="Search"/>
         </Link>
 
-      
+        <Link to="/library">
         <IconText iconName="library_music" displayText="Your Library" />
+        </Link>
       </div>
 
       <div className="pt-5 space-y-2">

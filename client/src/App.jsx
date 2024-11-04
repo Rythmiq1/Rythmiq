@@ -10,6 +10,8 @@ import AlbumPage from './pages/AlbumPage';
 import LikedSongs from './pages/LikedSongs';
 import CreatePlaylist from './pages/CreatePlaylist';
 import Search from './pages/Search'
+import LibraryPage from './pages/LibraryPage';
+import PlaylistPage from './pages/PlaylistPage';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -48,6 +50,8 @@ const App = () => {
                                 <Route path="/liked-songs" element={<LikedSongs />} />
                                 <Route path='/playlist' element={<CreatePlaylist/>} />
                                 <Route path="/search" element={<Search />} />
+                                <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong}/>} />
+                                <Route path="/playlist/:id" element={<PlaylistPage  setCurrentSong={setCurrentSong}/>} />
                             </Routes>
                         </div>
                         <MusicPlayer currentSong={currentSong} />
