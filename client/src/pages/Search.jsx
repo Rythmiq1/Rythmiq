@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlay } from 'react-icons/fa';
 
-const Search = ({ onSongSelect }) => { 
+const Search = ({ onSongSelect }) => {
   const buttonStyling = "flex space-x-1 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-1 ring-purple-400 px-6 py-2 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,7 +27,14 @@ const Search = ({ onSongSelect }) => {
   };
 
   useEffect(() => {
-    fetchSongs();
+    const token = sessionStorage.getItem('token'); // Check for token
+
+    if (!token) {
+      toast.info('Please log in to search for songs.'); // Show login prompt if no token
+      return; // Don't fetch songs if token is not present
+    }
+
+    fetchSongs(); // Fetch songs if token exists
   }, []);
 
   const handleSearch = (e) => {
@@ -40,8 +47,8 @@ const Search = ({ onSongSelect }) => {
   };
 
   const playSong = (song) => {
-    console.log("Selected Song:", song); 
-    onSongSelect(song); 
+    console.log("Selected Song:", song);
+    onSongSelect(song);
   };
 
   return (
@@ -55,8 +62,7 @@ const Search = ({ onSongSelect }) => {
         className="p-2 border border-gray-300 rounded w-full mb-4 text-black"
       />
       <div>
-        <div className="sm:grid hidden grid-cols-[0.5fr_1fr_2fr_1fr] items-center gap-2.5 p-3 border
-         border-gray-300 text-sm mr-5" style={{ backgroundColor: '#111828' }}  >
+        <div className="sm:grid hidden grid-cols-[0.5fr_1fr_2fr_1fr] items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5" style={{ backgroundColor: '#111828' }}>
           <b className="text-white">Image</b>
           <b className="text-white ml-12">Name</b>
           <b className="text-white ml-44">Album</b>
@@ -65,31 +71,22 @@ const Search = ({ onSongSelect }) => {
         {filteredSongs.length > 0 ? (
           filteredSongs.map((song) => (
             <div
-              key={song._id} className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] 
-              items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5"
-              style={{ backgroundColor: '#111828' }} 
->
+              key={song._id}
+              className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5"
+              style={{ backgroundColor: '#111828' }}
+            >
               <img className="w-12" src={song.image} alt={song.title} />
               <p className="text-white font-semibold ml-12">{song.name}</p>
               <p className="text-white ml-44">{song.album ? song.album.name : "N/A"}</p>
               <p className="text-white">{song.duration}</p>
 
-              {/* <button
-                onClick={() => playSong(song)}
-                className="text-white text-gray-800 rounded-full ml-4 flex justify-center items-center hover:bg-gray-200">
+              <button className={buttonStyling} onClick={() => playSong(song)}>
                 <FaPlay className="text-lg" />
-              </button> */}
-
-              <button className={buttonStyling} onClick={() => playSong(song)}> 
-              <FaPlay className="text-lg" />
               </button>
-
-
-
             </div>
           ))
         ) : (
-          <p className="py-2 text-white">No songs found</p>
+          <p className="py-2 text-white">Please LogIn to Search Songs</p>
         )}
       </div>
     </div>

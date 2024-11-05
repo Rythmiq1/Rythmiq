@@ -27,7 +27,7 @@ const LibraryPage = () => {
                 }
             } catch (error) {
                 console.error("Error fetching playlists:", error);
-                toast.error("Failed to load playlists.");
+                // toast.error("Failed to load playlists.");
             } finally {
                 setLoading(false);
             }
@@ -46,7 +46,7 @@ const LibraryPage = () => {
             }
         } catch (error) {
             console.error('Error fetching liked songs:', error);
-            toast.error('Failed to fetch liked songs');
+            toast.error('Please Login');
         }
     };
 
