@@ -155,8 +155,4 @@ const CreatePlaylist = () => {
   );
 };  
 
-<<<<<<< HEAD
 export default CreatePlaylist;
-=======
-export default CreatePlaylist;
->>>>>>> origin/main

@@ -173,8 +173,4 @@ const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     );
 };
 
-<<<<<<< HEAD
 export default AlbumPage;
-=======
-export default AlbumPage;
->>>>>>> origin/main
