@@ -21,10 +21,14 @@ const App = () => {
     const isAuthRoute = location.pathname === '/login' || location.pathname === '/genre';
 
     useEffect(() => {
-        // Update session storage when currentSong changes
         if (currentSong) {
             const currentHistory = JSON.parse(sessionStorage.getItem('songHistory')) || [];
-            const updatedHistory = [...currentHistory, currentSong];
+            const songIndex = currentHistory.findIndex(song => song._id === currentSong._id); 
+
+            if (songIndex !== -1) {
+                currentHistory.splice(songIndex, 1);
+            }
+            const updatedHistory = [currentSong, ...currentHistory];
             sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
         }
     }, [currentSong]);
@@ -48,7 +52,7 @@ const App = () => {
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
-                                <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+                                <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
                                 <Route path="/home" element={<Display onSongSelect={setCurrentSong} />} />
                                 <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/liked-songs" element={<LikedSongs onSongSelect={setCurrentSong} />} />
@@ -56,7 +60,7 @@ const App = () => {
                                 <Route path='/playlist' element={<CreatePlaylist />} />
                                 <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
-                                <Route path="/history" element={<History />} />
+                                <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
                             </Routes>
                         </div>
                     </div>
@@ -66,5 +70,4 @@ const App = () => {
         </div>
     );
 }
-
 export default App;
