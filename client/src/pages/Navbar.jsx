@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import arrow_right from "../assets/right_arrow.png";
-import arrow_left from "../assets/left_arrow.png";
+import TextWithHover from '../components/TextWithHover';
+
 
 function Navbar() {
-  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('loggedInUser') || '');
-  const [userdata, setUserdata] = useState(null);
+
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+
+
+  const [loggedInUser, setLoggedInUser] = useState('');
+  const [userdata, setUserdata] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,15 +18,21 @@ function Navbar() {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
     const name = params.get('name');
-
+    const id = params.get('userId');
     if (token && name) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('loggedInUser', name);
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('loggedInUser', name);
+      sessionStorage.setItem('userId', id);
       setLoggedInUser(name);
+    } else {
+      const storedUser = sessionStorage.getItem('loggedInUser');
+      if (storedUser) {
+        setLoggedInUser(storedUser);
+      }
     }
 
-    const fetchUserData = async () => {
-      const storedToken = localStorage.getItem('token');
+    const getUser = async () => {
+      const storedToken = sessionStorage.getItem('token');
       if (storedToken) {
         try {
           const response = await axios.get("http://localhost:8080/login/success", {
@@ -32,66 +42,67 @@ function Navbar() {
           setUserdata(response.data.user);
         } catch (error) {
           console.error('Error fetching user data:', error);
-          handleLogout();
         }
       }
     };
 
-    fetchUserData();
+    getUser();
   }, [location]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('UserId');
     setLoggedInUser('');
-    setUserdata(null);
-    navigate('/login');
+    setUserdata({});
   };
 
   return (
-    <div>
-      <div className=' flex justify-between items-center font-semibold text-white mt-10'>
-        <div className='flex items-center gap-2'>
-          <img
-            onClick={() => navigate(-1)}
-            className='w-8 bg-black p-2 rounded-2xl cursor-pointer'
-            src={arrow_left}
-            alt="Back"
-          />
-          <img
-            onClick={() => navigate(1)}
-            className='w-8 bg-black p-2 rounded-2xl cursor-pointer'
-            src={arrow_right}
-            alt="Forward"
-          />
+    <>
+      <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
+        <div className="h-6 border-l-2 border-gray-400"></div>
+        <div className="flex items-center space-x-4">
+          <TextWithHover displayText="Premium" />
+          <TextWithHover displayText="Support" />
+          <TextWithHover displayText="Download" />
         </div>
-        <div className='flex items-center gap-4'>
-          <p className='bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer'>
-           Sign Up
-          </p>
-        
+        <div className="h-6 border-l-2 border-gray-400"></div>
+        <div className="flex items-center space-x-4">
           {loggedInUser ? (
-            <div className='flex items-center gap-2'>
-              <p className='bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center'>
-                {loggedInUser[0].toUpperCase()}
-              </p>
-              <button onClick={handleLogout} className='bg-red-500 text-white px-3 py-1 rounded-2xl'>
-                Logout
-              </button>
-            </div>
+            <>
+              <span className="text-white">Welcome, {loggedInUser}!</span>
+              {/* <button
+                className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+                onClick={handleLogout}>Logout</button> */}
+
+
+          <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
+
+
+            </>
           ) : (
-            <p onClick={() => navigate('/login')} className='bg-purple-500 text-black w-20 h-7 rounded-full flex items-center justify-center'>
-              Login
-            </p>
+            <>
+              <button
+                className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+                onClick={() => navigate("/login?signin=true")}
+              >
+                Sign Up
+              </button>
+              <button
+                className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
+                onClick={() => navigate("/login")}
+              >
+                Log In
+              </button>
+            </>
           )}
         </div>
       </div>
-      <div className='flex items-center gap-2 mt-4'>
-        <p className='bg-white text-black px-4 py-1 rounded-2xl cursor-pointer'>All</p>
-        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer text-white'>Music</p>
-        <p className='bg-black px-4 py-1 rounded-2xl cursor-pointer text-white'>Podcasts</p>
+      
+      {/* Main Content Area */}
+      <div className="mt-20">
       </div>
-    </div>
+    </>
   );
 }
 

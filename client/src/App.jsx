@@ -1,24 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Login_signup from './pages/Login_signup';
 import GenreSelectionPopup from './pages/GenreSelector';
 import Display from './pages/Display';
 import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
+import Navbar from './pages/Navbar';
+import AlbumPage from './pages/AlbumPage';
+import LikedSongs from './pages/LikedSongs';
+import Search from './pages/Search';
+import LibraryPage from './pages/LibraryPage';
+import PlaylistPage from './pages/PlaylistPage';
+import CreatePlaylist from './pages/CreatePlaylist';
+import History from './pages/History';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
-    const location = useLocation(); // Get current location
-
-    // Determine if we should render App1 or App2 based on the current route
+    const location = useLocation();
+    const [currentSong, setCurrentSong] = useState(null); 
     const isAuthRoute = location.pathname === '/login' || location.pathname === '/genre';
+
+    useEffect(() => {
+        if (currentSong) {
+            const currentHistory = JSON.parse(sessionStorage.getItem('songHistory')) || [];
+            const songIndex = currentHistory.findIndex(song => song._id === currentSong._id); 
+
+            if (songIndex !== -1) {
+                currentHistory.splice(songIndex, 1);
+            }
+            const updatedHistory = [currentSong, ...currentHistory];
+            sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
+        }
+    }, [currentSong]);
 
     return (
         <div className="App">
             {isAuthRoute ? (
                 <div className="App1">
                     <Routes>
-                        {/* Redirect to home or login based on userId */}
                         <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login_signup />} />
                         <Route path="/genre" element={<GenreSelectionPopup userId={userId} />} />
@@ -31,17 +50,24 @@ const App = () => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
+                            <Navbar />
                             <Routes>
-                                <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-                                <Route path="/home/*" element={<Display />} /> {/* Nested routes under /home */}
+                                <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
+                                <Route path="/home" element={<Display onSongSelect={setCurrentSong} />} />
+                                <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={setCurrentSong} />} />
+                                <Route path="/liked-songs" element={<LikedSongs onSongSelect={setCurrentSong} />} />
+                                <Route path="/search" element={<Search onSongSelect={setCurrentSong} />} /> 
+                                <Route path='/playlist' element={<CreatePlaylist />} />
+                                <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
+                                <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
+                                <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
                             </Routes>
                         </div>
-                        <MusicPlayer />
                     </div>
+                    <MusicPlayer currentSong={currentSong} />
                 </div>
             )}
         </div>
     );
 }
-
 export default App;
