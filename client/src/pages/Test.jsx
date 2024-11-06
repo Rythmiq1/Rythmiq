@@ -1,58 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAlbums } from '../redux/spotifySlice';
 
-const Test = () => {
-  const [musicData, setMusicData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const getMusic = async () => {
-    const url = 'https://spotify23.p.rapidapi.com/albums/?ids=3IBcauSj5M2A6lTeffJzdv,2noRn2Aes5aoNVsU6iWThc,5ht7ItJgpBH7W6vJ5BqpPr';
-    const options = {
-      method: 'GET',
-      headers: {
-        'x-rapidapi-key': 'b3a04094e5msh37d4f4a894c8514p10a07cjsn4d10b501f00a', // Use environment variable for security
-        'x-rapidapi-host': 'spotify23.p.rapidapi.com',
-      },
-    };
-
-    try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const result = await response.json();
-      setMusicData(result.albums); // Assuming the response has an 'albums' array with multiple albums
-      setLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setLoading(false);
-    }
-  };
+const Test = ({ artistId }) => {
+  const dispatch = useDispatch();
+  const albums = useSelector((state) => state.spotify.albums);
+  const albumStatus = useSelector((state) => state.spotify.status);
+  const error = useSelector((state) => state.spotify.error);
 
   useEffect(() => {
-    getMusic();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+    if (albumStatus === 'idle') {
+      dispatch(fetchAlbums(artistId));
+    }
+  }, [albumStatus, dispatch, artistId]);
 
   return (
-    <div className="text-white" style={{ padding: '20px' }}>
-      <h1>Album Details</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {musicData.length > 0 ? (
-          musicData.map((album) => (
-            <div key={album.id} style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', width: '300px' }}>
-              <img src={album.images[0].url} alt={album.name} style={{ width: '100%', borderRadius: '8px' }} />
-              <h2>{album.name}</h2>
-              <p><strong>Artist:</strong> {album.artists[0].name}</p>
-              <p><strong>Release Date:</strong> {album.release_date}</p>
-              <p><strong>Total Tracks:</strong> {album.total_tracks}</p>
-            </div>
-          ))
-        ) : (
-          <div>No album data available</div>
+    <div className="min-h-screen bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-600 p-8">
+      <h2 className="text-center text-4xl font-semibold text-white mb-8">Albums</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {albumStatus === 'loading' && (
+          <div className="col-span-full text-center text-white text-xl">Loading...</div>
         )}
+        {albumStatus === 'failed' && (
+          <div className="col-span-full text-center text-red-500 text-xl">Error: {error}</div>
+        )}
+        {albumStatus === 'succeeded' &&
+          albums.map((album) => (
+            <div
+              key={album.id}
+              className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            >
+              <img
+                className="w-full h-56 object-cover"
+                src={album.images[0]?.url || 'https://via.placeholder.com/500'}
+                alt={album.name}
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-gray-800 truncate">{album.name}</h3>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );

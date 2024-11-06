@@ -13,6 +13,9 @@ import LibraryPage from './pages/LibraryPage';
 import PlaylistPage from './pages/PlaylistPage';
 import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
+import Test from './pages/Test';
+import Album from './pages/Album';
+
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -32,7 +35,8 @@ const App = () => {
             sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
         }
     }, [currentSong]);
-
+     
+     const id = '0TnOYISbd1XYRBk9myaseg'
     return (
         <div className="App">
             {isAuthRoute ? (
@@ -61,6 +65,8 @@ const App = () => {
                                 <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
+                                <Route path = "/test" element = {<Album/>}/>
+                                
                             </Routes>
                         </div>
                     </div>
