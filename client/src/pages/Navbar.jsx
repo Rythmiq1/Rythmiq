@@ -6,7 +6,7 @@ import TextWithHover from '../components/TextWithHover';
 
 function Navbar() {
 
-  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-white hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
 
 
   const [loggedInUser, setLoggedInUser] = useState('');
@@ -75,33 +75,29 @@ function Navbar() {
                 className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
                 onClick={handleLogout}>Logout</button> */}
 
-
           <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
-
 
             </>
           ) : (
             <>
-              <button
+              {/* <button
                 className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={() => navigate("/login?signin=true")}
-              >
-                Sign Up
-              </button>
-              <button
+                onClick={() => navigate("/login?signin=true")}>
+                Sign Up </button> */}
+                <button type='submit' className={buttonStyling} onClick={() => navigate("/login?signin=true")}>Sign Up</button>
+              {/* <button
                 className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={() => navigate("/login")}
-              >
-                Log In
-              </button>
+                onClick={() => navigate("/login")}>
+                Log In </button> */}
+
+                <button type='submit' className={buttonStyling} onClick={() => navigate("/login")}>Log In</button>
             </>
           )}
         </div>
       </div>
       
-      {/* Main Content Area */}
-      <div className="mt-20">
-      </div>
+     
+      <div className="mt-20"></div>
     </>
   );
 }

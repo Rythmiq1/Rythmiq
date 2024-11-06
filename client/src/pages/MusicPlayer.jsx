@@ -11,9 +11,12 @@ import queue from "../assets/queue.png";
 import speaker from "../assets/speaker.png";
 import volume from "../assets/volume.png";
 import mini_player from "../assets/mini-player.png";
-import zoom from "../assets/zoom.png";
+import zoom from "../assets/zoomin.png";
+import shrink from "../assets/zoomout.png";
 import rhythmiq from "../assets/images/Rhythmiq.png";
 import mute from "../assets/mute.png";
+import { useNavigate } from 'react-router-dom'; 
+
 
 const MusicPlayer = ({ currentSong, onSongChange })  => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -23,7 +26,31 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
 
-  
+  const navigate = useNavigate(); 
+  const [isZoomed, setIsZoomed] = useState(true);
+
+  // const toggleImage = () => {
+  //   if (!isZoomed) 
+  //   {
+  //     setIsZoomed(true);  // Set to zoomed
+  //     navigate('/player');  // Navigate to /player
+  //   } else {
+  //     setIsZoomed(false);  // Set to not zoomed
+  //     navigate('/');  // Navigate back to home
+  //   }
+  // };
+
+  const toggleImage = () => {
+    if (!isZoomed) {
+      setIsZoomed(true);
+      navigate('/player', { state: { currentSong } }); 
+    } else {
+      setIsZoomed(false);
+      navigate('/');
+    }
+};
+
+
 
   // Function to play/pause the audio
   const handlePlayPause = () => {
@@ -175,9 +202,12 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
           style={{ left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}>
       </div>
       </div>
-{/* 
-        <img className='w-4' src={mini_player} alt='mini player' /> */}
-        <img className='w-4 ml-10 mr-7' src={zoom} alt='zoom' />
+
+        <img className='ml-10 mr-7 cursor-pointer' 
+        style={{ filter: 'invert(1)', width: '32px', height: '32px' }} 
+        src={isZoomed ? shrink : zoom}  alt={isZoomed ? 'shrink' : 'zoom'} onClick={toggleImage}
+      />
+
       </div>
     </div>
   );

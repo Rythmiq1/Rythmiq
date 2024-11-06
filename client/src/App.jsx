@@ -13,6 +13,7 @@ import LibraryPage from './pages/LibraryPage';
 import PlaylistPage from './pages/PlaylistPage';
 import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
+import Player from './pages/Player';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -46,10 +47,11 @@ const App = () => {
             ) : (
                 <div className='App2'>
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
-                        <div className="h-screen w-1/5 bg-black flex flex-col justify-between pb-10">
+                        <div className="h-screen w-1/6 bg-black flex flex-col justify-between pb-10">
                             <Sidebar />
                         </div>
-                        <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
+  
+                        <div className="h-screen w-5/6 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
@@ -61,6 +63,7 @@ const App = () => {
                                 <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
+                                <Route path="/player" element={<Player/>} />
                             </Routes>
                         </div>
                     </div>

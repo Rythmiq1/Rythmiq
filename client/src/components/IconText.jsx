@@ -18,3 +18,9 @@ const IconText = ({ iconName, displayText, active }) => {
 };
 
 export default IconText;
+
+
+
+
+
+

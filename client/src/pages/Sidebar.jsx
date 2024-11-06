@@ -22,10 +22,9 @@ function Sidebar() {
         <Link to="/library" onClick={() => setActiveLink('/library')}>
           <IconText iconName="library_music" displayText="Your Library" active={activeLink === '/library'} />
         </Link>
-      </div>
+      {/* </div>
 
-      {/* Additional Options */}
-      <div className="pt-5 space-y-2">
+      <div className="pt-5 space-y-2"> */}
         <Link to="/playlist" onClick={() => setActiveLink('/playlist')}>
           <IconText iconName="library_add" displayText="Create Playlist" active={activeLink === '/playlist'} />
         </Link>
@@ -37,10 +36,14 @@ function Sidebar() {
         </Link>
       </div>
       <div className="px-5 pb-5">
-        <div className="flex items-center border border-gray-100 text-white w-3/4 rounded-full px-2 py-1
+
+
+        {/* <div className="flex items-center border border-gray-100 text-white w-3/4 rounded-full px-2 py-1
          hover:border-white cursor-pointer transition-colors duration-200">
           <IconText iconName="public" displayText="English" />
-        </div>
+        </div> */}
+
+
         <div className="mt-4 text-gray-400 text-xs space-y-1">
           {["About Us", "Cookies", "Privacy Center", "Privacy Policy", "Legal"].map((text, index) => (
             <p key={index} className="hover:text-white cursor-pointer transition duration-200 transform hover:scale-105">
@@ -48,9 +51,12 @@ function Sidebar() {
             </p>
           ))}
         </div>
+
+
       </div>
     </div>
   );
 }
 
 export default Sidebar;
+
