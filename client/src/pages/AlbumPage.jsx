@@ -55,10 +55,9 @@ const AlbumPage = ({ setCurrentSong }) => {
             toast.error('Failed to fetch liked songs');
         }
     };
-
-    // Handle song selection
     const handleSelectSong = (song) => {
-        setCurrentSong(song);
+        console.log(song,songs);
+        setCurrentSong(song, songs);
         setCurrentSongState(song);
     };
 
@@ -97,6 +96,7 @@ const AlbumPage = ({ setCurrentSong }) => {
     );
 };
 
+// Card component for rendering individual song
 const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     const [liked, setLiked] = useState(isLiked);
 

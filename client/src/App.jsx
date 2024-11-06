@@ -17,7 +17,8 @@ import History from './pages/History';
 const App = () => {
     const userId = localStorage.getItem('userId');
     const location = useLocation();
-    const [currentSong, setCurrentSong] = useState(null); 
+    const [currentSong, setCurrentSong] = useState(null);
+    const [songs, setSongs] = useState([]);  // Store all songs
     const isAuthRoute = location.pathname === '/login' || location.pathname === '/genre';
 
     useEffect(() => {
@@ -33,6 +34,17 @@ const App = () => {
         }
     }, [currentSong]);
 
+    // Function to handle song selection from AlbumPage or other components
+    const handleSongSelection = (song, albumSongs) => {
+        console.log('Selected Song:', song);
+        console.log('Album Songs:', albumSongs);
+        setCurrentSong(song);
+        if (albumSongs && Array.isArray(albumSongs)) {
+            setSongs(albumSongs);  // Only set if it's a valid array
+        }
+    };
+    
+
     return (
         <div className="App">
             {isAuthRoute ? (
@@ -46,28 +58,30 @@ const App = () => {
             ) : (
                 <div className='App2'>
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
-                        <div className="h-screen w-1/5 bg-black flex flex-col justify-between pb-10">
+                        <div className="h-screen w-1/5 bg-black flex flex-col justify-between">
                             <Sidebar />
                         </div>
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
-                                <Route path="/home" element={<Display onSongSelect={setCurrentSong} />} />
-                                <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={setCurrentSong} />} />
-                                <Route path="/liked-songs" element={<LikedSongs onSongSelect={setCurrentSong} />} />
-                                <Route path="/search" element={<Search onSongSelect={setCurrentSong} />} /> 
+                                <Route path="/home" element={<Display onSongSelect={handleSongSelection} />} />
+                                <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={handleSongSelection} />} />
+                                <Route path="/liked-songs" element={<LikedSongs onSongSelect={handleSongSelection} />} />
+                                <Route path="/search" element={<Search onSongSelect={handleSongSelection} />} />
                                 <Route path='/playlist' element={<CreatePlaylist />} />
-                                <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
-                                <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
-                                <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
+                                <Route path="/library" element={<LibraryPage setCurrentSong={handleSongSelection} />} />
+                                <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={handleSongSelection} />} />
+                                <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
                             </Routes>
                         </div>
                     </div>
-                    <MusicPlayer currentSong={currentSong} />
+                    <MusicPlayer songs={songs || []} currentSong={currentSong} onSongChange={handleSongSelection} />
+
                 </div>
             )}
         </div>
     );
 }
+
 export default App;
