@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import logo from "../assets/images/Rhythmiq-bg.ico";
+import logo from "../assets/images/logo2.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom'; 
 
 function Sidebar() {
   const [activeLink, setActiveLink] = useState('/home');
   return (
-    <div className="sidebar-container bg-gray-900 text-white h-full">
-      <div className="logoDiv p-6">
-        <img src={logo} alt="logo" className="w-40 h-auto cursor-pointer" />
+    <div className="sidebar-container bg-black text-white h-full">
+      <div className="logoDiv p-4">
+        <img src={logo} alt="logo" className="w-50 h-auto cursor-pointer" />
       </div>
-      <div className="py-5 space-y-4">
+      <div className="py-3 space-y-4">
         <Link to="/home" onClick={() => setActiveLink('/home')}>
           <IconText iconName="home" displayText="Home" active={activeLink === '/home'} />
         </Link>
@@ -47,7 +47,7 @@ function Sidebar() {
         <div className="mt-4 text-gray-400 text-xs space-y-1">
           {["About Us", "Cookies", "Privacy Center", "Privacy Policy", "Legal"].map((text, index) => (
             <p key={index} className="hover:text-white cursor-pointer transition duration-200 transform hover:scale-105">
-              {text}-
+              {text}
             </p>
           ))}
         </div>

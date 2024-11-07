@@ -6,7 +6,8 @@ import TextWithHover from '../components/TextWithHover';
 
 function Navbar() {
 
-  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-white hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-[#006161] border-2 border-[#006161] rounded-sm px-6 py-2 hover:bg-[#006161] hover:text-white hover:border-[#006161] mx-8 shadow-lg shadow-[#006161]/50 transition duration-300 ease-in-out";
+
 
 
   const [loggedInUser, setLoggedInUser] = useState('');
@@ -60,13 +61,13 @@ function Navbar() {
   return (
     <>
       <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
-        <div className="h-6 border-l-2 border-gray-400"></div>
-        <div className="flex items-center space-x-4">
+        {/* <div className="h-6 border-l-2 border-gray-400"></div> */}
+        {/* <div className="flex items-center space-x-4">
           <TextWithHover displayText="Premium" />
           <TextWithHover displayText="Support" />
           <TextWithHover displayText="Download" />
-        </div>
-        <div className="h-6 border-l-2 border-gray-400"></div>
+        </div> */}
+        {/* <div className="h-6 border-l-2 border-gray-400"></div> */}
         <div className="flex items-center space-x-4">
           {loggedInUser ? (
             <>

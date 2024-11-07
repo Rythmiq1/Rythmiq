@@ -144,7 +144,7 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
   };
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
+    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-black p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
         <audio 
         ref={audioRef} 
@@ -175,8 +175,9 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
         <div className='flex items-center gap-5'>
           <p className="text-white">{formatTime(currentTime)}</p>
           <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
-            <div className='h-1 bg-gray-300 rounded-full'></div>
-            <div className='h-1 bg-gray-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+          <div className='h-1 bg-teal-500 rounded-full'></div>
+        <div className='h-1 bg-teal-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+
             
             <div
               className="absolute w-3 h-3 bg-gray-600 rounded-full"
@@ -187,20 +188,23 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
         </div>
       </div>
       <div className='hidden lg:flex items-center gap-2 opacity-75'>
-        {/* <img className='w-4' src={plays} alt='plays' /> */}
-        {/* <img className='w-4' src={mic} alt='mic' />
-        <img className='w-4' src={queue} alt='queue' /> */}
-        {/* <img className='w-4' src={speaker} alt='speaker' /> */}
         <img className='w-4 cursor-pointer ml-10' src={isMuted ? mute : volume} alt='volume' onClick={toggleMute} />
 
         
         
         <div className='relative w-20 h-1 bg-slate-50 rounded cursor-pointer' 
             onClick={handleVolumeClick} onWheel={handleVolumeScroll}>
-        <div className='absolute top-0 left-0 h-full bg-gray-400 rounded' style={{ width: `${currentVolume * 100}%` }}></div>
-        <div className="absolute w-3 h-3 bg-gray-500 rounded-full"
-          style={{ left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}>
-      </div>
+        <div
+            className="absolute top-0 left-0 h-full rounded"
+            style={{
+              width: `${currentVolume * 100}%`,
+              backgroundColor: '#006161' // Teal color
+            }}
+          ></div>
+
+            <div className="absolute w-3 h-3 bg-teal-500 rounded-full"
+              style={{left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}></div>
+
       </div>
 
         <img className='ml-10 mr-7 cursor-pointer' 

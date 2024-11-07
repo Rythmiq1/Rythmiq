@@ -11,7 +11,7 @@ const LikedSongs = ({ onSongSelect }) => {
   };
 
 
-  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-4 py-1 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-full px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
 
   useEffect(() => {
     const fetchLikedSongs = async () => {
@@ -48,7 +48,7 @@ const LikedSongs = ({ onSongSelect }) => {
 
   if (loading) {
     return (
-      <div className="liked-songs-container p-5">
+      <div className="liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
         <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
         <p className="text-white">Loading...</p>
       </div>
@@ -65,14 +65,14 @@ const LikedSongs = ({ onSongSelect }) => {
   }
 
   return (
-    <div className="liked-songs-container p-5">
+    <div className="liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
       <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
       {likedSongs.length === 0 ? (
         <p className="text-white">No liked songs available.</p>
       ) : (
         <ul>
           {likedSongs.map((song) => (
-            <li key={song._id} className="flex items-center justify-between border-b py-2 text-white">
+            <li key={song._id} className="flex items-center justify-between py-2 text-white">
               <div className="flex items-center">
                 <img src={song.image} alt={song.name} className="w-16 h-16 mr-4" />
                 <div className="flex-1">

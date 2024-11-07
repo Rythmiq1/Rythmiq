@@ -36,41 +36,42 @@ const Player = () => {
 
   return (
     <div className='flex text-white h-screen'>
-      <div className='flex-1 w-[30%]'>
-        {currentSong && (
-          <img 
-            src={currentSong.image} 
-            alt={currentSong.title} 
-            className='ml-12 mt-20 h-[50%] w-[60%] object-contain' 
-          />
-        ) }
-        <h1 className='text-white ml-4 font-bold text-4xl mt-4'>{currentSong?.name}</h1>
-        <p className='text-white ml-28'>{currentSong?.desc}</p>
-      </div>
+   <div className='flex-1 w-[30%]'>
+  {currentSong && (
+    <img 
+      src={currentSong.image} 
+      alt={currentSong.title} 
+      className='ml-12 mt-20 h-[50%] w-[60%] object-contain transform transition duration-500 ease-in-out animate-slideDown'
+    />
+  )}
+  <h1 className='text-white ml-36 font-bold text-4xl mt-2'>{currentSong?.name}</h1>
+  <p className='text-white ml-36'>{currentSong?.desc}</p>
+</div>
+
 
       <div className='flex-1 flex justify-start'>
-        {currentSong ? (
-          <div>
-            <h3 className="font-bold text-3xl text-center mb-14 mt-9">Queue</h3>
+        {currentSong ? ( <div></div>
+          // <div>
+          //   <h3 className="font-bold text-3xl text-center mb-14 mt-9">Queue</h3>
 
-            <ul>
-              {songQueue.map((song, index) => 
-              (
-                <li key={index} className="flex items-center mb-4">
+          //   <ul>
+          //     {songQueue.map((song, index) => 
+          //     (
+          //       <li key={index} className="flex items-center mb-4">
                 
-                  <button className={buttonStyling} onClick={() => playSong(song)}>
-                    <FaPlay className="text-lg" />
-                  </button>
+          //         <button className={buttonStyling} onClick={() => playSong(song)}>
+          //           <FaPlay className="text-lg" />
+          //         </button>
                   
-                  <div className='ml-10'>
-                    <strong>"{song.title}"</strong><br />
-                    <p>{song.artist}</p>
-                    <em>Description:</em> {song.description}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          //         <div className='ml-10'>
+          //           <strong>"{song.title}"</strong><br />
+          //           <p>{song.artist}</p>
+          //           <em>Description:</em> {song.description}
+          //         </div>
+          //       </li>
+          //     ))}
+          //   </ul>
+          // </div>
         ) : (
           <h1>No song selected</h1>
         )}
