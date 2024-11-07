@@ -31,7 +31,7 @@ function Sidebar() {
         <Link to="/library" onClick={() => setActiveLink('/library')} className="sidebar-link">
           <IconText iconName="library_music" displayText="Your Library" active={activeLink === '/library'} />
         </Link>
-      </div>
+      {/* </div>
 
       {/* Additional Options Section */}
       <div className="pt-5 space-y-2">
@@ -60,7 +60,9 @@ function Sidebar() {
         </div>
       )}
     </div>
+    </div>
   );
 }
 
 export default Sidebar;
+

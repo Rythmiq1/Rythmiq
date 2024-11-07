@@ -7,6 +7,12 @@ import { SlLoop } from "react-icons/sl";
 import { BsArrowsAngleExpand } from "react-icons/bs";
 import { IoVolumeHighOutline, IoVolumeMuteOutline  } from "react-icons/io5";
 import rhythmiq from "../assets/images/Rhythmiq.png";
+import zoom from "../assets/zoomin.png";
+import shrink from "../assets/zoomout.png";
+import mute from "../assets/mute.png";
+import { useNavigate } from 'react-router-dom'; 
+
+
 const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,6 +21,32 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   const [currentVolume, setCurrentVolume] = useState(1); 
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
+
+  const navigate = useNavigate(); 
+  const [isZoomed, setIsZoomed] = useState(true);
+
+  // const toggleImage = () => {
+  //   if (!isZoomed) 
+  //   {
+  //     setIsZoomed(true);  // Set to zoomed
+  //     navigate('/player');  // Navigate to /player
+  //   } else {
+  //     setIsZoomed(false);  // Set to not zoomed
+  //     navigate('/');  // Navigate back to home
+  //   }
+  // };
+
+  const toggleImage = () => {
+    if (!isZoomed) {
+      setIsZoomed(true);
+      navigate('/player', { state: { currentSong } }); 
+    } else {
+      setIsZoomed(false);
+      navigate('/');
+    }
+};
+
+
   const [isLooping, setIsLooping] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false); 
   const [originalSongs, setOriginalSongs] = useState([]); 
@@ -233,7 +265,12 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
           style={{ left: `${currentVolume * 100}%`, top: 'px', transform: 'translateY(-55%)' }}>
       </div>
       </div>
-      <BsArrowsAngleExpand className='w-4 ml-10 mr-7 text-white font-extrabold'  alt='zoom' />
+
+        <img className='ml-10 mr-7 cursor-pointer' 
+        style={{ filter: 'invert(1)', width: '32px', height: '32px' }} 
+        src={isZoomed ? shrink : zoom}  alt={isZoomed ? 'shrink' : 'zoom'} onClick={toggleImage}
+      />
+
       </div>
 </div>
 

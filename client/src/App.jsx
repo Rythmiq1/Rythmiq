@@ -13,6 +13,7 @@ import LibraryPage from './pages/LibraryPage';
 import PlaylistPage from './pages/PlaylistPage';
 import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
+import Player from './pages/Player';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -73,6 +74,7 @@ const App = () => {
                                 <Route path="/library" element={<LibraryPage setCurrentSong={handleSongSelection} />} />
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={handleSongSelection} />} />
                                 <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
+                                <Route path="/player" element={<Player/>} />
                             </Routes>
                         </div>
                     </div>
