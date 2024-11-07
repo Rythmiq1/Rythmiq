@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer'; 
-import Card from './Card'; 
+
 const PlaylistPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); // Updated here

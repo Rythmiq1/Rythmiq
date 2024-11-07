@@ -13,8 +13,6 @@ import LibraryPage from './pages/LibraryPage';
 import PlaylistPage from './pages/PlaylistPage';
 import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
-import Test from './pages/Test';
-import Album from './pages/Album';
 import Songs from './pages/Songs';
 import { getSpotifyToken } from './spotifyAuth';
 
@@ -87,7 +85,7 @@ const App = () => {
                                 <Route path = "/test" element = {<Songs token={token}/>}/>
                                 
                                 <Route path="/player" element={<Player/>} />
-                                <Route path="/share" element={<Share/>} />
+                                <Route path="/playlist-shared/:playlistId" element={<Share/>} />
                             </Routes>
                         </div>
                     </div>
