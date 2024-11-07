@@ -16,6 +16,15 @@ export default {
       backgroundColor: {
         "app-black": "#121212",
       },
+      keyframes: {
+        slideDown: {
+          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        slideDown: 'slideDown 0.8s ease-out', // Custom animation for sliding down
+      },
     },
   },
   plugins: [],

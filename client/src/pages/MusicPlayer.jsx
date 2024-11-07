@@ -11,9 +11,12 @@ import queue from "../assets/queue.png";
 import speaker from "../assets/speaker.png";
 import volume from "../assets/volume.png";
 import mini_player from "../assets/mini-player.png";
-import zoom from "../assets/zoom.png";
+import zoom from "../assets/zoomin.png";
+import shrink from "../assets/zoomout.png";
 import rhythmiq from "../assets/images/Rhythmiq.png";
 import mute from "../assets/mute.png";
+import { useNavigate } from 'react-router-dom'; 
+
 
 const MusicPlayer = ({ currentSong, onSongChange })  => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -23,7 +26,31 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(false);
 
-  
+  const navigate = useNavigate(); 
+  const [isZoomed, setIsZoomed] = useState(true);
+
+  // const toggleImage = () => {
+  //   if (!isZoomed) 
+  //   {
+  //     setIsZoomed(true);  // Set to zoomed
+  //     navigate('/player');  // Navigate to /player
+  //   } else {
+  //     setIsZoomed(false);  // Set to not zoomed
+  //     navigate('/');  // Navigate back to home
+  //   }
+  // };
+
+  const toggleImage = () => {
+    if (!isZoomed) {
+      setIsZoomed(true);
+      navigate('/player', { state: { currentSong } }); 
+    } else {
+      setIsZoomed(false);
+      navigate('/');
+    }
+};
+
+
 
   // Function to play/pause the audio
   const handlePlayPause = () => {
@@ -117,7 +144,7 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
   };
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
+    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-black p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
         <audio 
         ref={audioRef} 
@@ -148,8 +175,9 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
         <div className='flex items-center gap-5'>
           <p className="text-white">{formatTime(currentTime)}</p>
           <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
-            <div className='h-1 bg-gray-300 rounded-full'></div>
-            <div className='h-1 bg-gray-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+          <div className='h-1 bg-teal-500 rounded-full'></div>
+        <div className='h-1 bg-teal-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+
             
             <div
               className="absolute w-3 h-3 bg-gray-600 rounded-full"
@@ -160,24 +188,30 @@ const MusicPlayer = ({ currentSong, onSongChange })  => {
         </div>
       </div>
       <div className='hidden lg:flex items-center gap-2 opacity-75'>
-        {/* <img className='w-4' src={plays} alt='plays' /> */}
-        {/* <img className='w-4' src={mic} alt='mic' />
-        <img className='w-4' src={queue} alt='queue' /> */}
-        {/* <img className='w-4' src={speaker} alt='speaker' /> */}
         <img className='w-4 cursor-pointer ml-10' src={isMuted ? mute : volume} alt='volume' onClick={toggleMute} />
 
         
         
         <div className='relative w-20 h-1 bg-slate-50 rounded cursor-pointer' 
             onClick={handleVolumeClick} onWheel={handleVolumeScroll}>
-        <div className='absolute top-0 left-0 h-full bg-gray-400 rounded' style={{ width: `${currentVolume * 100}%` }}></div>
-        <div className="absolute w-3 h-3 bg-gray-500 rounded-full"
-          style={{ left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}>
+        <div
+            className="absolute top-0 left-0 h-full rounded"
+            style={{
+              width: `${currentVolume * 100}%`,
+              backgroundColor: '#006161' // Teal color
+            }}
+          ></div>
+
+            <div className="absolute w-3 h-3 bg-teal-500 rounded-full"
+              style={{left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}></div>
+
       </div>
-      </div>
-{/* 
-        <img className='w-4' src={mini_player} alt='mini player' /> */}
-        <img className='w-4 ml-10 mr-7' src={zoom} alt='zoom' />
+
+        <img className='ml-10 mr-7 cursor-pointer' 
+        style={{ filter: 'invert(1)', width: '32px', height: '32px' }} 
+        src={isZoomed ? shrink : zoom}  alt={isZoomed ? 'shrink' : 'zoom'} onClick={toggleImage}
+      />
+
       </div>
     </div>
   );

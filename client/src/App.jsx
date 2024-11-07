@@ -18,6 +18,8 @@ import Album from './pages/Album';
 import Songs from './pages/Songs';
 import { getSpotifyToken } from './spotifyAuth';
 
+import Player from './pages/Player';
+import Share from './pages/Share';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -66,10 +68,11 @@ const App = () => {
             ) : (
                 <div className='App2'>
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
-                        <div className="h-screen w-1/5 bg-black flex flex-col justify-between pb-10">
-                            <Sidebar/>
+                        <div className="h-screen w-1/6 bg-black flex flex-col justify-between pb-10">
+                            <Sidebar />
                         </div>
-                        <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
+  
+                        <div className="h-screen w-5/6 bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
@@ -83,6 +86,8 @@ const App = () => {
                                 <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
                                 <Route path = "/test" element = {<Songs token={token}/>}/>
                                 
+                                <Route path="/player" element={<Player/>} />
+                                <Route path="/share" element={<Share/>} />
                             </Routes>
                         </div>
                     </div>

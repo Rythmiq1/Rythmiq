@@ -10,6 +10,9 @@ const CreatePlaylist = () => {
   const [availableSongs, setAvailableSongs] = useState([]);
   const [image, setImage] = useState(null); 
   const token = sessionStorage.getItem('token'); 
+
+  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-full px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
+
   useEffect(() => {
     const fetchSongs = async () => {
       if (!token) {
@@ -82,7 +85,7 @@ const CreatePlaylist = () => {
   }
 
   return (
-    <div className="w-full h-screen p-8 bg-gray-800 rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl overflow-y-auto max-h-[calc(110vh-200px)]">
+    <div className="w-full h-screen p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl overflow-y-auto max-h-[calc(110vh-200px)]">
       <h2 className="text-2xl font-bold text-center mb-6">Create Your Playlist</h2>
       <div className='flex flex-col gap-4 mb-6'>
         <p>Upload Image</p>
@@ -93,31 +96,29 @@ const CreatePlaylist = () => {
       </div>
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Playlist Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400 transition-transform duration-200"
-          placeholder="Enter playlist name"
-        />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+      className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-black placeholder-gray-400 transition-transform duration-200"
+      placeholder="Enter playlist name"
+    />
+
       </div>
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Description</label>
         <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white placeholder-gray-400 transition-transform duration-200"
-          placeholder="Enter a short description"
-          rows="2"
-        ></textarea>
+          value={description} onChange={(e) => setDescription(e.target.value)}
+          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-black placeholder-gray-400 transition-transform duration-200"
+          placeholder="Enter a short description" rows="2"
+        />
+
       </div>
       <div className="mb-6">
         <label className="block text-sm font-medium mb-1">Add Songs</label>
+
         <select
-          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-white transition-colors duration-200 cursor-pointer"
-          onChange={(e) => addSong(e.target.value)}
-          defaultValue=""
-        >
+          className="drop-shadow-2xl w-3/5 px-3 py-2 border-none bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-black transition-colors duration-200 cursor-pointer"
+          onChange={(e) => addSong(e.target.value)} defaultValue="" >
+
+
           <option value="" disabled>Select a song to add</option>
           {availableSongs.map((song) => (
             <option key={song._id} value={song._id}>
@@ -127,7 +128,7 @@ const CreatePlaylist = () => {
         </select>
       </div>
       <div className="w-1/5 mb-6">
-        <label className="block text-sm font-medium mb-1">Selected Songs</label>
+        <label className="block text-sm font-medium mb-1 text-white">Selected Songs</label>
         <ul className="space-y-2">
           {selectedSongs.map((song) => (
             <li
@@ -145,12 +146,12 @@ const CreatePlaylist = () => {
           ))}
         </ul>
       </div>
+
       <button
         onClick={submitPlaylist}
-        className="drop-shadow-2xl w-3/5 py-2 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 transform hover:scale-105"
-      >
-        Create Playlist
-      </button>
+        className="drop-shadow-2xl w-3/5 py-2 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-gray-600 hover:to-gray-500 transition-all duration-300 transform hover:scale-105">
+        Create Playlist </button>
+        
     </div>
   );
 };  
