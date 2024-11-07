@@ -17,8 +17,4 @@ const Modal = ({ isOpen, onClose, children }) => {
     );
 };
 
-<<<<<<< HEAD
 export default Modal;
-=======
-export default Modal;
->>>>>>> origin/main

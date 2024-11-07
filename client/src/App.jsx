@@ -15,6 +15,8 @@ import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
 import Test from './pages/Test';
 import Album from './pages/Album';
+import Songs from './pages/Songs';
+import { getSpotifyToken } from './spotifyAuth';
 
 
 const App = () => {
@@ -36,7 +38,21 @@ const App = () => {
         }
     }, [currentSong]);
      
-     const id = '0TnOYISbd1XYRBk9myaseg'
+    //  const id = '0TnOYISbd1XYRBk9myaseg'
+
+
+     const [token, setToken] = useState(null);
+
+     // Fallback for testing
+     useEffect(() => {
+       const fetchToken = async () => {
+         const fetchedToken = await getSpotifyToken();
+         setToken(fetchedToken || 'default-token-for-testing');
+       };
+     
+       fetchToken();
+     }, []);
+
     return (
         <div className="App">
             {isAuthRoute ? (
@@ -51,7 +67,7 @@ const App = () => {
                 <div className='App2'>
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
                         <div className="h-screen w-1/5 bg-black flex flex-col justify-between pb-10">
-                            <Sidebar />
+                            <Sidebar/>
                         </div>
                         <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
                             <Navbar />
@@ -65,7 +81,7 @@ const App = () => {
                                 <Route path="/library" element={<LibraryPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={setCurrentSong} />} />
                                 <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
-                                <Route path = "/test" element = {<Album/>}/>
+                                <Route path = "/test" element = {<Songs token={token}/>}/>
                                 
                             </Routes>
                         </div>

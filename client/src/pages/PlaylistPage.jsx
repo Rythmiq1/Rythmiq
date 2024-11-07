@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer'; 
-import defaultImg from '../assets/images/Rhythmiq.png';
-
+import Card from './Card'; 
 const PlaylistPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate(); // Updated here
     const [playlist, setPlaylist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentSong, setCurrentSong] = useState(null); 
@@ -68,21 +68,21 @@ const PlaylistPage = () => {
 
         try {
             let response;
-            if (likedSongs.includes(songId)) {
+            const isLiked = likedSongs.includes(songId);
+            if (isLiked) {
                 response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
                     data: songIdObj,
                     headers
                 });
-                if (response.data.success) {
-                    setLikedSongs(likedSongs.filter(id => id !== songId));
-                    toast.success('Song unliked!');
-                }
             } else {
                 response = await axios.post('http://localhost:8080/auth/like-song', songIdObj, { headers });
-                if (response.data.success) {
-                    setLikedSongs([...likedSongs, songId]);
-                    toast.success('Song liked!');
-                }
+            }
+
+            if (response.data.success) {
+                setLikedSongs((prevLikedSongs) => 
+                    isLiked ? prevLikedSongs.filter(id => id !== songId) : [...prevLikedSongs, songId]
+                );
+                toast.success(isLiked ? 'Song unliked!' : 'Song liked!');
             }
         } catch (error) {
             console.error('Error liking/unliking song:', error);
@@ -98,7 +98,6 @@ const PlaylistPage = () => {
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>
-            
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {playlist.songs.map((song) => (
                     <Card 
@@ -111,41 +110,6 @@ const PlaylistPage = () => {
                 ))}
             </div>
             {currentSong && <MusicPlayer song={currentSong} />}
-        </div>
-    );
-};
-
-
-const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
-    return (
-        <div 
-            className="bg-black bg-opacity-40 w-full h-72 p-4 rounded-lg flex flex-col items-start justify-between cursor-pointer"
-            onClick={onSelect}
-        >
-            <img
-                src={song.image || defaultImg}
-                alt={song.name}
-                className="w-full h-36 object-cover rounded-md"
-            />
-            <div className="mt-2 flex-grow">
-                <h3 className="text-lg font-semibold text-white">{song.name}</h3>
-                <p className="text-gray-400 text-sm">
-                    {song.description ? song.description : "No description available"}
-                </p>
-            </div>
-
-            <div className="flex justify-between w-full mt-1 text-gray-400 text-xs">
-                <span>Duration: {song.duration}</span>
-                <button 
-                    onClick={(e) => { e.stopPropagation(); onToggleLike(song._id); }} 
-                    className="text-2xl" 
-                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                    <span role="img" aria-label="heart" className={`transition duration-200 ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
-                        {isLiked ? '❤️' : '🤍'}
-                    </span>
-                </button>
-            </div>
         </div>
     );
 };
