@@ -1,17 +1,27 @@
-import React from "react";
-
+import React from 'react';
+import {  FaHeart, FaHistory, FaGlobe } from 'react-icons/fa';
+import { IoMdHome } from "react-icons/io";
+import { IoSearchSharp } from "react-icons/io5";
+import { MdLibraryMusic } from "react-icons/md";
+import { FiPlusCircle } from "react-icons/fi";
 const IconText = ({ iconName, displayText, active }) => {
+  const iconMap = {
+    home: <IoMdHome className="text-3xl"/>,
+    search: <IoSearchSharp className="text-2xl"/>,
+    library_music: <MdLibraryMusic className="text-2xl"/>,
+    library_add: <FiPlusCircle className="text-2xl"/>,
+    favorite: <FaHeart className="text-2xl"/>,
+    history: <FaHistory className="text-2xl"/>,
+    public: <FaGlobe className="text-2xl"/>,
+  };
+
   return (
-    <div className="flex items-center justify-start cursor-pointer">
-      <div className="px-5 py-2">
-        <span
-          className={`material-icons text-lg ${active ? 'text-white' : 'text-gray-400'}`}
-        >
-          {iconName}
-        </span>
-      </div>
-      <div className={`text-sm font-semibold ${active ? 'text-white' : 'text-gray-400'} hover:text-white`}>
-        {displayText}
+    <div className={`flex items-center p-2 rounded ${active ? ' text-gray' : 'text-white-900 hover:text-white'}`}>
+      <div className="mr-5 mb-2 ml-3">
+        {iconMap[iconName]}
+      </div >
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <span className="text-lg ml-3 pb-8">{displayText}</span>
       </div>
     </div>
   );
