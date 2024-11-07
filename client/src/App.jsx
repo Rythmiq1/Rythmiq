@@ -58,10 +58,10 @@ const App = () => {
             ) : (
                 <div className='App2'>
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
-                        <div className="h-screen w-1/5 bg-black flex flex-col justify-between">
+                        <div className="h-screen  bg-black flex flex-col justify-between overflow-hid">
                             <Sidebar />
                         </div>
-                        <div className="h-screen w-4/5 bg-app-black scrollbar-hide">
+                        <div className="h-screen w-screen bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
