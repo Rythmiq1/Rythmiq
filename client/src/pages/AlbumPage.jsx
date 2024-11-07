@@ -96,15 +96,14 @@ const AlbumPage = ({ setCurrentSong }) => {
     );
 };
 
-// Card component for rendering individual song
+
 const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     const [liked, setLiked] = useState(isLiked);
 
     useEffect(() => {
-        setLiked(isLiked); // Update local liked state based on prop
+        setLiked(isLiked); 
     }, [isLiked]);
 
-    // Define the handleLike function
     const handleLike = async () => {
         try {
             const token = sessionStorage.getItem('token');

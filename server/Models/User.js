@@ -29,6 +29,7 @@ const UserSchema = new Schema({
     },
   ],
   createdPlaylists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }],
+  savedPlaylists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }]
 }, { timestamps: true });
 
 const UserModel = mongoose.model('users', UserSchema);
