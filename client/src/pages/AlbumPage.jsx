@@ -55,10 +55,9 @@ const AlbumPage = ({ setCurrentSong }) => {
             toast.error('Failed to fetch liked songs');
         }
     };
-
-    // Handle song selection
     const handleSelectSong = (song) => {
-        setCurrentSong(song);
+        console.log(song,songs);
+        setCurrentSong(song, songs);
         setCurrentSongState(song);
     };
 
@@ -97,14 +96,14 @@ const AlbumPage = ({ setCurrentSong }) => {
     );
 };
 
+
 const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     const [liked, setLiked] = useState(isLiked);
 
     useEffect(() => {
-        setLiked(isLiked); // Update local liked state based on prop
+        setLiked(isLiked); 
     }, [isLiked]);
 
-    // Define the handleLike function
     const handleLike = async () => {
         try {
             const token = sessionStorage.getItem('token');

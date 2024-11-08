@@ -1,72 +1,118 @@
-import React from 'react';
-import { FaPlay, FaPlus, FaEllipsisH } from 'react-icons/fa'; // Importing icons from react-icons
+import React, { useEffect, useState } from 'react';
+import { FaPlay, FaPlus, FaEllipsisH } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Share = () => {
-  const currentAlbum = 
-  {
-    image: 'https://i2.cinestaan.com/image-bank/1500-1500/66001-67000/66708.jpg', // Replace with actual album cover image
-    title: 'Super Sharanya',
-    artist: 'Armaan Malik',
-    year: '2022',
-    songCount: '24 songs, 45 min 37 sec',
-    songs: [
-      { title: 'Ashubha Mangalakaari', artist: 'Justin Varghese, Sarath Chetanpady, Meera Johny', duration: '4:02' },
-      { title: 'Shaaru Shaaru', artist: 'Justin Varghese, Meera Johny, Hafsath Abdussalam K P', duration: '3:43' },
-      { title: 'Pacha Paayal', artist: 'Justin Varghese, Catherine Francis, Christin Jos', duration: '5:00' },
-      { title: 'Shaaru In Town', artist: 'Justin Varghese', duration: '1:49' },
-    ]
+  const { playlistId } = useParams(); // Get playlist ID from URL
+  const [playlist, setPlaylist] = useState(null); // State for playlist data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [message, setMessage] = useState(''); // Success or error message
+
+  // Fetch playlist data from backend using playlistId
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/playlist/${playlistId}`);
+        if (response.data.success) {
+          setPlaylist(response.data.playlist);
+        } else {
+          console.error('Failed to fetch playlist:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching playlist:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlaylist();
+  }, [playlistId]);
+
+  // Function to handle saving the playlist
+  const handleAddPlaylist = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/auth/save-playlist/${playlistId}`,
+        {}, 
+        {
+          headers: {
+            'Authorization': `${sessionStorage.getItem('token')}`, 
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setMessage('Playlist added to your saved playlists.');
+      } else {
+        setMessage('Failed to add playlist: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error saving playlist:', error);
+      setMessage('An error occurred while saving the playlist.');
+    }
   };
 
-  return (
-<div className="w-full h-full min-h-screen bg-gradient-to-b from-teal-700 to-black p-8 text-white flex flex-col">
-     
-      <div className="flex items-center w-full h-full">
-            <img src={currentAlbum.image} alt={currentAlbum.title}
-            className="h-40 w-40 object-cover shadow-lg transform transition-all duration-200 hover:scale-200 hover:border-4 hover:border-white"
-            />
+  if (loading) return <div className="text-white">Loading...</div>;
 
+  if (!playlist) return <div className="text-white">Playlist not found!</div>;
+
+  return (
+    <div className="w-full h-full min-h-screen bg-gradient-to-b from-[#006161] to-black p-8 text-white flex flex-col">
+      <div className="flex items-center w-full h-full">
+        <img
+          src={playlist.image}
+          alt={playlist.name}
+          className="h-40 w-40 object-cover shadow-lg transform transition-all duration-200 hover:scale-200 hover:border-4 hover:border-white"
+        />
         <div className="ml-8">
-          <p className="uppercase text-sm">Album</p>
-          <h1 className="text-6xl font-bold">{currentAlbum.title}</h1>
-          <p className="text-lg mt-2">
-            {currentAlbum.artist} • {currentAlbum.year} • {currentAlbum.songCount}
-          </p>
+          <p className="uppercase text-sm">Playlist</p>
+          <h1 className="text-6xl font-bold">{playlist.name}</h1>
+          <p className="text-lg mt-2">{playlist.description}</p>
         </div>
       </div>
 
       {/* Action Buttons */}
       <div className="flex items-center mt-0 space-x-4">
-
-      <button className="bg-transparent border border-white hover:border-2 hover:border-white text-white text-lg font-bold py-2 px-4 rounded-full flex items-center transition-all duration-500 ease-in-out">
-        <FaPlay className="mr-2" /></button>
         <button className="bg-transparent border border-white hover:border-2 hover:border-white text-white text-lg font-bold py-2 px-4 rounded-full flex items-center transition-all duration-500 ease-in-out">
-        <FaPlus className="mr-2" /></button>
-        <button className="bg-transparent border border-white hover:border-2 hover:border-white text-white text-lg font-bold py-2 px-4 rounded-full flex items-center transition-all duration-500 ease-in-out">
-        <FaEllipsisH className="mr-2" /></button>
+          <FaPlay className="mr-2" /> Play
+        </button>
 
+        <button
+          className="bg-transparent border border-white hover:border-2 hover:border-white text-white text-lg font-bold py-2 px-4 rounded-full flex items-center transition-all duration-500 ease-in-out"
+          onClick={handleAddPlaylist} // Trigger the add playlist function
+        >
+          <FaPlus className="mr-2" /> Add
+        </button>
+
+        <button className="bg-transparent border border-white hover:border-2 hover:border-white text-white text-lg font-bold py-2 px-4 rounded-full flex items-center transition-all duration-500 ease-in-out">
+          <FaEllipsisH className="mr-2" />
+        </button>
       </div>
+
+      {/* Display success or error message */}
+      {message && <p className="mt-4 text-green-500">{message}</p>}
 
       {/* Song List */}
       <div className="mt-8">
         <div className="flex justify-between items-center text-gray-400 border-b border-gray-700 pb-2">
-          
           <span>Title</span>
           <span>Duration</span>
         </div>
         <ul className="mt-4">
-          {currentAlbum.songs.map((song, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center py-2 hover:bg-gray-800 rounded-md transition duration-200"
-            >
-              
-              <div>
-                <p className="font-bold text-white">{song.title}</p>
-                <p className="text-gray-400 text-sm">{song.artist}</p>
-              </div>
-              <span className="text-gray-400">{song.duration}</span>
-            </li>
-          ))}
+          {playlist.songs && playlist.songs.length > 0 ? (
+            playlist.songs.map((song) => (
+              <li key={song._id} className="flex justify-between items-center py-2 hover:bg-gray-800 rounded-md transition duration-200">
+                <div>
+                  <p className="font-bold text-white">{song.name}</p>
+                  <p className="text-gray-400 text-sm">{song.desc}</p>
+                </div>
+                <span className="text-gray-400">{song.duration}</span>
+              </li>
+            ))
+          ) : (
+            <p>No songs available in this playlist.</p>
+          )}
         </ul>
       </div>
     </div>

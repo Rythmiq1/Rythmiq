@@ -8,7 +8,6 @@
   display: none;
 }
 
-
 * {
   box-sizing: border-box;
 }
@@ -20,7 +19,6 @@ body {
   align-items: center;
   flex-direction: column;
   height: 100vh;
-  margin: -20px 0 50px;
 }
 
 h1 {
@@ -28,7 +26,8 @@ h1 {
   margin: 0;
 }
 
-button {
+button 
+{
   border-radius: 20px;
   border: 1px solid #18608a;
   background-color: #18608a;
@@ -41,11 +40,13 @@ button {
   transition: transform 80ms ease-in;
 }
 
-button:active {
+button:active 
+{
   transform: scale(0.95);
 }
 
-button:focus {
+button:focus 
+{
   outline: none;
 }
 
@@ -396,3 +397,4 @@ input {
   justify-content: right;
   background-color: transparent;
  }
+ 

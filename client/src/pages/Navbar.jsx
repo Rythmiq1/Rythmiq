@@ -97,8 +97,9 @@ function Navbar() {
         </div>
       </div>
       
-     
-      <div className="mt-20"></div>
+      {/* Main Content Area */}
+      <div className="mt-16">
+      </div>
     </>
   );
 }

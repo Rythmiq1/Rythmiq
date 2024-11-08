@@ -2,7 +2,7 @@
 
 import UserModel from '../Models/User.js';
 import Song from '../Models/songModel.js';
-
+import Playlist from '../Models/PlaylistModel.js';
 export const addLikedSong = async (req, res) => {
     try {
         const { songId } = req.body;
@@ -136,3 +136,57 @@ export const addCreatedPlaylist = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+// getSavedPlaylists function (your code is mostly correct, so no changes needed here)
+export const getSavedPlaylists = async (req, res) => {
+    const userId = req.user.userId || req.user._id;  // Get userId from the authenticated user
+  
+    try {
+      // Query the user and populate savedPlaylists
+      const user = await UserModel.findById(userId).populate('savedPlaylists');
+  
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+  
+      return res.status(200).json({ success: true, savedPlaylists: user.savedPlaylists });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ success: false, message: 'Error fetching saved playlists' });
+    }
+};
+
+export const addSavedPlaylist = async (req, res) => {
+    try {
+      const { playlistId } = req.params;
+  
+      if (!playlistId) {
+        return res.status(400).json({ success: false, message: "Playlist ID is required." });
+      }
+  
+      const userId = req.user.userId || req.user._id;
+  
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userId,
+        { $addToSet: { savedPlaylists: playlistId } }, 
+        { new: true }
+      );
+  
+    
+      if (!updatedUser) 
+      {
+        return res.status(404).json({ success: false, message: "User not found." });
+      }
+  
+      res.status(200).json({
+        success: true,
+        message: "Playlist added to saved playlists successfully",
+        data: updatedUser
+      });
+    } 
+    catch (err) 
+    {
+      console.error("Error adding saved playlist:", err);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+  
