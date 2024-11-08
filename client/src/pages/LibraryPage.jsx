@@ -12,6 +12,8 @@ const LibraryPage = () => {
     const [likedSongs, setLikedSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentSong, setCurrentSong] = useState(null); 
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [shareUrl, setShareUrl] = useState('');
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -32,7 +34,6 @@ const LibraryPage = () => {
                 }
             } catch (error) {
                 console.error("Error fetching playlists:", error);
-                // toast.error("Failed to load playlists.");
             } finally {
                 setLoading(false);
             }
@@ -59,11 +60,9 @@ const LibraryPage = () => {
         fetchLikedSongs();
     }, []);
 
-
     const handleSelectSong = (song) => {
         setCurrentSong(song);
     };
-
 
     const handleLikeToggle = async (songId) => {
         const token = sessionStorage.getItem('token');
@@ -78,7 +77,6 @@ const LibraryPage = () => {
         try {
             let response;
             if (likedSongs.some((song) => song._id === songId)) {
-
                 response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
                     data: songIdObj,
                     headers,
@@ -104,6 +102,21 @@ const LibraryPage = () => {
         navigate(`/playlist/${playlistId}`);
     };
 
+    const handleShareClick = (playlistId) => {
+        const generatedUrl = `${window.location.origin}/playlist-shared/${playlistId}`;
+        setShareUrl(generatedUrl);
+        setShowShareModal(true);
+    };
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+    };
+
+    const closeModal = () => {
+        setShowShareModal(false);
+    };
+
     if (loading) return <div className="text-white text-xl">Loading...</div>;
 
     return (
@@ -114,32 +127,24 @@ const LibraryPage = () => {
                 {playlists.map((playlist) => (
                     <div
                         key={playlist._id}
-                        onClick={() => handlePlaylistClick(playlist._id)}
-                        className="bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg hover:bg-opacity-50 transition duration-200 cursor-pointer"
+                        className="bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg hover:bg-opacity-50 transition duration-200 cursor-pointer relative"
                     >
                         <img
                             src={playlist.image || defaultImg}
                             alt={playlist.name}
                             className="w-full h-40 object-cover rounded-md"
+                            onClick={() => handlePlaylistClick(playlist._id)}
                         />
-                        <div className='flex flex-row gap-14'>
-                            <div>
-                            <h3 className="text-lg font-semibold text-white mt-2">{playlist.name}</h3>
-                            <p className="text-gray-400">{playlist.description}</p>
-                            </div>
-                            <div>
-
-                            <button className="bg-transparent hover:bg-green-500 text-white text-lg font-bold py-2 px-4 rounded-full flex items-center mt-2"
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Prevent the playlist click event
-                                    handleClick(); // Navigate to /share
-                                  }}>
-                                <FaShare className="mr-2" /></button>
-
-                            </div>
-                        </div>
+                        <h3 className="text-lg font-semibold text-white mt-2">{playlist.name}</h3>
+                        <p className="text-gray-400">{playlist.description}</p>
                         
-                        
+                        {/* Share Button */}
+                        <button
+                            className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-2"
+                            onClick={() => handleShareClick(playlist._id)}
+                        >
+                            Share
+                        </button>
                     </div>
                 ))}
             </div>
@@ -157,12 +162,32 @@ const LibraryPage = () => {
                 ))}
             </div>
 
-         
             {currentSong && <MusicPlayer song={currentSong} />}
+
+            {/* Share Modal */}
+            {showShareModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg max-w-sm w-full text-center">
+                        <h2 className="text-xl font-semibold mb-4">Share this Playlist</h2>
+                        <p className="mb-4">{shareUrl}</p>
+                        <button 
+                            className="bg-blue-500 text-white px-4 py-2 rounded-full mb-4"
+                            onClick={handleCopyLink}
+                        >
+                            Copy Link
+                        </button>
+                        <button 
+                            className="bg-gray-500 text-white px-4 py-2 rounded-full"
+                            onClick={closeModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
-
 
 const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     return (

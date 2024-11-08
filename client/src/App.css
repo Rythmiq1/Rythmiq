@@ -22,7 +22,6 @@ body {
   align-items: center;
   flex-direction: column;
   height: 100vh;
-  margin: -20px 0 50px;
 }
 
 h1 {
@@ -535,4 +534,4 @@ input::placeholder {  color: black;
   justify-content: right;
   background-color: transparent;
  }
-
+ 

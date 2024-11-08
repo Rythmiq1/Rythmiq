@@ -56,10 +56,9 @@ const AlbumPage = ({ setCurrentSong }) => {
             toast.error('Failed to fetch liked songs');
         }
     };
-
-    // Handle song selection
     const handleSelectSong = (song) => {
-        setCurrentSong(song);
+        console.log(song,songs);
+        setCurrentSong(song, songs);
         setCurrentSongState(song);
     };
 
