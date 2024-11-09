@@ -60,7 +60,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   }, [safeSongs]);
 
   useEffect(() => {
-    console.log("Songs structure: ", safeSongs);
+    // console.log("Songs structure: ", safeSongs);
     
   }, [safeSongs]);
 
@@ -117,7 +117,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   // Update audio source when the song changes
   useEffect(() => {
     if (currentSong && audioRef.current) {
-      audioRef.current.src = currentSong.file;
+      audioRef.current.src = currentSong.file||currentSong.preview_url;
       audioRef.current.load();
       setIsPlaying(true); // Automatically set isPlaying to true
       audioRef.current.play().catch(error => {
@@ -125,6 +125,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
       });
     }
   }, [currentSong]);
+  
 
   // Function to handle progress bar click
   const handleProgressClick = (e) => {
@@ -203,7 +204,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
     <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
         <audio 
-          ref={audioRef} 
+          ref={audioRef}
           onEnded={handleAudioEnd} 
           onLoadedMetadata={handleMetadataLoaded} 
           onTimeUpdate={handleTimeUpdate} 
