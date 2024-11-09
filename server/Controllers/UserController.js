@@ -1,5 +1,5 @@
 // server/Controllers/UserController.js
-
+import Artist from '../Models/artist.js';
 import UserModel from '../Models/User.js';
 import Song from '../Models/songModel.js';
 import Playlist from '../Models/PlaylistModel.js';
@@ -191,4 +191,59 @@ export const addSavedPlaylist = async (req, res) => {
       res.status(500).json({ success: false, message: "Internal server error" });
     }
   };
-  
+
+  export const followArtist = async (req, res) => {
+    try {
+        const { artistId } = req.body;  // Only need the artistId to follow an artist
+
+        // Check if the artist exists
+        const artist = await Artist.findById(artistId);
+        if (!artist) {
+            return res.status(404).json({ success: false, message: "Artist not found" });
+        }
+
+        // Get the userId from the authenticated user (using req.user from JWT or session)
+        const userId = req.user._id;
+
+        // Find user and update their followed artists
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Add artist to the followedArtists array if not already followed
+        if (!user.followedArtists.includes(artistId)) {
+            user.followedArtists.push(artistId);
+            await user.save();
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `You are now following ${artist.name}.`,
+            followedArtists: user.followedArtists
+        });
+    } catch (error) {
+        console.error("Error following artist:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+};
+export const getFollowedArtists = async (req, res) => {
+    try {
+        // Get the userId from the authenticated user (using req.user from JWT or session)
+        const userId = req.user._id;
+
+        // Find the user and populate their followedArtists array
+        const user = await UserModel.findById(userId).populate('followedArtists');
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            followedArtists: user.followedArtists
+        });
+    } catch (error) {
+        console.error("Error retrieving followed artists for user:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};

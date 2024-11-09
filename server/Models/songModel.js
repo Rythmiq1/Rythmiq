@@ -13,6 +13,11 @@ const songSchema = new mongoose.Schema({
   album: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "album",
+    required: false,
+  },
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Artist",
     required: true,
   },
   image: {
@@ -26,8 +31,7 @@ const songSchema = new mongoose.Schema({
   duration: {
     type: String,
     required: false,
-  }
-  
+  },
 });
 
 const Song = mongoose.models.Song || mongoose.model("Song", songSchema);
