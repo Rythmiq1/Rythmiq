@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import io from 'socket.io-client'; 
 import Login_signup from './pages/Login_signup';
 import GenreSelectionPopup from './pages/GenreSelector';
-import Display from './pages/Display';
 import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
