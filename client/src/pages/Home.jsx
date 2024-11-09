@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-function Home() {
-  const navigate = useNavigate();
+import { useNavigate } from 'react-router-dom';
+
+function Home({ onSongSelect }) {
   const [playlistsData, setPlaylistsData] = useState([]); // For playlists
   const [songsData, setSongsData] = useState([]); // For songs
   const [loading, setLoading] = useState(true);
@@ -54,42 +54,94 @@ function Home() {
 
   return (
     <div>
+      {/* Playlists Section */}
       <PlayListView titleText={"Playlist"} cardData={playlistsData} />
-      <PlayListView titleText={"Songs available"} cardData={songsData} />
-      <PlayListView titleText={"Sound Of India"} cardData={songsData} />
+
+      {/* Songs Available Section */}
+      <SongListView titleText={"Songs Available"} cardData={songsData} onSongSelect={onSongSelect} />
+
+      {/* Sound of India Section */}
+      <SongListView titleText={"Sound Of India"} cardData={songsData} onSongSelect={onSongSelect} />
     </div>
   );
 }
 
 const PlayListView = ({ titleText, cardData }) => {
+  const navigate = useNavigate();
+
   return (
     <div className='text-white mt-8'>
       <div className='text-2xl font-semibold mb-5'>{titleText}</div>
       <div className='w-full flex overflow-x-auto space-x-4 scrollbar-hide'>
-        {cardData.map((item) => (
-          <NavLink to={`/album-p/${item._id}`} key={item._id}> {/* Changed here */}
-            <Card 
-              name={item.name} 
-              desc={item.desc} 
-              image={item.image} 
+        {cardData.map((playlist) => (
+          <div
+            key={playlist._id}
+            onClick={() => navigate(`/album-p/${playlist._id}`)} 
+          >
+            <PlaylistCard 
+              name={playlist.name} 
+              desc={playlist.desc} 
+              image={playlist.image} 
             />
-          </NavLink>
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-const Card = ({ name, desc, image }) => {
+const SongListView = ({ titleText, cardData, onSongSelect }) => {
   return (
-    <div className='bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg hover:bg-opacity-50 transition duration-200 scrollbar-hide'>
-      <img src={image} alt={name} className='w-full h-40 object-cover rounded-md' />
-      <div className='mt-2'>
-        <h3 className='text-lg font-semibold text-white'>{name}</h3>
-        <p className='text-gray-400'>{desc}</p>
+    <div className='text-white mt-8'>
+      <div className='text-2xl font-semibold mb-5'>{titleText}</div>
+      <div className='w-full flex overflow-x-auto space-x-4 scrollbar-hide'>
+        {cardData.map((song) => (
+          <div
+            key={song._id}
+            onClick={() => onSongSelect(song)}  // Pass the selected song to the parent (Home)
+          >
+            <SongCard 
+              name={song.name} 
+              desc={song.desc} 
+              image={song.image} 
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+const PlaylistCard = ({ name, desc, image }) => {
+  return (
+    <div className="w-80 h-60 px-4 py-2 rounded-lg bg-black bg-opacity-40 hover:bg-opacity-50 cursor-pointer transition duration-200">
+      <img 
+        src={image} 
+        alt={name} 
+        className='w-full h-40 object-cover rounded-md' 
+      />
+      <div className='mt-2'>
+        <h3 className='text-lg font-semibold text-white'>{name}</h3>
+        <p className='text-gray-400 text-sm'>{desc}</p>
+      </div>
+    </div>
+  );
+};
+
+const SongCard = ({ name, desc, image }) => {
+  return (
+    <div className="w-80 h-60 px-4 py-2 rounded-lg bg-gray-800 bg-opacity-50 hover:bg-opacity-50 cursor-pointer transition duration-200">
+      <img 
+        src={image} 
+        alt={name} 
+        className='w-full h-40 object-cover rounded-md' 
+      />
+      <div className='mt-2'>
+        <h3 className='text-lg font-semibold text-white'>{name}</h3>
+        <p className='text-gray-400 text-sm'>{desc}</p>
+      </div>
+    </div>
+  );
+};
 
 export default Home;
