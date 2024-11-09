@@ -201,7 +201,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   };
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-gray-800 p-4 rounded-t shadow-lg z-50'>
+    <div className='fixed bottom-0 left-0 right-0 flex justify-between items-center bg-black p-4 rounded-t shadow-lg z-50'>
       {currentSong && (
         <audio 
           ref={audioRef}

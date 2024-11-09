@@ -17,6 +17,10 @@ import Home from './pages/Home';
 import Player from './pages/Player';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Songs from './pages/Songs';
+import { getSpotifyToken } from './spotifyAuth';
+import Share from './pages/Share';
+
 const App = () => {
     const userId = sessionStorage.getItem('userId');
     const location = useLocation();
@@ -37,6 +41,21 @@ const App = () => {
             sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
         }
     }, [currentSong]);
+     
+    //  const id = '0TnOYISbd1XYRBk9myaseg'
+
+
+     const [token, setToken] = useState(null);
+
+     // Fallback for testing
+     useEffect(() => {
+       const fetchToken = async () => {
+         const fetchedToken = await getSpotifyToken();
+         setToken(fetchedToken || 'default-token-for-testing');
+       };
+     
+       fetchToken();
+     }, []);
 
     const handleSongSelection = (song, albumSongs) => {
         setCurrentSong(song);
@@ -92,6 +111,7 @@ useEffect(() => {
                                 <Route path="/playlist/:id" element={<PlaylistPage setCurrentSong={handleSongSelection} />} />
                                 <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
                                 <Route path="/player" element={<Player />} />
+                                <Route path="/playlist-shared/:playlistId" element={<Share/>} />
                             </Routes>
                         </div>
                     </div>

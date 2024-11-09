@@ -149,14 +149,14 @@ const handleLogin = async (e) => {
     <div className={`container ${isSignInActive ? '' : 'right-panel-active'}`} id="container">
       <div className={`form-container sign-up-container ${isSignInActive ? 'hidden' : ''}`}>
         <form onSubmit={handleSignup}>
-          <h1>Create Account</h1>
+          <h1 className='text-white'>Create Account</h1>
           <input
             onChange={handleChange}
             type='text'
             name='name'
             placeholder='Enter Your name'
           />
-          <input
+          <input 
             onChange={handleChange}
             type='email'
             name='email'
@@ -168,14 +168,14 @@ const handleLogin = async (e) => {
             name='password'
             placeholder='Enter Your Password'
           />
-          <button id='signUp-btn' type='submit'>REGISTER</button>
+          <button className='btn' type='submit'><span>REGISTER</span></button>
         </form>
-        <button className='switch-btn Login' onClick={switchToSignIn}>Go to Login</button>
+        <button className='switch-btn Login ' onClick={switchToSignIn}>Go to Login</button>
       </div>
 
       <div className={`form-container sign-in-container ${isSignInActive ? '' : 'hidden'}`}>
         <form onSubmit={handleLogin}>
-          <h1>Login</h1>
+          <h1 className='text-white'>Login</h1>
           <input
             onChange={handleLChange}
             type="email"
@@ -190,8 +190,8 @@ const handleLogin = async (e) => {
             placeholder="PASSWORD"
             value={loginInfo.password}
           />
-          <button id='signIn-btn' type='submit'>Login</button>
-          <button className='login-with-google-btn' onClick={loginwithgoogle}>SIGN IN WITH GOOGLE</button>
+          <button className='btn' type='submit'><span>Login</span></button>
+          <button className='login-with-google-btn ' onClick={loginwithgoogle}>SIGN IN WITH GOOGLE</button>
         </form>
         <button className='switch-btn Login' onClick={switchToSignUp}>Go to Register</button>
       </div>

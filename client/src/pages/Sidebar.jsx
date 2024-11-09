@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import logo from "../assets/images/Rhythmiq-bg.ico";
+import logo from "../assets/images/logo-bg.png";
+import logoh from  "../assets/images/logo-hl.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
 
@@ -14,9 +15,13 @@ function Sidebar() {
       onMouseLeave={() => setIsSidebarOpen(false)}  // Close sidebar on hover out
     >
       {/* Logo Section */}
-      <div className="logoDiv p-6 flex justify-center">
-        <img src={logo} alt="logo" className="w-40 h-auto cursor-pointer" />
-      </div>
+      <div className="logoDiv p-4 flex justify-center">
+  <img
+    src={isSidebarOpen ? logo : logoh}  // Switch logo based on sidebar state
+    alt="logo"
+    className="cursor-pointer transition-all duration-300" style={isSidebarOpen ? { width: 'auto', height: 'auto' } : { width: '180px', height: '60px' }}
+  />
+</div>
 
       
       <div className="py-5 space-y-4">

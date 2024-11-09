@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import defaultImg from '../assets/images/Rhythmiq.png';
 import MusicPlayer from './MusicPlayer';
+import { FaShare } from 'react-icons/fa'; 
 
 const LibraryPage = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -14,6 +15,10 @@ const LibraryPage = () => {
     const [showShareModal, setShowShareModal] = useState(false);
     const [shareUrl, setShareUrl] = useState('');
     const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/share'); 
+      };
 
     useEffect(() => {
         const fetchPlaylists = async () => {
@@ -115,7 +120,7 @@ const LibraryPage = () => {
     if (loading) return <div className="text-white text-xl">Loading...</div>;
 
     return (
-        <div className="flex flex-col justify-start min-h-screen bg-gray-800 p-4 mt-16">
+        <div className="flex flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16">
             <ToastContainer />
             <h2 className="text-2xl font-semibold text-white mb-4">Your Playlists:</h2>
             <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
