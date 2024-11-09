@@ -22,12 +22,16 @@ const LibraryPage = () => {
         const fetchPlaylists = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/playlist/my-playlists', {
+                const response = await axios.get('http://localhost:8080/playlist/my-playlists', 
+                {
                     headers: { Authorization: token },
                 });
-                if (response.data.success) {
+                if (response.data.success) 
+                {
                     setPlaylists(response.data.playlists);
-                } else {
+                } 
+                else 
+                {
                     throw new Error("Could not fetch playlists");
                 }
             } catch (error) {
