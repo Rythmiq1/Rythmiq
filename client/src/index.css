@@ -9,3 +9,31 @@ body {
     background-color: black;
   }
   
+  @layer utilities {
+    .border-neon-green {
+      border-color: #ff00ff; /* Neon purple color */
+    }
+  
+    @keyframes runningShadow {
+      0% {
+        box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff; /* Neon purple */
+      }
+      25% {
+        box-shadow: 10px 0 20px #00ffff, 20px 0 30px #00ffff, 30px 0 40px #00ffff; /* Neon blue */
+      }
+      50% {
+        box-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4, 0 0 30px #ff69b4; /* Neon pink */
+      }
+      75% {
+        box-shadow: -10px 0 20px #00ff00, -20px 0 30px #00ff00, -30px 0 40px #00ff00; /* Neon green */
+      }
+      100% {
+        box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff; /* Neon purple */
+      }
+    }
+  
+    .animate-runningShadow {
+      animation: runningShadow 2s infinite ease-in-out;
+    }
+  }
+  

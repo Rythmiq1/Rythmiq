@@ -1,6 +1,10 @@
 import Playlist from '../Models/PlaylistModel.js';
 import UserModel from '../Models/User.js';
 import { uploadOnCloudinary } from '../config/cloudinary.js'; 
+import cors from 'cors';
+
+
+
 
 export const createPlaylist = async (req, res) => {
     try {
@@ -70,7 +74,8 @@ export const getUserPlaylists = async (req, res) => {
         const userId = req.user.userId || req.user._id; 
 
         const user = await UserModel.findById(userId).populate('createdPlaylists');
-        if (!user) {
+        if (!user) 
+        {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
@@ -95,6 +100,24 @@ export const getPlaylistById = async (req, res) => {
         res.status(200).json({ success: true, playlist });
     } catch (error) {
         console.error('Error fetching playlist:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+
+export const getSavedPlaylistsByUser = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const user = await UserModel.findById(userId).populate({
+            path: 'savedPlaylists',
+            populate: { path: 'songs' }, // Populate the songs in each playlist
+        });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        res.status(200).json({ success: true, playlists: user.savedPlaylists });
+    } catch (error) {
+        console.error('Error fetching saved playlists:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };

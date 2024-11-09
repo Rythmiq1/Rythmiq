@@ -101,6 +101,7 @@ useEffect(() => {
                         <div className="h-screen w-screen bg-app-black scrollbar-hide">
                             <Navbar />
                             <Routes>
+
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
                                 <Route path="/home" element={<Home onSongSelect={handleSongSelection} />} />
                                 <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={handleSongSelection} />} />
@@ -112,6 +113,7 @@ useEffect(() => {
                                 <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
                                 <Route path="/player" element={<Player />} />
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
+
                             </Routes>
                         </div>
                     </div>

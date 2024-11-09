@@ -4,13 +4,14 @@ import { IoIosPause , IoMdSkipForward} from "react-icons/io";
 import { IoMdSkipBackward } from "react-icons/io";
 import { FaPlay } from "react-icons/fa";
 import { SlLoop } from "react-icons/sl";
-import { BsArrowsAngleExpand } from "react-icons/bs";
+// import { BsArrowsAngleExpand } from "react-icons/bs";
 import { IoVolumeHighOutline, IoVolumeMuteOutline  } from "react-icons/io5";
 import rhythmiq from "../assets/images/Rhythmiq.png";
 import zoom from "../assets/zoomin.png";
 import shrink from "../assets/zoomout.png";
-import mute from "../assets/mute.png";
+// import mute from "../assets/mute.png";
 import { useNavigate } from 'react-router-dom'; 
+
 
 
 const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
@@ -244,8 +245,13 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
         <div className='flex items-center gap-5'>
           <p className="text-white">{formatTime(currentTime)}</p>
           <div className='relative w-[60vw] max-w-[500px] bg-gray-300 rounded-full cursor-pointer' onClick={handleProgressClick}>
-            <div className='h-1 bg-gray-300 rounded-full'></div>
-            <div className='h-1 bg-green-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+            <div className='h-1 bg-teal-500 rounded-full'></div>
+            <div className='h-1 bg-teal-600 rounded-full' style={{ width: `${(currentTime / duration) * 100}%` }}></div>
+            
+            <div
+              className="absolute w-3 h-3 bg-gray-600 rounded-full"
+              style={{ left: `${(currentTime / duration) * 100}%`, top: '-1px', transform: 'translateX(-50%)' }} // Adjust 'top' to align with the progress line
+            ></div>
           </div>
           <p className="text-white">{formatTime(duration)}</p>
         </div>
@@ -257,13 +263,16 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
           <IoVolumeHighOutline className="w-5 h-5 cursor-pointer text-white" onClick={toggleMute} />
         )}
 
-        
+
         
         <div className='relative w-20 h-1 bg-slate-50 rounded cursor-pointer' 
             onClick={handleVolumeClick} onWheel={handleVolumeScroll}>
-        <div className='absolute top-0 left-0 h-full bg-green-400 rounded' style={{ width: `${currentVolume * 100}%` }}></div>
-        <div className="absolute w-3 h-3 bg-blue-500 rounded-full"
-          style={{ left: `${currentVolume * 100}%`, top: 'px', transform: 'translateY(-55%)' }}>
+        <div className="absolute top-0 left-0 h-full rounded"
+            style={{ width: `${currentVolume * 100}%`, backgroundColor: '#006161' }}>
+          </div>
+
+        <div className="absolute w-3 h-3 bg-gray-500 rounded-full"
+          style={{ left: `${currentVolume * 100}%`, top: '1px', transform: 'translateY(-55%)' }}>
       </div>
       </div>
 

@@ -157,36 +157,34 @@ export const getSavedPlaylists = async (req, res) => {
 
 export const addSavedPlaylist = async (req, res) => {
     try {
-      // Extract playlistId from the URL parameters
       const { playlistId } = req.params;
   
-      // Validate that playlistId is provided
       if (!playlistId) {
         return res.status(400).json({ success: false, message: "Playlist ID is required." });
       }
   
-      // Get the user's ID from the authenticated user
       const userId = req.user.userId || req.user._id;
   
-      // Update the user to add the playlistId to savedPlaylists
       const updatedUser = await UserModel.findByIdAndUpdate(
         userId,
-        { $addToSet: { savedPlaylists: playlistId } }, // Use $addToSet to avoid duplicates
+        { $addToSet: { savedPlaylists: playlistId } }, 
         { new: true }
       );
   
-      // Check if the user was found and updated
-      if (!updatedUser) {
+    
+      if (!updatedUser) 
+      {
         return res.status(404).json({ success: false, message: "User not found." });
       }
   
-      // Return the updated user with the new saved playlists
       res.status(200).json({
         success: true,
         message: "Playlist added to saved playlists successfully",
         data: updatedUser
       });
-    } catch (err) {
+    } 
+    catch (err) 
+    {
       console.error("Error adding saved playlist:", err);
       res.status(500).json({ success: false, message: "Internal server error" });
     }

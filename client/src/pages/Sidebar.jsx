@@ -24,7 +24,7 @@ function Sidebar() {
 </div>
 
       
-      <div className="py-5 space-y-4">
+      <div className="py-3 space-y-4">
         <Link to="/home" onClick={() => setActiveLink('/home')} className="sidebar-link">
           <IconText iconName="home" displayText="Home" active={activeLink === '/home'} />
         </Link>

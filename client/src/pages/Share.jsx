@@ -33,23 +33,23 @@ const Share = () => {
   const handleAddPlaylist = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/save-playlist/${playlistId}`,
+        `http://localhost:8080/auth/save-playlist/${playlistId}`,
         {}, 
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Assuming token is stored in localStorage
+            'Authorization': `${sessionStorage.getItem('token')}`, 
           }
         }
       );
 
       if (response.data.success) {
-        setMessage({ text: 'Playlist added to your saved playlists.', type: 'success' });
+        setMessage('Playlist added to your saved playlists.');
       } else {
-        setMessage({ text: 'Failed to add playlist: ' + response.data.message, type: 'error' });
+        setMessage('Failed to add playlist: ' + response.data.message);
       }
     } catch (error) {
       console.error('Error saving playlist:', error);
-      setMessage({ text: 'An error occurred while saving the playlist.', type: 'error' });
+      setMessage('An error occurred while saving the playlist.');
     }
   };
 
@@ -91,11 +91,7 @@ const Share = () => {
       </div>
 
       {/* Display success or error message */}
-      {message && (
-        <p className={`mt-4 ${message.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
-          {message.text}
-        </p>
-      )}
+      {message && <p className="mt-4 text-green-500">{message}</p>}
 
       {/* Song List */}
       <div className="mt-8">
@@ -115,7 +111,7 @@ const Share = () => {
               </li>
             ))
           ) : (
-            <p className="text-center text-gray-400 mt-4">No songs available in this playlist.</p>
+            <p>No songs available in this playlist.</p>
           )}
         </ul>
       </div>
