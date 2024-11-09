@@ -18,10 +18,11 @@ import Player from './pages/Player';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Songs from './pages/Songs';
-import { getSpotifyToken } from './spotifyAuth';
 import Share from './pages/Share';
 
 const App = () => {
+    const [notifications, setNotifications] = useState([]);
+    const [notificationCount, setNotificationCount] = useState(0);
     const userId = sessionStorage.getItem('userId');
     const location = useLocation();
     const [currentSong, setCurrentSong] = useState(null);
@@ -48,14 +49,14 @@ const App = () => {
      const [token, setToken] = useState(null);
 
      // Fallback for testing
-     useEffect(() => {
-       const fetchToken = async () => {
-         const fetchedToken = await getSpotifyToken();
-         setToken(fetchedToken || 'default-token-for-testing');
-       };
+    //  useEffect(() => {
+    //    const fetchToken = async () => {
+    //     //  const fetchedToken = await getSpotifyToken();
+    //      setToken(fetchedToken || 'default-token-for-testing');
+    //    };
      
-       fetchToken();
-     }, []);
+    //    fetchToken();
+    //  }, []);
 
     const handleSongSelection = (song, albumSongs) => {
         setCurrentSong(song);
@@ -65,21 +66,29 @@ const App = () => {
     };
 
 
-useEffect(() => {
-    const socketIo = io('http://localhost:8080', {
-        transports: ['websocket','polling'] // Specify transports explicitly if needed
-    });
-    setSocket(socketIo);
-    socketIo.emit('join-room', userId);
-    // Listen for new song notifications
-    socketIo.on('new-song', (data) => {
-        console.log(`New song added: ${data.songName} by artist ${data.artistId}`);
-    });
-
-    return () => {
-        socketIo.disconnect();
-    };
-}, [userId]);
+    useEffect(() => {
+        if (!userId) return; // Don't initialize socket until userId is available
+    
+        const socketIo = io('http://localhost:8080', {
+          transports: ['websocket', 'polling'],
+        });
+    
+        socketIo.emit('join-room', userId);
+    
+        // Listen for new song notifications
+        socketIo.on('new-song', (data) => {
+          console.log(`New song added: ${data.songName} by artist ${data.artistId}`);
+          setNotificationCount(prevCount => prevCount + 1);  // Increase the notification count
+          setNotifications(prevNotifications => [
+            ...prevNotifications,
+            { message: `New song added: ${data.songName} by artist ${data.artistId}` },
+          ]);
+        });
+    
+        return () => {
+          socketIo.disconnect();
+        };
+      }, [userId]);
 
     return (
         <div className="App">
@@ -99,7 +108,7 @@ useEffect(() => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-screen bg-app-black scrollbar-hide">
-                            <Navbar />
+                        <Navbar notificationCount={notificationCount} setNotificationCount={setNotificationCount} notifications={notifications} />
                             <Routes>
 
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
