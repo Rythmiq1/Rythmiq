@@ -36,7 +36,7 @@ function Navbar() {
       if (storedToken) {
         try {
           const response = await axios.get("http://localhost:8080/login/success", {
-            headers: { Authorization: `Bearer ${storedToken}` },
+            headers: { Authorization: storedToken },
             withCredentials: true,
           });
           setUserdata(response.data.user);
@@ -71,24 +71,12 @@ function Navbar() {
           {loggedInUser ? (
             <>
               <span className="text-white">Welcome, {loggedInUser}!</span>
-              {/* <button
-                className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={handleLogout}>Logout</button> */}
-
           <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
 
             </>
           ) : (
             <>
-              {/* <button
-                className="bg-black text-white font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={() => navigate("/login?signin=true")}>
-                Sign Up </button> */}
                 <button type='submit' className={buttonStyling} onClick={() => navigate("/login?signin=true")}>Sign Up</button>
-              {/* <button
-                className="bg-white text-black font-bold px-4 py-1 rounded-full hover:bg-gray-200 transition"
-                onClick={() => navigate("/login")}>
-                Log In </button> */}
 
                 <button type='submit' className={buttonStyling} onClick={() => navigate("/login")}>Log In</button>
             </>

@@ -17,7 +17,7 @@ const genres = [
 const GenreSelector = ({ userId }) => {
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false); // Loading state
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,14 +25,22 @@ const GenreSelector = ({ userId }) => {
         const token = urlParams.get('token');
         const name = urlParams.get('name');
         const userId = urlParams.get('userId');
-
+        const spotifyAccessToken = urlParams.get('spotifyAccessToken');
+        const googleAccessToken = urlParams.get('googleAccessToken');
+        
+        // Log the retrieved values
+        console.log('URL Params:', { token, name, userId, spotifyAccessToken, googleAccessToken });
+    
         if (token && name && userId) {
             sessionStorage.setItem('token', token);
             sessionStorage.setItem('loggedInUser', name);
             sessionStorage.setItem('userId', userId);
+            localStorage.setItem('spotifyAccessToken', spotifyAccessToken);
+            sessionStorage.setItem('googleAccessToken', googleAccessToken);
             console.log("Login successful!");
         }
     }, []);
+    
 
     useEffect(() => {
         if (!userId) {
@@ -50,8 +58,10 @@ const GenreSelector = ({ userId }) => {
 
     const handleSubmit = async () => {
         const token = sessionStorage.getItem('token');
+        const spotifyAccessToken = sessionStorage.getItem('spotifyAccessToken');
+
         if (!token) {
-            console.error('Token not found in local storage');
+            console.error('Token not found in session storage');
             return;
         }
 
@@ -60,7 +70,7 @@ const GenreSelector = ({ userId }) => {
             return;
         }
 
-        setLoading(true); // Start loading
+        setLoading(true); 
         const requestBody = { genreIds: selectedGenres };
 
         try {
@@ -69,6 +79,7 @@ const GenreSelector = ({ userId }) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token,
+                    'Spotify-Access-Token': spotifyAccessToken, // Send the Spotify token in headers
                 },
                 body: JSON.stringify(requestBody),
             });
@@ -84,9 +95,9 @@ const GenreSelector = ({ userId }) => {
             navigate('/home');
         } catch (error) {
             console.error('Error updating interests:', error.message);
-            setErrorMessage('An error occurred while submitting your genres.'); // User-friendly message
+            setErrorMessage('An error occurred while submitting your genres.');
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false);
         }
     };
 
@@ -125,7 +136,7 @@ const GenreSelector = ({ userId }) => {
                 onClick={handleSubmit} 
                 className={`mt-6 block mx-auto px-4 py-2 rounded-lg transition 
                     ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
-                disabled={loading} // Disable button when loading
+                disabled={loading}
             >
                 {loading ? 'Submitting...' : 'Submit Genres'}
             </button>

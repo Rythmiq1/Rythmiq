@@ -3,22 +3,21 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { handleError, handleSuccess } from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
-import GenreSelectionPopup from './GenreSelector'; // Import the new popup component
+import GenreSelectionPopup from './GenreSelector'; 
 
 function Login_signup() {
   const navigate = useNavigate();
-  const location = useLocation(); // Use location to access query parameters
+  const location = useLocation();
   const [isSignInActive, setIsSignInActive] = useState(true);
-  const [showGenrePopup, setShowGenrePopup] = useState(false); // State for genre popup
+  const [showGenrePopup, setShowGenrePopup] = useState(false); 
   
-  // Check for query parameters to determine which form to show
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const signIn = params.get('signin');
     if (signIn === 'true') {
-      setIsSignInActive(false); // Show the login form
+      setIsSignInActive(false); 
     } else {
-      setIsSignInActive(true); // Show the signup form
+      setIsSignInActive(true); 
     }
   }, [location.search]);
 
@@ -119,7 +118,7 @@ const handleLogin = async (e) => {
         });
 
         const result = await response.json();
-        const { success, message, jwtToken, id, name, error } = result;
+        const { success, message, jwtToken, userId, name, error } = result;
 
         if (success) {
             handleSuccess(message);
@@ -127,8 +126,9 @@ const handleLogin = async (e) => {
             // Store user data in localStorage on successful login
             sessionStorage.setItem('token', jwtToken);
             sessionStorage.setItem('loggedInUser', name);
-            sessionStorage.setItem('userId', id);
-
+            sessionStorage.setItem('userId', userId);
+            console.log(jwtToken)
+            console.log(userId);
             setTimeout(() => {
                 navigate('/home'); // Navigate to home page after login
             }, 1000);
