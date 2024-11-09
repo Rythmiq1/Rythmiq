@@ -1,5 +1,5 @@
 import Artist from '../Models/artist.js';
-
+import { uploadOnCloudinary } from '../config/cloudinary.js';
 export const addArtist = async (req, res) => {
   try {
       const { name, bio } = req.body;
