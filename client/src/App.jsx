@@ -18,6 +18,7 @@ import { getSpotifyToken } from './spotifyAuth';
 
 import Player from './pages/Player';
 import Share from './pages/Share';
+import SocketRoom from './pages/SocketRoom';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -95,6 +96,7 @@ const App = () => {
                                 <Route path="/history" element={<History setCurrentSong={setCurrentSong} />} />
                                 <Route path="/player" element={<Player/>} />
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
+                                <Route path='/room' element={<SocketRoom/>}/>
                             </Routes>
                         </div>
                     </div>

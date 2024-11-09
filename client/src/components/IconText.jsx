@@ -1,5 +1,5 @@
 import React from 'react';
-import {  FaHeart, FaHistory, FaGlobe } from 'react-icons/fa';
+import {  FaHeart, FaHistory, FaGlobe, FaUserFriends } from 'react-icons/fa';
 import { IoMdHome } from "react-icons/io";
 import { IoSearchSharp } from "react-icons/io5";
 import { MdLibraryMusic } from "react-icons/md";
@@ -13,6 +13,7 @@ const IconText = ({ iconName, displayText, active }) => {
     favorite: <FaHeart className="text-2xl"/>,
     history: <FaHistory className="text-2xl"/>,
     public: <FaGlobe className="text-2xl"/>,
+    room:<FaUserFriends className = "text-2xl"/>
   };
 
   return (

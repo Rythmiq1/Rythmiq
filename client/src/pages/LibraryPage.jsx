@@ -5,7 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import defaultImg from '../assets/images/Rhythmiq.png';
 import MusicPlayer from './MusicPlayer';
-import { FaShare } from 'react-icons/fa'; 
+import { FaShare } from 'react-icons/fa';
+import LikedCard from '../components/LikedCard'; 
 
 const LibraryPage = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -152,7 +153,7 @@ const LibraryPage = () => {
             <h2 className="text-2xl font-semibold text-white mt-8 mb-4">Liked Songs:</h2>
             <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
                 {likedSongs.map((song) => (
-                    <Card 
+                    <LikedCard
                         key={song._id} 
                         song={song} 
                         isLiked={likedSongs.some((s) => s._id === song._id)} 

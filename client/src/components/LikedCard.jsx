@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
+import '../App.css';
 const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
     const [liked, setLiked] = useState(isLiked);
 
@@ -57,8 +57,9 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
     return (
         <div 
             onClick={onSelect} 
-            className="bg-gray-900 bg-opacity-60 w-64 p-4 rounded-lg hover:bg-opacity-80 transition-all duration-200 cursor-pointer shadow-lg relative"
+            className='card'
         >
+            <div className='bg-black  w-64 h-80 p-4 rounded-lg'>
             <div className="relative">
                 <img src={song.image} alt={song.name} className="w-full h-40 object-cover rounded-md" />
                 
@@ -76,14 +77,20 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
                         {liked ? '❤️' : '🤍'}
                     </span>
                 </button>
-            </div>
 
-            {/* Song details */}
-            <div className="mt-3">
+                   {/* Song details */}
+
+                <div className="mt-3">
                 <h3 className="text-lg font-semibold text-white">{song.name}</h3>
                 <p className="text-gray-400 text-sm">{song.desc}</p>
                 <p className="text-gray-400 text-sm mt-1">Duration: {song.duration}</p>
             </div>
+            </div>
+            </div>
+           
+
+          
+            
         </div>
     );
 };

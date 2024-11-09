@@ -14,9 +14,13 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    // required: true,
+    // required: true, // Leave commented if using only OAuth for login
   },
-  googleId: String,
+  googleId: { type: String, unique: true, sparse: true },
+  spotifyId: { type: String, unique: true, sparse: true },
+  googleAccessToken: String,
+  spotifyAccessToken: String,
+  spotifyRefreshToken: String,
   image: String,
   interests: {
     type: [String],
@@ -32,5 +36,5 @@ const UserSchema = new Schema({
   savedPlaylists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }]
 }, { timestamps: true });
 
-const UserModel = mongoose.model('users', UserSchema);
+const UserModel = mongoose.model('User', UserSchema);
 export default UserModel;

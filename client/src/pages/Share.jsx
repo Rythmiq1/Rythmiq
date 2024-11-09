@@ -33,11 +33,11 @@ const Share = () => {
   const handleAddPlaylist = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/save-playlist/${playlistId}`,
+        `http://localhost:8080/auth/save-playlist/${playlistId}`,
         {}, 
         {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Assuming token is stored in localStorage
+            'Authorization': `${sessionStorage.getItem('token')}`, // Assuming token is stored in localStorage
           }
         }
       );

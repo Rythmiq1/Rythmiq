@@ -36,6 +36,10 @@ function Sidebar() {
         <Link to="/library" onClick={() => setActiveLink('/library')} className="sidebar-link">
           <IconText iconName="library_music" displayText="Your Library" active={activeLink === '/library'} />
         </Link>
+
+        <Link to="/room" onClick={() => setActiveLink('/room')} className="sidebar-link">
+          <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
+        </Link>
       {/* </div>
 
       {/* Additional Options Section */}

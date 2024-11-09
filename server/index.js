@@ -7,12 +7,13 @@ import passport from 'passport';
 import { Strategy as OAuth2Strategy } from 'passport-google-oauth2';
 import jwt from 'jsonwebtoken';
 import playlistRouter from './Routes/playlistRouter.js';
-// Import your routes and models
 import AuthRouter from './Routes/AuthRouter.js';
 import songRoutes from './Routes/songRoute.js';
 import albumRouter from './Routes/albumRouter.js';
 import Userdb from './Models/User.js';
 import './Models/db.js';
+import http from 'http';
+import { Server } from 'socket.io';
 
 // Initialize environment variables
 dotenv.config();
@@ -44,7 +45,6 @@ passport.use(
     scope: ["profile", "email"],
   },
     async (accessToken, refreshToken, profile, done) => {
-      console.log("profile", profile);
       try {
         let user = await Userdb.findOne({ googleId: profile.id });
 
@@ -77,29 +77,25 @@ passport.deserializeUser((user, done) => {
 app.get('/ping', (req, res) => {
   res.send('pong');
 });
-app.use("/playlist",playlistRouter)
+app.use("/playlist", playlistRouter);
 app.use("/song", songRoutes);
 app.use("/album", albumRouter);
 app.use('/auth', AuthRouter);
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get("/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
-  async (req, res) => {
-    if (req.user) {
-      const token = jwt.sign({
-        userId: req.user._id,
-        name: req.user.name
-      }, process.env.JWT_SECRET, { expiresIn: '1h' });
+app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }), async (req, res) => {
+  if (req.user) {
+    const token = jwt.sign({
+      userId: req.user._id,
+      name: req.user.name
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-      return res.redirect(`http://localhost:5173/genre?token=${token}&name=${encodeURIComponent(req.user.name)}&userId=${req.user._id}`);
-    } else {
-      res.redirect("http://localhost:5173/login");
-    }
+    return res.redirect(`http://localhost:5173/genre?token=${token}&name=${encodeURIComponent(req.user.name)}&userId=${req.user._id}`);
+  } else {
+    res.redirect("http://localhost:5173/login");
   }
-);
-
+});
 
 app.get("/login/success", async (req, res) => {
   if (req.user) {
@@ -114,10 +110,56 @@ app.get("/login/success", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Socket.io integration
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
 });
 
-app.get("/", (req, res) => {
-  res.status(200).json("Server Started");
+const rooms = {}; // Room states
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+  
+
+  socket.on('joinRoom', ({ roomId, username }) => {
+    socket.join(roomId);
+    console.log(`User ${username} is joining room ${roomId}`);
+    if (!rooms[roomId]) {
+      rooms[roomId] = { isPlaying: false, songUrl: '', currentTime: 0, users: [] };
+    }
+    rooms[roomId].users.push(username);
+
+    io.to(socket.id).emit('roomState', rooms[roomId]);
+    io.to(roomId).emit('userJoined', { username, users: rooms[roomId].users });
+  });
+
+  socket.on('playSong', ({ roomId, songUrl }) => {
+    rooms[roomId].songUrl = songUrl;
+    rooms[roomId].isPlaying = true;
+    io.to(roomId).emit('playSong', { songUrl });
+  });
+
+  socket.on('togglePlay', ({ roomId, isPlaying }) => {
+    rooms[roomId].isPlaying = isPlaying;
+    io.to(roomId).emit('togglePlay', isPlaying);
+  });
+
+  socket.on('syncTime', ({ roomId, currentTime }) => {
+    rooms[roomId].currentTime = currentTime;
+    io.to(roomId).emit('syncTime', currentTime);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+
+  
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
