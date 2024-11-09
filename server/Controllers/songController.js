@@ -27,6 +27,19 @@ const addSong = async (req, res) => {
             });
         }
 
+        // Validate album if provided
+        let albumId = null;
+        if (album !== 'none' && album) {
+            const albumExists = await Album.findById(album); // Assuming you have an Album model
+            if (!albumExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Album not found."
+                });
+            }
+            albumId = album; // Valid album ID
+        }
+
         const audioUpload = await uploadOnCloudinary(audioFile.path);
         const imageUpload = await uploadOnCloudinary(imageFile.path);
 
@@ -43,7 +56,7 @@ const addSong = async (req, res) => {
         const songData = {
             name,
             desc,
-            album, // Album ID
+            album: albumId, // Ensure album is set to valid ObjectId or null
             artist, // Artist ID
             image: imageUpload.secure_url,
             file: audioUpload.secure_url,
@@ -73,10 +86,8 @@ const addSong = async (req, res) => {
                 songName: newSong.name,
                 message: `New song added by ${artistExists.name}: ${newSong.name}`
             });
-            console.log('message send')
+            console.log('message sent');
         });
-
-
 
         res.status(201).json({
             success: true,
@@ -92,6 +103,7 @@ const addSong = async (req, res) => {
         });
     }
 };
+
 
 const listSong = async (req, res) => {
     try {
