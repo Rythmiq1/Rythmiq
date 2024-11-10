@@ -110,19 +110,18 @@ const LibraryPage = () => {
         }
     };
 
-    // Handle playlist click navigation
     const handlePlaylistClick = (playlistId) => {
         navigate(`/playlist/${playlistId}`);
     };
+    
 
-    // Handle share button click for playlist
     const handleShareClick = (playlistId) => {
         const generatedUrl = `${window.location.origin}/playlist-shared/${playlistId}`;
         setShareUrl(generatedUrl);
         setShowShareModal(true);
     };
+    
 
-    // Handle link copy to clipboard
     const handleCopyLink = () => {
         navigator.clipboard.writeText(shareUrl);
         toast.success("Link copied to clipboard!");
@@ -197,8 +196,8 @@ const LibraryPage = () => {
                 </div>
             )}
 
-            <div className="text-white mt-8">
-                <h2>Your Saved Playlists</h2>
+            <div className=" text-blue-50 mt-8">
+                <h2 className='text-white font-bold'>Your Saved Playlists</h2>
                 {savedPlaylists?.length === 0 ? (
                     <p>No playlists saved.</p>
                 ) : (
@@ -220,25 +219,35 @@ const LibraryPage = () => {
     );
 };
 
-// Card Component for displaying songs
+
 const Card = ({ song, isLiked, onSelect, onToggleLike }) => {
     return (
-        <div className="bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg hover:bg-opacity-50 transition duration-200 cursor-pointer relative">
-            <img src={song.image || defaultImg} alt={song.name} className="w-full h-40 object-cover rounded-md" onClick={onSelect} />
+        <div 
+            className="bg-black bg-opacity-40 w-60 px-4 py-2 rounded-lg"
+            onClick={onSelect}
+        >
+            <img
+                src={song.image || defaultImg}
+                alt={song.name}
+                className="w-full h-40 object-cover rounded-md"
+            />
             <h3 className="text-lg font-semibold text-white mt-2">{song.name}</h3>
             <p className="text-gray-400">{song.artist}</p>
-            <button
-                className={`absolute top-2 right-2 ${isLiked ? 'bg-red-500' : 'bg-green-500'} text-white rounded-full p-2`}
-                onClick={onToggleLike}
+            <button 
+                onClick={(e) => { e.stopPropagation(); onToggleLike(song._id); }} 
+                className="text-2xl mt-1" 
+                style={{ background: 'none', border: 'none', cursor: 'pointer' }}
             >
-                {isLiked ? 'Unlike' : 'Like'}
+                <span role="img" aria-label="heart" className={`transition duration-200 ${isLiked ? 'text-red-500' : 'text-gray-400'}`}>
+                    {isLiked ? '❤️' : '🤍'}
+                </span>
+
             </button>
         </div>
     );
 };
 
 export default LibraryPage;
-
 
 
 

@@ -38,21 +38,26 @@ const Player = () => {
   return (
     <div className="flex text-white h-screen gap-20" style={{ backgroundColor: colors[bgColorIndex], }}>
 
-
-<div className='ml-32 mt-8 flex'>
+      <div className='ml-32 mt-8 flex'>
       <div className="flex w-[60%]">
         {currentSong && 
-        (
-        <img src={currentSong.image} alt={currentSong.title} className="ml-12 mt-20 h-[500px] w-[600px] object-contain "/>
-        )}
+          (
+            <img src={currentSong.image}  alt={currentSong.title} 
+            className="ml-8 mt-11 h-[500px] w-[600px] object-contain"
+            style={{ height: '500px',  width: '600px',  objectFit: 'cover' }} />
+          )
+        }
       </div>
+
       <div>
-        <h1 className="text-black ml-1 font-bold text-5xl mt-80">{currentSong?.name}</h1>
-        <p className="text-black ml-1 mt-5">{currentSong?.desc}</p>
+        <h1 className="text-black ml-9 font-bold text-5xl mt-[450px]">{currentSong?.name}</h1>
+        <p className="text-black ml-9 mt-5">{currentSong?.desc}</p>
       </div>
 
       <div className="flex-1 flex justify-start">
-        {currentSong ? (
+        {
+        currentSong ? 
+        (
           <div>
             <button onClick={changeBackgroundColor}
               className="p-4 bg-black text-white border border-white rounded-full absolute bottom-40 right-10 flex items-center space-x-2">
@@ -60,40 +65,16 @@ const Player = () => {
               <span className="text-white font-bold"></span> 
             </button>
           </div>
-        ) : (
+        ) : 
+        (
           <h1>No song selected</h1>
-        )}
+        )
+        }
+
       </div>
       </div>
 
-      {/* <div className='ml-32 mt-24'>
-      <div className="music-case">
-      <div className="front-case">
-        <div className="icon"></div>
-      </div>
-      <div className="disc">
-        <div className="hole"></div>
-      </div>
-      <div className="back-case"></div>
-
-     
-      </div>
-      </div> */}
-
-      
-
-      
-
-
-
-      
     </div>
-
-
-
-    
-
-
         
   );
 };

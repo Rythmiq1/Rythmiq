@@ -43,7 +43,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
       navigate('/player', { state: { currentSong } }); 
     } else {
       setIsZoomed(false);
-      navigate('/');
+      navigate(-1);
     }
 };
 
@@ -213,7 +213,8 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
         />
       )}
       <div className='absolute left-4 top-4'>
-        <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong ? currentSong.image : rhythmiq} alt={currentSong ? currentSong.title : "No song playing"} />
+        <img className='w-12 h-12 rounded-lg border-2 border-gray-600' src={currentSong ? currentSong.image : rhythmiq} 
+        alt={currentSong ? currentSong.title : "No song playing"} />
       </div>
       <div className='flex flex-col items-center gap-1 ml-20'>
       <div className='flex gap-4 items-center'>

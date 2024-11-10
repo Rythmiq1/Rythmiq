@@ -67,3 +67,29 @@ export const listArtists = async (req, res) => {
       });
   }
 };
+
+
+
+export const getArtistById = async (req, res) => {
+    try {
+      const artist = await Artist.findById(req.params.id).populate('songs');  // Fetch artist and populate songs
+      
+      if (!artist) {
+        return res.status(404).json({
+          success: false,
+          message: "Artist not found"
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: artist
+      });
+    } catch (error) {
+      console.error("Error fetching artist:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  };
