@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logo from "../assets/images/logo-bg.png";
-import logoh from  "../assets/images/logo-hl.png";
+import logoh from  "../assets/images/browser-logo.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
 

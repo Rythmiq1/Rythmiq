@@ -65,8 +65,8 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
 
   return (
     <>
-      <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
-        <div className="flex items-center space-x-4">
+      <div className="navbar fixed top-0  w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6 mr-20">
+        <div className="flex items-center space-x-4 mr-14">
           {loggedInUser ? (
             <>
               {/* Notification Bell Icon */}
