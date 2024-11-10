@@ -17,15 +17,13 @@ const UserSchema = new Schema({
     // required: true, // Leave commented if using only OAuth for login
   },
   googleId: { type: String, unique: true, sparse: true },
-  spotifyId: { type: String, unique: true, sparse: true },
   googleAccessToken: String,
-  spotifyAccessToken: String,
-  spotifyRefreshToken: String,
-  image: String,
-  interests: {
-    type: [String],
-    default: [],
-  },
+  interests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Artist",
+    },
+  ],
   likedSongs: [
     {
       type: mongoose.Schema.Types.ObjectId,

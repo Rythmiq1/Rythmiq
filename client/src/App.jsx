@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import io from 'socket.io-client'; 
 import Login_signup from './pages/Login_signup';
-import GenreSelectionPopup from './pages/GenreSelector';
+import InterestSelector from './pages/InterestSelector';
 import Sidebar from './pages/Sidebar';
 import MusicPlayer from './pages/MusicPlayer';
 import Navbar from './pages/Navbar';
@@ -29,7 +29,7 @@ const App = () => {
     const [currentSong, setCurrentSong] = useState(null);
     const [songs, setSongs] = useState([]);
     const [socket, setSocket] = useState(null);  // Store the socket instance
-    const isAuthRoute = location.pathname === '/login' || location.pathname === '/genre';
+    const isAuthRoute = location.pathname === '/login' || location.pathname === '/interest';
 
     useEffect(() => {
         if (currentSong) {
@@ -71,11 +71,18 @@ const App = () => {
         if (!userId) return; // Don't initialize socket until userId is available
     
         const socketIo = io('http://localhost:8080', {
-          transports: ['websocket', 'polling'],
+            withCredentials: true
         });
     
         socketIo.emit('join-room', userId);
-    
+        socketIo.on('connect', () => {
+            console.log('Connected to WebSocket server');
+          });
+          
+          socketIo.on('connect_error', (error) => {
+            console.error('WebSocket connection error:', error);
+          });
+          
         // Listen for new song notifications
         socketIo.on('new-song', (data) => {
           console.log(`New song added: ${data.songName} by artist ${data.artistId}`);
@@ -98,7 +105,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login_signup />} />
-                        <Route path="/genre" element={<GenreSelectionPopup userId={userId} />} />
+                        <Route path="/interest" element={<InterestSelector userId={userId} />} />
                     </Routes>
                 </div>
             ) : (

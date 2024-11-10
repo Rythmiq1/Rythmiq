@@ -3,13 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { handleError, handleSuccess } from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
-import GenreSelectionPopup from './GenreSelector'; 
 
 function Login_signup() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSignInActive, setIsSignInActive] = useState(true);
-  const [showGenrePopup, setShowGenrePopup] = useState(false); 
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -74,7 +72,7 @@ function Login_signup() {
             sessionStorage.setItem('userId', id);
 
             setTimeout(() => {
-                navigate('/genre')
+                navigate('/interest');
             }, 1000);
         } else if (error) {
             const details = error?.details[0]?.message;
@@ -127,7 +125,7 @@ const handleLogin = async (e) => {
             sessionStorage.setItem('token', jwtToken);
             sessionStorage.setItem('loggedInUser', name);
             sessionStorage.setItem('userId', userId);
-            console.log(jwtToken)
+            console.log(jwtToken);
             console.log(userId);
             setTimeout(() => {
                 navigate('/home'); // Navigate to home page after login
@@ -210,12 +208,8 @@ const handleLogin = async (e) => {
           </div>
         </div>
       </div>
-      
-      <ToastContainer />
 
-      {showGenrePopup && ( // Render the genre selection popup if it is to be shown
-        <GenreSelectionPopup onClose={() => setShowGenrePopup(false)} />
-      )}
+      <ToastContainer />
     </div>
   );
 }

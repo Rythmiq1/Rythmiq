@@ -80,54 +80,6 @@ const login = async (req, res) => {
     }
 }
 
-const selectGenres = async (req, res) => {
-    try {
-        const { genreIds } = req.body;
-
-        if (!Array.isArray(genreIds) || genreIds.length < 3) {
-            return res.status(400).json({
-                success: false,
-                message: "Please select at least 3 genres."
-            });
-        }
-
-        // Attempt to get the userId from both possible fields
-        const userId = req.user.userId || req.user._id; 
-
-        if (!userId) {
-            return res.status(403).json({
-                success: false,
-                message: "User ID not found in request."
-            });
-        }
-
-        const updatedUser = await UserModel.findByIdAndUpdate(
-            userId, 
-            { interests: genreIds },
-            { new: true, useFindAndModify: false }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found."
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Genres selected successfully",
-            data: updatedUser
-        });
-    } catch (err) {
-        console.error("Error saving genres:", err);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        });
-    }
-};
 
 
-
-export { signup, login, selectGenres };
+export { signup, login};

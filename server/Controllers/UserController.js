@@ -245,3 +245,71 @@ export const getFollowedArtists = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+export const selectInterests = async (req, res) => {
+    try {
+        const { artistIds } = req.body;
+
+        // Ensure at least 3 artist IDs are selected
+        if (!Array.isArray(artistIds) || artistIds.length < 3) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select at least 3 artists."
+            });
+        }
+
+        // Get the userId from req.user (check for existence first)
+        const userId = req.user?.userId || req.user?._id;
+
+        if (!userId) {
+            return res.status(403).json({
+                success: false,
+                message: "User ID not found in request."
+            });
+        }
+
+        // Iterate through the artistIds one by one and update the user's interests
+        for (let artistId of artistIds) {
+            // Check if artistId is valid by looking it up in the Artist collection
+            const artist = await Artist.findById(artistId);
+
+            if (!artist) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Artist with ID ${artistId} does not exist.`
+                });
+            }
+
+            // Add the valid artist to the user's interests (if not already present)
+            const user = await UserModel.findById(userId);
+
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found."
+                });
+            }
+
+            // Check if the artist is already in the user's interests to avoid duplicates
+            if (!user.interests.includes(artistId)) {
+                user.interests.push(artistId);
+                await user.save(); // Save the updated user document
+            }
+        }
+
+        // After all updates, send success response
+        const updatedUser = await UserModel.findById(userId).populate('interests'); // Populate artist details
+
+        res.status(200).json({
+            success: true,
+            message: "Interests selected successfully",
+            data: updatedUser
+        });
+
+    } catch (err) {
+        console.error("Error saving interests:", err);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
