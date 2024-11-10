@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-// Establish socket connection
 const socket = io('http://localhost:8080', {
   transports: ['websocket', 'polling'],
   withCredentials: true,
@@ -16,6 +15,9 @@ const SocketRoom = ({ setCurrentSong }) => {
   const [selectedSong, setSelectedSong] = useState(null);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
+  const [currentTime, setCurrentTime] = useState(0); // Track current time
+  const [adminId, setAdminId] = useState(null); // Track the room admin
+
   const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
@@ -61,13 +63,19 @@ const SocketRoom = ({ setCurrentSong }) => {
         if (data && data.song) {
           setSelectedSong(data.song);
           setCurrentSong(data.song); // Update current song prop in App.jsx
-          setSongUrl(data.song.url);
+          setSongUrl(data.song.file);
           setIsPlaying(true);
         } else {
           console.error('Received undefined song data in playSong event');
         }
       });
-      
+
+      // Listen for time updates
+      socket.on('updateTime', (data) => {
+        if (data.roomId === roomId && data.userId !== userId) {
+          setCurrentTime(data.newTime); // Update the time for other users
+        }
+      });
 
       fetchSongs();
     }
@@ -76,18 +84,19 @@ const SocketRoom = ({ setCurrentSong }) => {
       socket.off('userJoined');
       socket.off('togglePlay');
       socket.off('playSong');
+      socket.off('updateTime');
     };
-  }, [userId, setCurrentSong]);
+  }, [userId, roomId, setCurrentSong]);
 
   const playSong = (song) => {
-    if (roomId) {
+    if (roomId && userId === adminId) { // Check if current user is the admin
       setSelectedSong(song);
       setCurrentSong(song);
       setSongUrl(song.file);
       console.log(song.file)
       socket.emit('playSong', { roomId, song, userId }); // Emit the song to everyone in the room
     } else {
-      alert('Please create or join a room to play music.');
+      alert('Only the room admin can play or change the song.');
     }
   };
 
@@ -97,6 +106,7 @@ const SocketRoom = ({ setCurrentSong }) => {
       socket.emit('joinRoom', { roomId, userId }, (response) => {
         if (response && response.success) {
           console.log(`Successfully joined room ${roomId}`);
+          setAdminId(response.adminId); // Set the admin ID when joining
         } else {
           console.error('Failed to join room');
         }
@@ -111,6 +121,7 @@ const SocketRoom = ({ setCurrentSong }) => {
     if (userId) {
       const newRoomId = generateRoomId();
       setRoomId(newRoomId);
+      setAdminId(userId); // Set the creator as the admin
       socket.emit('createRoom', { roomId: newRoomId, userId }, (response) => {
         if (response && response.success) {
           console.log(`Room created with ID: ${newRoomId}`);
@@ -124,12 +135,19 @@ const SocketRoom = ({ setCurrentSong }) => {
   };
 
   const togglePlay = () => {
-    if (roomId) {
+    if (roomId && userId === adminId) { // Check if current user is the admin
       const newPlayingStatus = !isPlaying;
       setIsPlaying(newPlayingStatus);
       socket.emit('togglePlay', { roomId, isPlaying: newPlayingStatus, userId });
     } else {
-      alert('Please create or join a room to play music.');
+      alert('Only the room admin can control playback.');
+    }
+  };
+
+  const handleTimeUpdate = (newTime) => {
+    setCurrentTime(newTime);
+    if (roomId && userId) {
+      socket.emit('updateTime', { roomId, userId, newTime }); // Emit time update to server
     }
   };
 
@@ -189,9 +207,11 @@ const SocketRoom = ({ setCurrentSong }) => {
 
         {roomId && (
           <div className="mt-4">
-            <button onClick={togglePlay} className="bg-green-500 text-white p-2">
-              {isPlaying ? 'Pause' : 'Play'}
-            </button>
+            {userId === adminId && (
+              <button onClick={togglePlay} className="bg-green-500 text-white p-2">
+                {isPlaying ? 'Pause' : 'Play'}
+              </button>
+            )}
           </div>
         )}
 
@@ -220,12 +240,14 @@ const SocketRoom = ({ setCurrentSong }) => {
                   className="cursor-pointer hover:text-blue-500 flex justify-between items-center"
                 >
                   {song.name} - {song.artist}
-                  <button
-                    onClick={() => playSong(song)}
-                    className="bg-blue-500 text-white p-2 ml-2"
-                  >
-                    Play
-                  </button>
+                  {userId === adminId && (
+                    <button
+                      onClick={() => playSong(song)}
+                      className="bg-blue-500 text-white p-2 ml-2"
+                    >
+                      Play
+                    </button>
+                  )}
                 </li>
               ))
             ) : (
@@ -233,6 +255,19 @@ const SocketRoom = ({ setCurrentSong }) => {
             )}
           </ul>
         </div>
+
+        {selectedSong && (
+          <div className="mt-4">
+            <p className="text-white">Current Song: {selectedSong.name}</p>
+            <input
+              type="range"
+              value={currentTime}
+              max={selectedSong.duration || 100}
+              onChange={(e) => handleTimeUpdate(Number(e.target.value))}
+              className="w-full"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

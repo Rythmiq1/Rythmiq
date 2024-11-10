@@ -2,7 +2,7 @@ const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-[#006161]
 import { useLocation,useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { FaBell } from 'react-icons/fa';
-
+import axios from 'axios'
 function Navbar({ notificationCount, setNotificationCount, notifications }) {
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState('');
@@ -65,8 +65,8 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
 
   return (
     <>
-      <div className="navbar fixed top-0  w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6 mr-20">
-        <div className="flex items-center space-x-4 mr-14">
+      <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
+        <div className="flex items-center space-x-4">
           {loggedInUser ? (
             <>
               {/* Notification Bell Icon */}

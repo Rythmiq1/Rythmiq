@@ -1,4 +1,3 @@
-// Import dependencies
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -7,7 +6,6 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import { Strategy as SpotifyStrategy } from 'passport-spotify';
 import jwt from 'jsonwebtoken';
 import { Server } from 'socket.io';
 import ArtistRouter from './Routes/ArtistRouter.js';
@@ -24,8 +22,6 @@ dotenv.config();
 const PORT = process.env.PORT || 8080;
 const app = express();
 const server = http.createServer(app);
-
-// Initialize Socket.io with CORS configuration
 
 // Middleware
 app.use(bodyParser.json());
@@ -76,30 +72,6 @@ passport.use(
   })
 );
 
-// Spotify Strategy
-passport.use(
-  new SpotifyStrategy({
-    clientID: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/callback/spotify",
-    scope: ['user-read-email', 'user-read-private'],
-  },
-  async (accessToken, refreshToken, expires_in, profile, done) => {
-    try {
-      let user = await Userdb.findOne({ $or: [{ spotifyId: profile.id }, { email: profile.emails[0].value }] });
-      if (user) {
-        user.spotifyId = profile.id;
-        user.spotifyAccessToken = accessToken;
-        user.spotifyRefreshToken = refreshToken;
-        await user.save();
-      }
-      return done(null, user);
-    } catch (error) {
-      return done(error, null);
-    }
-  })
-);
-
 // Serialize and deserialize
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -110,29 +82,25 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 
 app.get("/auth/google/callback",
 passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
-(req, res) => {
-    res.redirect(`http://localhost:8080/auth/spotify?googleAccessToken=${req.user.googleAccessToken}`);
-  }
-);
-
-app.get('/auth/spotify', passport.authenticate('spotify', { scope: ['user-read-email', 'user-read-private'] }));
-
-app.get("/auth/callback/spotify",
-passport.authenticate("spotify", { failureRedirect: "http://localhost:5173/login" }),
 async (req, res) => {
+  const user = req.user;
   const token = jwt.sign(
     {
-      userId: req.user._id,
-      name: req.user.name,
-      googleAccessToken: req.user.googleAccessToken,
-      spotifyAccessToken: req.user.spotifyAccessToken
+      userId: user._id,
+      name: user.name,
+      googleAccessToken: user.googleAccessToken
     },
     process.env.JWT_SECRET,
     { expiresIn: '24h' }
   );
-  res.redirect(`http://localhost:5173/genre?token=${token}&name=${encodeURIComponent(req.user.name)}&userId=${req.user._id}&spotifyAccessToken=${req.user.spotifyAccessToken}`);
-}
-);
+  const isNewUser = user.interests.length === 0;
+  if (isNewUser) {
+    res.redirect(`http://localhost:5173/interest?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
+  } else {
+    res.redirect(`http://localhost:5173/home?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
+  }
+});
+
 
 app.get("/login/success", ensureAuthenticated, (req, res) => {
   if (req.user) {
@@ -151,38 +119,48 @@ app.use("/album", albumRouter);
 app.use('/auth', AuthRouter);
 app.use('/artist', ArtistRouter);
 
-
-
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000'],  // Allowed origins
-    methods: ['GET', 'POST'],  // Allowed methods
-    allowedHeaders: ['Content-Type'],  // Allowed headers
-    credentials: true,  // Enable credentials
-    transports: ['websocket', 'polling'],  // Allowed transport protocols
-  }
+    origin: ['http://localhost:5173', 'http://localhost:3000'], 
+    methods: ['GET', 'POST'], 
+    allowedHeaders: ['Content-Type'], 
+    credentials: true,  
+  },
+  transports: ['websocket', 'polling'],  
 });
 
-let rooms = {};  // Store rooms and users
+
+let rooms = {};
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // Handle room joining
+  socket.on('join-room', (userId) => {
+    if (userId) {
+      socket.join(userId);
+      console.log(`User with ID ${userId} joined their room`);
+    }
+  });
+
+  socket.on('new-song', (songData) => {
+    if (songData && songData.artistId) {
+      console.log('Sending new song notification:', songData);
+      io.to(songData.artistId).emit('new-song', songData);
+    }
+  });
+
   socket.on('joinRoom', ({ roomId, userId }) => {
-    socket.join(roomId);  // Join the specific room
+    socket.join(roomId);  
 
     if (!rooms[roomId]) {
-      // Initialize the room if it doesn't exist
       rooms[roomId] = { 
         isPlaying: false, 
-        song: null,  // Changed to store the full song object
+        song: null, 
         currentTime: 0, 
-        users: [], 
+        users: [],
       };
     }
 
-    // Add user to the room if not already present
     if (!rooms[roomId].users.find(user => user.userId === userId)) {
       rooms[roomId].users.push({ userId, socketId: socket.id });
     }
@@ -194,19 +172,33 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('userJoined', { userId, users: rooms[roomId].users });
   });
 
-  // Handle song playback (called when a song is played)
+  // Handle song playback (when a song is played by a user)
   socket.on('playSong', ({ roomId, song, userId }) => {
     if (rooms[roomId]) {
-      rooms[roomId].song = song;  // Store the full song object
+      rooms[roomId].song = song;  // Store the song object
       rooms[roomId].isPlaying = true;
 
-      // Log the userId and song details when the song is being sent
       console.log(`User with ID ${userId} is playing song in room ${roomId}: ${song.name}`);
 
       // Emit the song to all users in the room
       io.to(roomId).emit('playSong', { song, userId });
+
+      // Emit the current song time (starting from 0)
+      io.to(roomId).emit('syncTime', 0);
     } else {
       console.log(`Room ${roomId} does not exist for playSong event.`);
+    }
+  });
+
+  // Handle time update (called when a user updates their time)
+  socket.on('updateTime', ({ roomId, userId, newTime }) => {
+    if (rooms[roomId]) {
+      rooms[roomId].currentTime = newTime;  // Update the current time in the room
+
+      // Emit the updated time to all users in the room, except the one who sent it
+      socket.to(roomId).emit('updateTime', { userId, newTime });
+    } else {
+      console.log(`Room ${roomId} does not exist for updateTime event.`);
     }
   });
 
@@ -223,7 +215,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle time sync for the song (called when time sync is required)
+  // Handle sync time (called when time sync is required)
   socket.on('syncTime', ({ roomId, currentTime }) => {
     if (rooms[roomId]) {
       rooms[roomId].currentTime = currentTime;
@@ -243,7 +235,6 @@ io.on('connection', (socket) => {
     for (let roomId in rooms) {
       const userIndex = rooms[roomId].users.findIndex(user => user.socketId === socket.id);
       if (userIndex > -1) {
-        // Remove user from the room's user list
         const user = rooms[roomId].users[userIndex];
         rooms[roomId].users.splice(userIndex, 1);
         io.to(roomId).emit('userLeft', { userId: user.userId, users: rooms[roomId].users });
@@ -259,10 +250,6 @@ io.on('connection', (socket) => {
 
 // Export io for use in other files
 export { io };
-
-
-
-
 
 // Start server
 server.listen(PORT, () => {
