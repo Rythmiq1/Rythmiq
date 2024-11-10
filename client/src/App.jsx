@@ -123,7 +123,7 @@ const App = () => {
                                 <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
                                 <Route path="/player" element={<Player />} />
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
-                                <Route path='/room' element={<SocketRoom/>}/>
+                                <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                             </Routes>
                         </div>
                     </div>
