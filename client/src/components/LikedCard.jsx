@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import '../App.css';
+
 const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
     const [liked, setLiked] = useState(isLiked);
 
     useEffect(() => {
-        setLiked(isLiked); // Update local liked state based on prop
+        setLiked(isLiked);
     }, [isLiked]);
 
     const handleLike = async () => {
@@ -55,42 +55,43 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
     };
 
     return (
-        <div 
-            onClick={onSelect} 
-            className='card'
-        >
-            <div className='bg-black  w-64 h-80 p-4 rounded-lg'>
-            <div className="relative">
-                <img src={song.image} alt={song.name} className="w-full h-40 object-cover rounded-md" />
-                
-                {/* Heart icon button */}
-                <button 
-                    onClick={(e) => { e.stopPropagation(); handleLike(); }} 
-                    className="absolute ml-32 mt-16 text-2xl"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                    <span 
-                        role="img" 
-                        aria-label="heart" 
-                        className={`transition duration-200 ${liked ? 'text-red-500' : 'text-gray-400'}`}
+        <div className="bg-transparent">
+            <div
+                className="w-72 h-[420px] rounded-md shadow-md text-white 
+                    flex flex-col cursor-pointer transform transition-transform duration-200 
+                    hover:scale-105 hover:border-2 gas kr"
+            >
+                <img
+                    src={song.image}
+                    alt={song.name}
+                    className="object-cover w-full h-64 rounded-t-md"
+                />
+
+                <div className="flex-grow p-4 space-y-4 flex flex-col justify-between align-middle relative">
+                    <div className="space-y-2">
+                        <h2 className="text-xl font-semibold tracking-wide text-white truncate">{song.name}</h2>
+                        <p className="text-white text-sm truncate">
+                            {song.desc}
+                        </p>
+                        <p className="text-gray-400 text-sm">Duration: {song.duration}</p>
+                    </div>
+
+                    {/* Like Button at the bottom */}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); handleLike(); }} 
+                        className="absolute right-2 bottom-0 text-2xl"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                     >
-                        {liked ? '❤️' : '🤍'}
-                    </span>
-                </button>
-
-                   {/* Song details */}
-
-                <div className="mt-3">
-                <h3 className="text-lg font-semibold text-white">{song.name}</h3>
-                <p className="text-gray-400 text-sm">{song.desc}</p>
-                <p className="text-gray-400 text-sm mt-1">Duration: {song.duration}</p>
+                        <div
+                            role="img" 
+                            aria-label="heart" 
+                            className={`transition duration-200 ${liked ? 'text-red-500' : 'text-gray-400'}`}
+                        >
+                            {liked ? '❤️' : '🤍'}
+                        </div>
+                    </button>
+                </div>
             </div>
-            </div>
-            </div>
-           
-
-          
-            
         </div>
     );
 };

@@ -3,6 +3,8 @@ import logo from "../assets/images/logo-bg.png";
 import logoh from  "../assets/images/browser-logo.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
+import { FaMusic } from 'react-icons/fa'; // Music icon from Font Awesome
+import { AiOutlineUser } from 'react-icons/ai'; // Artist icon from Ant Design
 
 function Sidebar() {
   const [activeLink, setActiveLink] = useState('/home');
@@ -37,13 +39,7 @@ function Sidebar() {
           <IconText iconName="library_music" displayText="Your Library" active={activeLink === '/library'} />
         </Link>
 
-        <Link to="/room" onClick={() => setActiveLink('/room')} className="sidebar-link">
-          <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
-        </Link>
-      {/* </div>
-
-      {/* Additional Options Section */}
-      <div className="pt-5 space-y-2">
+     
         <Link to="/playlist" onClick={() => setActiveLink('/playlist')} className="sidebar-link">
           <IconText iconName="library_add" displayText="Create Playlist" active={activeLink === '/playlist'} />
         </Link>
@@ -53,10 +49,16 @@ function Sidebar() {
         <Link to="/history" onClick={() => setActiveLink('/history')} className="sidebar-link">
           <IconText iconName="history" displayText="History" active={activeLink === '/history'} />
         </Link>
-      </div>
 
-      {/* Language Selector and Footer Links */}
-      {/* Conditionally render the footer only when the sidebar is open */}
+        <Link to="/artists" onClick={() => setActiveLink('/artists')} className="sidebar-link">
+          <IconText iconName="artist" displayText="Artists" active={activeLink === '/artists'} />
+        </Link>
+      
+        <Link to="/room" onClick={() => setActiveLink('/room')} className="sidebar-link">
+          <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
+        </Link>
+
+
       {isSidebarOpen && (
         <div className="px-5 pb-5">
           <div className="mt-4 text-gray-400 text-xs space-y-1">

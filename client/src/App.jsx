@@ -20,6 +20,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Songs from './pages/Songs';
 import Share from './pages/Share';
 import SocketRoom from './pages/SocketRoom';
+import Artists from './pages/Artists';
+import ArtistPage from './pages/ArtistPage';
+
 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
@@ -44,20 +47,9 @@ const App = () => {
         }
     }, [currentSong]);
      
-    //  const id = '0TnOYISbd1XYRBk9myaseg'
-
 
      const [token, setToken] = useState(null);
-
-     // Fallback for testing
-    //  useEffect(() => {
-    //    const fetchToken = async () => {
-    //     //  const fetchedToken = await getSpotifyToken();
-    //      setToken(fetchedToken || 'default-token-for-testing');
-    //    };
-     
-    //    fetchToken();
-    //  }, []);
+  
 
     const handleSongSelection = (song, albumSongs) => {
         setCurrentSong(song);
@@ -124,6 +116,10 @@ const App = () => {
                                 <Route path="/player" element={<Player />} />
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
                                 <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
+                                <Route path="/artists" element={<Artists/>} />
+                                <Route path="/artists/:id" element={<ArtistPage/>} />
+                                
+
                             </Routes>
                         </div>
                     </div>
