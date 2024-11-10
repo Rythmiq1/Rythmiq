@@ -131,4 +131,22 @@ const removeSong = async (req, res) => {
 
 }
 
-export { addSong, listSong, removeSong }
+const listLastFiveSongs = async (req, res) => {
+    try {
+      // Fetch the last 5 songs, sorted by 'createdAt' in descending order
+      const lastFiveSongs = await songModel
+        .find({})
+        .sort({ createdAt: -1 })  // Sort by 'createdAt' field, newest first
+        .limit(5)                  // Limit the results to 5 songs
+        .populate('album');        // Populate the 'album' field if needed
+  
+      res.json({ success: true, songs: lastFiveSongs });
+    } catch (error) {
+      console.error("Error fetching last 5 songs:", error);
+      res.json({ success: false, message: "Failed to fetch last 5 songs" });
+    }
+  };
+  
+
+  
+export { addSong, listSong, removeSong,listLastFiveSongs }

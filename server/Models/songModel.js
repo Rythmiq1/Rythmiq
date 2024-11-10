@@ -32,6 +32,7 @@ const songSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Song = mongoose.models.Song || mongoose.model("Song", songSchema);

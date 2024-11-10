@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Home({ onSongSelect }) {
   const [playlistsData, setPlaylistsData] = useState([]); // For playlists
-  const [songsData, setSongsData] = useState([]); // For songs
+  const [songsData, setSongsData] = useState([]); // For all songs
+  const [lastFiveSongs, setLastFiveSongs] = useState([]); // For the last 5 songs
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,13 +13,9 @@ function Home({ onSongSelect }) {
     // Fetch both playlists and songs data
     const fetchPlaylists = async () => {
       try {
-        const response = await fetch('http://localhost:8080/album/list');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (Array.isArray(data.albums)) {
-          setPlaylistsData(data.albums); // Set playlists data
+        const response = await axios.get('http://localhost:8080/album/list');
+        if (Array.isArray(response.data.albums)) {
+          setPlaylistsData(response.data.albums); // Set playlists data
         } else {
           throw new Error('Data fetched for playlists is not an array');
         }
@@ -29,13 +27,9 @@ function Home({ onSongSelect }) {
 
     const fetchSongs = async () => {
       try {
-        const response = await fetch('http://localhost:8080/song/list');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (Array.isArray(data.songs)) {
-          setSongsData(data.songs); // Set songs data
+        const response = await axios.get('http://localhost:8080/song/list');
+        if (Array.isArray(response.data.songs)) {
+          setSongsData(shuffleArray(response.data.songs)); // Shuffle songs and set data
         } else {
           throw new Error('Data fetched for songs is not an array');
         }
@@ -45,23 +39,49 @@ function Home({ onSongSelect }) {
       }
     };
 
-    // Execute both fetch operations
-    Promise.all([fetchPlaylists(), fetchSongs()]).finally(() => setLoading(false));
+    // Fetch last 5 songs for "Sound of India" section
+    const fetchLastFiveSongs = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/song/last5');
+        if (Array.isArray(response.data.songs)) {
+          setLastFiveSongs(response.data.songs); // Set last 5 songs data
+        } else {
+          throw new Error('Data fetched for last 5 songs is not an array');
+        }
+      } catch (error) {
+        console.error("Error fetching last 5 songs:", error);
+        setError(error.message);
+      }
+    };
+
+    // Execute all fetch operations
+    Promise.all([fetchPlaylists(), fetchSongs(), fetchLastFiveSongs()])
+      .finally(() => setLoading(false));
   }, []);
+
+  const shuffleArray = (array) => {
+    const shuffledArray = [...array];
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]]; // Swap elements
+    }
+    return shuffledArray;
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
+    <div className='mb-24'>
       {/* Playlists Section */}
+      <SongListView titleText={"Latest Release"} cardData={lastFiveSongs} onSongSelect={onSongSelect} />
       <PlayListView titleText={"Playlist"} cardData={playlistsData} />
 
       {/* Songs Available Section */}
       <SongListView titleText={"Songs Available"} cardData={songsData} onSongSelect={onSongSelect} />
 
-      {/* Sound of India Section */}
-      <SongListView titleText={"Sound Of India"} cardData={songsData} onSongSelect={onSongSelect} />
+      {/* Sound of India Section - Show the last 5 songs */}
+     
     </div>
   );
 }
