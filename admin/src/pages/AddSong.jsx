@@ -14,29 +14,36 @@ const AddSong = () => {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [album, setAlbum] = useState("none");
+  const [artist, setArtist] = useState("none");
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
-
-  // Fetch album data when component mounts
+  const [artistData, setArtistData] = useState([]);
   useEffect(() => {
-    const fetchAlbums = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${url}/album/list`); // Correct endpoint for albums
-        console.log(response); // Log the entire response
-    
-        if (response.data.success) {
-          setAlbumData(response.data.albums); // Set album data
+        const albumResponse = await axios.get(`${url}/album/list`);
+        console.log("Album Response:", albumResponse);  
+        if (albumResponse.data.success) {
+          setAlbumData(albumResponse.data.albums);  
         } else {
           toast.error("Failed to fetch albums.");
         }
+        const artistResponse = await axios.get(`${url}/artist/artists`);
+        console.log("Artist Response:", artistResponse); 
+        if (artistResponse.data.success) {
+          setArtistData(artistResponse.data.data);  
+        } else {
+          toast.error("Failed to fetch artists.");
+        }
       } catch (error) {
-        console.error("Fetch albums error:", error); // Log the error object
-        toast.error("An error occurred while fetching albums.");
+        console.error("Error occurred:", error);
+        toast.error("An error occurred while fetching data.");
       }
     };
-    
-    fetchAlbums(); // Call fetchAlbums to load album data
+  
+    fetchData();  
   }, []);
+  
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -48,24 +55,23 @@ const AddSong = () => {
       formData.append("desc", desc);
       formData.append("image", image);
       formData.append("audio", song);
-      formData.append("album", album); // Include the album ID
-
-      // Calling API to add song
+      formData.append("album", album);
+      formData.append("artist", artist);
       const response = await axios.post(`${url}/song/add`, formData);
 
       if (response.data.success) {
-        toast.success("Song Added Successfully"); // Display success toast
-        // Reset form fields
+        toast.success("Song Added Successfully");
         setName("");
         setDesc("");
         setAlbum("none");
+        setArtist("none");
         setImage(null);
         setSong(null);
       } else {
         toast.error("Something went wrong");
       }
     } catch (error) {
-      console.error("Error occurred while adding song:", error); // Log the error
+      console.error("Error occurred while adding song:", error);
       toast.error("Error Occurred");
     } finally {
       setLoading(false);
@@ -119,9 +125,26 @@ const AddSong = () => {
           <p>Album</p>
           <select onChange={(e) => setAlbum(e.target.value)} value={album} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]'>
             <option value="none">None</option>
-            {albumData.map((albumItem) => (
-              <option key={albumItem._id} value={albumItem._id}>{albumItem.name}</option>
-            ))}
+            {albumData && albumData.length > 0 ? (
+              albumData.map((albumItem) => (
+                <option key={albumItem._id} value={albumItem._id}>{albumItem.name}</option>
+              ))
+            ) : (
+              <option disabled>No albums available</option>
+            )}
+          </select>
+        </div>
+        <div className="flex flex-col gap-2.5">
+          <p>Artist</p>
+          <select onChange={(e) => setArtist(e.target.value)} value={artist} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]'>
+            <option value="none">None</option>
+            {artistData && artistData.length > 0 ? (
+              artistData.map((artistItem) => (
+                <option key={artistItem._id} value={artistItem._id}>{artistItem.name}</option>
+              ))
+            ) : (
+              <option disabled>No artists available</option>
+            )}
           </select>
         </div>
       </div>

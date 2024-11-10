@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MdNotificationsNone } from "react-icons/md";  // Notification icon
+import { MdNotificationsNone } from "react-icons/md";  
 
 const notificationsData = [
   { id: 1, text: "You left your coffee in the microwave again... It's cold now.", time: "2 minutes ago" },
@@ -27,7 +27,7 @@ const Notification = () => {
               <div key={notification.id} className="flex items-start px-4 py-3 border-b hover:bg-gray-100">
                 
                 <div className="w-8 h-8 flex items-center justify-center mr-3">
-                  <MdNotificationsNone className="w-6 h-6 text-gray-500" /> {/* React icon without background */}
+                  <MdNotificationsNone className="w-6 h-6 text-gray-500" /> 
                 </div>
 
                 <div className="text-sm flex-1">

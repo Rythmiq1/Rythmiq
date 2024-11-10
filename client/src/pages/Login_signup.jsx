@@ -3,22 +3,21 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { handleError, handleSuccess } from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
-import GenreSelectionPopup from './GenreSelector'; // Import the new popup component
+import GenreSelectionPopup from './GenreSelector'; 
 
 function Login_signup() {
   const navigate = useNavigate();
-  const location = useLocation(); // Use location to access query parameters
+  const location = useLocation();
   const [isSignInActive, setIsSignInActive] = useState(true);
-  const [showGenrePopup, setShowGenrePopup] = useState(false); // State for genre popup
+  const [showGenrePopup, setShowGenrePopup] = useState(false); 
   
-  // Check for query parameters to determine which form to show
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const signIn = params.get('signin');
     if (signIn === 'true') {
-      setIsSignInActive(false); // Show the login form
+      setIsSignInActive(false); 
     } else {
-      setIsSignInActive(true); // Show the signup form
+      setIsSignInActive(true); 
     }
   }, [location.search]);
 
@@ -119,7 +118,7 @@ const handleLogin = async (e) => {
         });
 
         const result = await response.json();
-        const { success, message, jwtToken, id, name, error } = result;
+        const { success, message, jwtToken, userId, name, error } = result;
 
         if (success) {
             handleSuccess(message);
@@ -127,8 +126,9 @@ const handleLogin = async (e) => {
             // Store user data in localStorage on successful login
             sessionStorage.setItem('token', jwtToken);
             sessionStorage.setItem('loggedInUser', name);
-            sessionStorage.setItem('userId', id);
-
+            sessionStorage.setItem('userId', userId);
+            console.log(jwtToken)
+            console.log(userId);
             setTimeout(() => {
                 navigate('/home'); // Navigate to home page after login
             }, 1000);
@@ -149,14 +149,14 @@ const handleLogin = async (e) => {
     <div className={`container ${isSignInActive ? '' : 'right-panel-active'}`} id="container">
       <div className={`form-container sign-up-container ${isSignInActive ? 'hidden' : ''}`}>
         <form onSubmit={handleSignup}>
-          <h1>Create Account</h1>
+          <h1 className='text-white'>Create Account</h1>
           <input
             onChange={handleChange}
             type='text'
             name='name'
             placeholder='Enter Your name'
           />
-          <input
+          <input 
             onChange={handleChange}
             type='email'
             name='email'
@@ -168,14 +168,14 @@ const handleLogin = async (e) => {
             name='password'
             placeholder='Enter Your Password'
           />
-          <button id='signUp-btn' type='submit'>REGISTER</button>
+          <button className='btn' type='submit'><span>REGISTER</span></button>
         </form>
-        <button className='switch-btn Login' onClick={switchToSignIn}>Go to Login</button>
+        <button className='switch-btn Login ' onClick={switchToSignIn}>Go to Login</button>
       </div>
 
       <div className={`form-container sign-in-container ${isSignInActive ? '' : 'hidden'}`}>
         <form onSubmit={handleLogin}>
-          <h1>Login</h1>
+          <h1 className='text-white'>Login</h1>
           <input
             onChange={handleLChange}
             type="email"
@@ -190,8 +190,8 @@ const handleLogin = async (e) => {
             placeholder="PASSWORD"
             value={loginInfo.password}
           />
-          <button id='signIn-btn' type='submit'>Login</button>
-          <button className='login-with-google-btn' onClick={loginwithgoogle}>SIGN IN WITH GOOGLE</button>
+          <button className='btn' type='submit'><span>Login</span></button>
+          <button className='login-with-google-btn ' onClick={loginwithgoogle}>SIGN IN WITH GOOGLE</button>
         </form>
         <button className='switch-btn Login' onClick={switchToSignUp}>Go to Register</button>
       </div>

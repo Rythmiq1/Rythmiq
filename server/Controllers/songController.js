@@ -1,9 +1,13 @@
 import Album from '../Models/albumModel.js';
+import Artist from '../Models/artist.js';
+import UserModel from '../Models/User.js';
 import songModel from '../Models/songModel.js';
 import { uploadOnCloudinary } from '../config/cloudinary.js';
+import { io } from '../index.js';
+
 const addSong = async (req, res) => {
     try {
-        const { name, desc, album } = req.body; 
+        const { name, desc, album, artist } = req.body; 
         const audioFile = req.files.audio ? req.files.audio[0] : null; 
         const imageFile = req.files.image ? req.files.image[0] : null; 
 
@@ -14,13 +18,26 @@ const addSong = async (req, res) => {
             });
         }
 
-        // Check if the album exists
-        const albumExists = await Album.findById(album);
-        if (!albumExists) {
+        // Check if the artist exists
+        const artistExists = await Artist.findById(artist);
+        if (!artistExists) {
             return res.status(404).json({
                 success: false,
-                message: "Album not found."
+                message: "Artist not found."
             });
+        }
+
+        // Validate album if provided
+        let albumId = null;
+        if (album !== 'none' && album) {
+            const albumExists = await Album.findById(album); // Assuming you have an Album model
+            if (!albumExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Album not found."
+                });
+            }
+            albumId = album; // Valid album ID
         }
 
         const audioUpload = await uploadOnCloudinary(audioFile.path);
@@ -35,11 +52,12 @@ const addSong = async (req, res) => {
 
         const duration = `${Math.floor(audioUpload.duration / 60)}:${Math.floor(audioUpload.duration % 60)}`;
 
-        // Create song data with album reference
+        // Create song data with album and artist references
         const songData = {
             name,
             desc,
-            album, // Use the album ID here
+            album: albumId, // Ensure album is set to valid ObjectId or null
+            artist, // Artist ID
             image: imageUpload.secure_url,
             file: audioUpload.secure_url,
             duration
@@ -49,7 +67,27 @@ const addSong = async (req, res) => {
         const newSong = new songModel(songData);
         await newSong.save();
 
+        // Update artist's songs array
+        artistExists.songs.push(newSong._id);
+        await artistExists.save();
+
         console.log("Saved Song:", newSong);
+
+        // Find all users following this artist
+        const usersFollowingArtist = await UserModel.find({ followedArtists: artist });
+        console.log("Users following the artist:", usersFollowingArtist);
+
+        // Emit a notification to all users following this artist
+        usersFollowingArtist.forEach(user => {
+            console.log(`Sending notification to user: ${user._id}`);
+            io.to(user._id.toString()).emit('new-song', {
+                artistId: artist,
+                songId: newSong._id,
+                songName: newSong.name,
+                message: `New song added by ${artistExists.name}: ${newSong.name}`
+            });
+            console.log('message sent');
+        });
 
         res.status(201).json({
             success: true,
