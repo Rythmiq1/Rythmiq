@@ -4,6 +4,7 @@ import { IoMdHome } from "react-icons/io";
 import { IoSearchSharp } from "react-icons/io5";
 import { MdLibraryMusic } from "react-icons/md";
 import { FiPlusCircle } from "react-icons/fi";
+import { AiOutlineUser } from 'react-icons/ai'; 
 const IconText = ({ iconName, displayText, active }) => {
   const iconMap = {
     home: <IoMdHome className="text-3xl"/>,
@@ -13,6 +14,7 @@ const IconText = ({ iconName, displayText, active }) => {
     favorite: <FaHeart className="text-2xl"/>,
     history: <FaHistory className="text-2xl"/>,
     public: <FaGlobe className="text-2xl"/>,
+    artist :<AiOutlineUser className="text-2xl"/>
   };
 
   return (

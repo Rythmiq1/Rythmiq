@@ -15,6 +15,8 @@ import CreatePlaylist from './pages/CreatePlaylist';
 import History from './pages/History';
 import Player from './pages/Player';
 import Share from './pages/Share';
+import Artists from './pages/Artists';
+import ArtistPage from './pages/ArtistPage';
 
 const App = () => {
     const userId = localStorage.getItem('userId');
@@ -79,6 +81,8 @@ const App = () => {
                                 <Route path="/player" element={<Player/>} />
                                 {/* <Route path="/playlist-shared/:id" element={<Share/>} /> */}
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
+                                <Route path="/artists" element={<Artists/>} />
+                                <Route path="/artists/:id" element={<ArtistPage/>} />
                                 
 
                                
