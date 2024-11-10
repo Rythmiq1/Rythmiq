@@ -257,11 +257,12 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
         </div>
       </div>
       <div className='hidden lg:flex items-center gap-2 opacity-75'>
-      {isMuted ? (
-          <IoVolumeMuteOutline className="w-5 h-5 cursor-pointer text-white" onClick={toggleMute} />
-        ) : (
-          <IoVolumeHighOutline className="w-5 h-5 cursor-pointer text-white" onClick={toggleMute} />
-        )}
+      {isMuted ? ( <IoVolumeMuteOutline className="w-5 h-5 cursor-pointer text-white" onClick={toggleMute} />) 
+      : 
+      ( <IoVolumeHighOutline className="w-5 h-5 cursor-pointer text-white" onClick={toggleMute} />)
+        }
+       
+        {/* <img className='w-4 cursor-pointer ml-10' src={isMuted ? FaVolumeMute : FaVolumeUp} alt='volume' onClick={toggleMute} /> */}
 
 
         

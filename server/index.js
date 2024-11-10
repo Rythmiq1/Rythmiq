@@ -18,6 +18,8 @@ import Userdb from './Models/User.js';
 import './Models/db.js';
 import songRouter from './Routes/songRoute.js';
 import { ensureAuthenticated } from './Middlewares/Auth.js';
+import http from 'http';
+import { Server } from 'socket.io';
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -197,6 +199,90 @@ app.use("/album", albumRouter);
 app.use('/auth', AuthRouter);
 app.use('/artist',ArtistRouter);
 // Server setup
+// Socket.io integration
+
+
+const rooms = {}; // Room states
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+  
+
+  socket.on('joinRoom', ({ roomId, username }) => {
+    socket.join(roomId);
+    console.log(`User ${username} is joining room ${roomId}`);
+    if (!rooms[roomId]) {
+      rooms[roomId] = { isPlaying: false, songUrl: '', currentTime: 0, users: [] };
+    }
+    rooms[roomId].users.push(username);
+
+    io.to(socket.id).emit('roomState', rooms[roomId]);
+    io.to(roomId).emit('userJoined', { username, users: rooms[roomId].users });
+  });
+
+  socket.on('playSong', ({ roomId, songUrl }) => {
+    rooms[roomId].songUrl = songUrl;
+    rooms[roomId].isPlaying = true;
+    io.to(roomId).emit('playSong', { songUrl });
+  });
+
+  socket.on('togglePlay', ({ roomId, isPlaying }) => {
+    rooms[roomId].isPlaying = isPlaying;
+    io.to(roomId).emit('togglePlay', isPlaying);
+  });
+
+  socket.on('syncTime', ({ roomId, currentTime }) => {
+    rooms[roomId].currentTime = currentTime;
+    io.to(roomId).emit('syncTime', currentTime);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+
+  
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+fetch('https://api.spotify.com/v1/search?q=kuch+kuch&type=track', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer YOUR_SPOTIFY_ACCESS_TOKEN`
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  // Listen for join-room event and join the user’s room
+  socket.on('join-room', (userId) => {
+      if (userId) {
+          socket.join(userId);  // Join a room based on userId
+          console.log(`User with ID ${userId} joined their room`);
+      }
+  });
+
+  // Emit a 'new-song' event to users following the artist
+  socket.on('new-song', (songData) => {
+      // Logic to send notifications to users following the artist
+      console.log('Sending notification:', songData);
+      // Example: notify all users following the artist
+      io.to(songData.artistId).emit('new-song', songData);
+  });
+
+  socket.on('disconnect', () => {
+      console.log('A user disconnected:', socket.id);
+  });
+});
+
+export {io};
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 app.get("/", (req, res) => {
   res.status(200).json("Server Started");

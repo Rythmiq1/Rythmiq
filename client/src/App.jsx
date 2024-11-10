@@ -19,6 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Songs from './pages/Songs';
 import Share from './pages/Share';
+import SocketRoom from './pages/SocketRoom';
 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
@@ -122,7 +123,7 @@ const App = () => {
                                 <Route path="/history" element={<History setCurrentSong={handleSongSelection} />} />
                                 <Route path="/player" element={<Player />} />
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
-
+                                <Route path='/room' element={<SocketRoom/>}/>
                             </Routes>
                         </div>
                     </div>
