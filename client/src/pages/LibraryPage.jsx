@@ -227,7 +227,7 @@ const LibraryPage = () => {
       {savedPlaylists.map((playlist) => (
         <div
           key={playlist._id}
-          className="max-w-[16rem] w-72 rounded-md shadow-md bg-white text-white 
+          className="max-w-[16rem] w-72 rounded-md shadow-md bg-transparent text-white 
             flex flex-col cursor-pointer transform transition-transform duration-200 
             hover:scale-105 hover:border-2 gas kr"
         >
@@ -241,7 +241,7 @@ const LibraryPage = () => {
             <div className="flex-grow p-4 space-y-4 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="h-8">
-                  <h2 className="text-l font-semibold tracking-wide text-black truncate">
+                  <h2 className="text-l font-semibold tracking-wide text-white truncate">
                     {playlist.name}
                   </h2>
                 </div>
