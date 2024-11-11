@@ -377,3 +377,79 @@ export const selectInterests = async (req, res) => {
         });
     }
 };
+
+
+// Helper function to analyze song history and get the top song types (genres)
+const analyzeSongHistory = (songHistory) => {
+  const typeCount = {};
+
+  // Count how many times each type has been listened to
+  songHistory.forEach(song => {
+    if (typeCount[song.type]) {
+      typeCount[song.type]++;
+    } else {
+      typeCount[song.type] = 1;
+    }
+  });
+
+  // Sort types by frequency (descending order)
+  const sortedTypes = Object.entries(typeCount).sort((a, b) => b[1] - a[1]);
+
+  // Return top 3 types or fewer if there are less
+  return sortedTypes.slice(0, 3).map(type => type[0]);
+};
+
+export const getRecommendations = async (req, res) => {
+    try {
+      // Step 1: Get the user's ID from the request (you can modify this based on your authentication method)
+      const userId = req.user?.userId || req.user?._id;
+
+  
+      // Step 2: Fetch the user from the database (including interests)
+      const user = await UserModel.findById(userId).populate('interests');
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      // Step 3: Get the song history (sent from the frontend)
+      const songHistory = req.body.songHistory || [];
+      
+      // Step 4: Analyze the song history to get the top types (genres) of songs
+      let topTypes = [];
+      if (songHistory.length > 0) {
+        // Extract the song types (genres) from the song history
+        topTypes = analyzeSongHistory(songHistory);
+      } else {
+        // If song history is empty, fallback to default types
+        topTypes = ["pop", "rock", "hip-hop", "electronic"]; // Example default types
+      }
+  
+      // Step 5: Fetch songs by the top types (from the Song model)
+      const songsByType = await Song.find({ type: { $in: topTypes } }).limit(20);
+  
+      
+      const artistIds = user.interests.map(artist => artist._id);
+      const artists = await Artist.find({ _id: { $in: artistIds } }).populate('songs');
+    //   console.log("Fetched Artists:", artists); // Debugging log
+
+    let songsByInterest = [];
+    artists.forEach(artist => {
+    // console.log("Artist's Songs:", artist.songs); // Debugging log
+    songsByInterest = [...songsByInterest, ...artist.songs];
+    });
+      const combinedSongs = [...songsByType, ...songsByInterest];
+
+      const uniqueSongs = combinedSongs.filter((song, index, self) =>
+        index === self.findIndex((t) => (
+          t._id.toString() === song._id.toString()
+        ))
+      );
+  
+      res.status(200).json({ recommendations: uniqueSongs });
+    } catch (error) {
+      console.error("Error generating recommendations:", error.message || error);
+      res.status(500).json({ error: error.message || "Failed to generate recommendations" });
+    }
+  };
+  
+  

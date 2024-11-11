@@ -7,7 +7,7 @@ import { io } from '../index.js';
 
 const addSong = async (req, res) => {
     try {
-        const { name, desc, album, artist } = req.body; 
+        const { name, desc, album, artist, type } = req.body; 
         const audioFile = req.files.audio ? req.files.audio[0] : null; 
         const imageFile = req.files.image ? req.files.image[0] : null; 
 
@@ -58,6 +58,7 @@ const addSong = async (req, res) => {
             desc,
             album: albumId, // Ensure album is set to valid ObjectId or null
             artist, // Artist ID
+            type,
             image: imageUpload.secure_url,
             file: audioUpload.secure_url,
             duration

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-function Home({ onSongSelect }) {
+function Home({ onSongSelect,recommendations  }) {
   const [playlistsData, setPlaylistsData] = useState([]); // For playlists
   const [songsData, setSongsData] = useState([]); // For all songs
   const [lastFiveSongs, setLastFiveSongs] = useState([]); // For the last 5 songs
@@ -81,7 +81,7 @@ function Home({ onSongSelect }) {
       <SongListView titleText={"Songs Available"} cardData={songsData} onSongSelect={onSongSelect} />
 
       {/* Sound of India Section - Show the last 5 songs */}
-     
+      <SongListView titleText={"Recommended for You"} cardData={recommendations} onSongSelect={onSongSelect} />
     </div>
   );
 }

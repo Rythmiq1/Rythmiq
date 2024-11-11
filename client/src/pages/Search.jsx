@@ -52,7 +52,7 @@ const Search = ({ onSongSelect }) => {
   };
 
   return (
-    <div className="p-4 rounded-lg" style={{ backgroundColor: '#111828' }}>
+    <div className="p-4 rounded-lg bg-gradient-to-b from-[#006161] to-black" >
       <h2 className="text-3xl mb-4 text-white">Search Songs</h2>
       <input
         type="text"
@@ -62,19 +62,14 @@ const Search = ({ onSongSelect }) => {
         className="p-2 border border-gray-300 rounded w-full mb-4 text-black"
       />
       <div>
-        <div className="sm:grid hidden grid-cols-[0.5fr_1fr_2fr_1fr] items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5" style={{ backgroundColor: '#111828' }}>
-          <b className="text-white">Image</b>
-          <b className="text-white ml-12">Name</b>
-          <b className="text-white ml-44">Album</b>
-          <b className="text-white">Duration</b>
-        </div>
+        
 
         {filteredSongs.length > 0 ? (
           filteredSongs.map((song) => (
             <div
               key={song._id}
-              className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5"
-              style={{ backgroundColor: '#111828' }}
+              className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 bg-transparent text-sm mr-5"
+              
             >
               <img className="w-12" src={song.image} alt={song.title} />
               <p className="text-white font-semibold ml-12">{song.name}</p>

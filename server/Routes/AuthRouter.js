@@ -2,7 +2,7 @@ import { signup, login } from '../Controllers/AuthController.js';
 import { signupValidation, loginValidation } from '../Middlewares/AuthValidation.js';
 import { ensureAuthenticated } from '../Middlewares/Auth.js';
 import { addLikedSong,getLikedSongs,removeLikedSong,getSavedPlaylists, 
-  addSavedPlaylist,followArtist,getFollowedArtists,selectInterests,unfollowArtist,removeSavedPlaylist } from '../Controllers/UserController.js';
+  addSavedPlaylist,followArtist,getFollowedArtists,selectInterests,unfollowArtist,removeSavedPlaylist,getRecommendations } from '../Controllers/UserController.js';
 import express from 'express';
 
 const router = express.Router();
@@ -19,4 +19,5 @@ router.post('/remove-saved-playlist', ensureAuthenticated, removeSavedPlaylist);
 router.post('/save-playlist/:playlistId', ensureAuthenticated, addSavedPlaylist);
 router.post('/follow-artist',ensureAuthenticated, followArtist);
 router.get('/all-followed-artists',ensureAuthenticated, getFollowedArtists);
+router.post('/recommendations', ensureAuthenticated, getRecommendations);
 export default router;

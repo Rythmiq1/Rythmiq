@@ -84,7 +84,7 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
                 </button>
 
                 {notificationCount > 0 && (
-                  <span className="absolute top-6 right-6 bg-red-500 text-white text-xs rounded-full px-2">
+                  <span className="absolute top-6 right-16 bg-red-500 text-white text-xs rounded-full px-2">
                     {notificationCount}
                   </span>
                 )}

@@ -15,21 +15,21 @@ const AddSong = () => {
   const [desc, setDesc] = useState("");
   const [album, setAlbum] = useState("none");
   const [artist, setArtist] = useState("none");
+  const [type, setType] = useState(""); // State for song type
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
   const [artistData, setArtistData] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const albumResponse = await axios.get(`${url}/album/list`);
-        console.log("Album Response:", albumResponse);  
         if (albumResponse.data.success) {
           setAlbumData(albumResponse.data.albums);  
         } else {
           toast.error("Failed to fetch albums.");
         }
         const artistResponse = await axios.get(`${url}/artist/artists`);
-        console.log("Artist Response:", artistResponse); 
         if (artistResponse.data.success) {
           setArtistData(artistResponse.data.data);  
         } else {
@@ -43,7 +43,6 @@ const AddSong = () => {
   
     fetchData();  
   }, []);
-  
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -57,6 +56,8 @@ const AddSong = () => {
       formData.append("audio", song);
       formData.append("album", album);
       formData.append("artist", artist);
+      formData.append("type", type); // Append selected type
+
       const response = await axios.post(`${url}/song/add`, formData);
 
       if (response.data.success) {
@@ -65,6 +66,7 @@ const AddSong = () => {
         setDesc("");
         setAlbum("none");
         setArtist("none");
+        setType(""); // Reset type after submission
         setImage(null);
         setSong(null);
       } else {
@@ -122,6 +124,20 @@ const AddSong = () => {
         </div>
 
         <div className="flex flex-col gap-2.5">
+          <p>Song Type</p>
+          <select onChange={(e) => setType(e.target.value)} value={type} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]' required>
+            <option value="">Select Type</option>
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="energetic">Energetic</option>
+            <option value="calm">Calm</option>
+            <option value="romantic">Romantic</option>
+            <option value="uplifting">Uplifting</option>
+            <option value="melancholy">Melancholy</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
           <p>Album</p>
           <select onChange={(e) => setAlbum(e.target.value)} value={album} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]'>
             <option value="none">None</option>
@@ -134,6 +150,7 @@ const AddSong = () => {
             )}
           </select>
         </div>
+        
         <div className="flex flex-col gap-2.5">
           <p>Artist</p>
           <select onChange={(e) => setArtist(e.target.value)} value={artist} className='bg-transparent border-2 border-black p-2.5 w-[max(40vw,250px)]'>
@@ -148,6 +165,7 @@ const AddSong = () => {
           </select>
         </div>
       </div>
+      
       <button type="submit" className="bg-black text-white p-2 rounded">Submit</button>
       <ToastContainer />
     </form>

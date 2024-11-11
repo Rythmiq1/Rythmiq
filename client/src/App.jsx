@@ -22,7 +22,7 @@ import Share from './pages/Share';
 import SocketRoom from './pages/SocketRoom';
 import Artists from './pages/Artists';
 import ArtistPage from './pages/ArtistPage';
-
+import axios from 'axios'
 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
@@ -33,19 +33,40 @@ const App = () => {
     const [songs, setSongs] = useState([]);
     const [socket, setSocket] = useState(null);  // Store the socket instance
     const isAuthRoute = location.pathname === '/login' || location.pathname === '/interest';
-
+    const [recommendations, setRecommendations] = useState([]);
     useEffect(() => {
         if (currentSong) {
-            const currentHistory = JSON.parse(sessionStorage.getItem('songHistory')) || [];
-            const songIndex = currentHistory.findIndex(song => song._id === currentSong._id);
-
-            if (songIndex !== -1) {
-                currentHistory.splice(songIndex, 1);
-            }
-            const updatedHistory = [currentSong, ...currentHistory];
-            sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
+          // Get song history from sessionStorage (or localStorage if that's where it's stored)
+          const currentHistory = JSON.parse(sessionStorage.getItem('songHistory')) || [];
+    
+          // Remove the current song if it exists to prevent duplicates
+          const songIndex = currentHistory.findIndex(song => song._id === currentSong._id);
+          if (songIndex !== -1) {
+            currentHistory.splice(songIndex, 1);
+          }
+    
+          // Add the current song to the top of the history
+          const updatedHistory = [currentSong, ...currentHistory];
+    
+          // Update sessionStorage with the new history
+          sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
+    
+          // Get the token from sessionStorage (or wherever you store it)
+          const token = sessionStorage.getItem('token'); // Make sure this token exists and is valid
+    
+          // Send the updated history to the backend to get recommendations
+          const headers = token ? { Authorization: token} : {}; // Optional token header
+    
+          axios.post('http://localhost:8080/auth/recommendations', { songHistory: updatedHistory }, { headers })
+            .then(response => {
+            //   console.log('Recommendations received:', response.data);
+              setRecommendations(response.data.recommendations); // Store recommendations
+            })
+            .catch(error => {
+              console.error('Error fetching recommendations:', error);
+            });
         }
-    }, [currentSong]);
+      }, [currentSong]); 
      
 
      const [token, setToken] = useState(null);
@@ -76,8 +97,10 @@ const App = () => {
           });
           
         // Listen for new song notifications
+        
         socketIo.on('new-song', (data) => {
           console.log(`New song added: ${data.songName} by artist ${data.artistId}`);
+          
           setNotificationCount(prevCount => prevCount + 1);  // Increase the notification count
           setNotifications(prevNotifications => [
             ...prevNotifications,
@@ -108,11 +131,11 @@ const App = () => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-screen bg-app-black scrollbar-hide">
-                        <Navbar notificationCount={notificationCount} setNotificationCount={setNotificationCount} notifications={notifications} />
+                        <Navbar notificationCount={notificationCount+1} setNotificationCount={setNotificationCount} notifications={notifications} />
                             <Routes>
 
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
-                                <Route path="/home" element={<Home onSongSelect={handleSongSelection} />} />
+                                <Route path="/home" element={<Home onSongSelect={handleSongSelection} recommendations={recommendations}/>} />
                                 <Route path="/album-p/:id" element={<AlbumPage setCurrentSong={handleSongSelection} />} />
                                 <Route path="/liked-songs" element={<LikedSongs onSongSelect={handleSongSelection} />} />
                                 <Route path="/search" element={<Search onSongSelect={handleSongSelection} />} />
