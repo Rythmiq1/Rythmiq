@@ -45,6 +45,7 @@ const Search = ({ onSongSelect }) => {
     );
     setFilteredSongs(filtered);
   };
+
   const playSong = (song) => {
     console.log("Selected Song:", song);
     onSongSelect(song);
@@ -67,6 +68,7 @@ const Search = ({ onSongSelect }) => {
           <b className="text-white ml-44">Album</b>
           <b className="text-white">Duration</b>
         </div>
+
         {filteredSongs.length > 0 ? (
           filteredSongs.map((song) => (
             <div
@@ -85,7 +87,12 @@ const Search = ({ onSongSelect }) => {
             </div>
           ))
         ) : (
-          <p className="py-2 text-white">Please LogIn to Search Songs</p>
+          <p className="py-2 text-white">
+            No songs found matching your search. 
+            <span className="text-pink-500 font-semibold">
+              Please feel free to join our Admin Facility to upload songs!
+            </span>
+          </p>
         )}
       </div>
     </div>

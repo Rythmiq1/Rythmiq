@@ -93,3 +93,34 @@ export const getArtistById = async (req, res) => {
       });
     }
   };
+  export const getSongsByArtistId = async (req, res) => {
+    try {
+      // Fetch the artist and populate the songs field
+      const artist = await Artist.findById(req.params.id).populate('songs'); 
+      
+      // Check if the artist is found
+      if (!artist) {
+        return res.status(404).json({
+          success: false,
+          message: "Artist not found"
+        });
+      }
+  
+      console.log("Artist found:", artist);
+      console.log("Artist's songs:", artist.songs);
+  
+      // Return only the songs of the artist
+      res.status(200).json({
+        success: true,
+        message: "Songs retrieved successfully.",
+        data: artist.songs // Sending only the songs data
+      });
+    } catch (error) {
+      console.error("Error fetching songs:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error"
+      });
+    }
+  };
+  

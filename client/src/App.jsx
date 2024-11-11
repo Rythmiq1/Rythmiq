@@ -81,7 +81,7 @@ const App = () => {
           setNotificationCount(prevCount => prevCount + 1);  // Increase the notification count
           setNotifications(prevNotifications => [
             ...prevNotifications,
-            { message: `New song added: ${data.songName} by artist ${data.artistId}` },
+            { message: data.message },
           ]);
         });
     
@@ -124,7 +124,7 @@ const App = () => {
                                 <Route path="/playlist-shared/:playlistId" element={<Share/>} />
                                 <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                                 <Route path="/artists" element={<Artists/>} />
-                                <Route path="/artists/:id" element={<ArtistPage/>} />
+                                <Route path="/artists/:id" element={<ArtistPage currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                                 
 
                             </Routes>
