@@ -64,6 +64,14 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
     navigate("/login"); 
   };
 
+  // Extract initials from the logged-in user's name
+  const getInitials = (name) => {
+    return name
+      .split(" ")
+      .map((word) => word[0].toUpperCase())
+      .join("");
+  };
+
   return (
     <>
       <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4 z-10 flex items-center justify-end space-x-6">
@@ -71,8 +79,8 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
           {loggedInUser ? (
             <>
               <div className="relative">
-                <button onClick={toggleNotificationBox} className="text-gray-700 focus:outline-none">
-                  <MdNotificationsNone className="w-6 h-6 text-white" />
+                <button onClick={toggleNotificationBox} className="text-gray-700 bg-transparent focus:outline-none rounded mr-10">
+                  <MdNotificationsNone className="w-6 h-6 bg-transparent text-white" />
                 </button>
 
                 {notificationCount > 0 && (
@@ -111,7 +119,18 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
                 )}
               </div>
 
-              <span className="text-white">Welcome, {loggedInUser}!</span>
+              <div className="relative flex items-center">
+                {/* User's Initials Circle */}
+                <div className="group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl mr-4 cursor-pointer">
+                  {/* Initials */}
+                  <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
+                  {/* "Welcome, User!" text on hover */}
+                  <span className="group-hover:block hidden text-sm text-white">
+                    Welcome, {loggedInUser}!
+                  </span>
+                </div>
+              </div>
+
               <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
             </>
           ) : (
