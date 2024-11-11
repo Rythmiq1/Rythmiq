@@ -103,6 +103,38 @@ export const removeLikedSong = async (req, res) => {
       res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+export const removeSavedPlaylist = async (req, res) => {
+    try {
+        const { playlistId } = req.body;
+
+        if (!playlistId) {
+            return res.status(400).json({ success: false, message: "Playlist ID is required." });
+        }
+
+        const userId = req.user.userId || req.user._id; // Get the user ID from the request
+
+        // Find the user and remove the playlistId from their savedPlaylists array
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { $pull: { savedPlaylists: playlistId } }, // $pull to remove playlist from savedPlaylists array
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Playlist removed from saved playlists successfully.",
+            savedPlaylists: updatedUser.savedPlaylists // Optionally return the updated saved playlists list
+        });
+    } catch (err) {
+        console.error("Error removing saved playlist:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 export const addCreatedPlaylist = async (req, res) => {
     try {
         const { playlistId } = req.body;
@@ -245,6 +277,38 @@ export const getFollowedArtists = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+export const unfollowArtist = async (req, res) => {
+    try {
+        const { artistId } = req.body;
+
+        if (!artistId) {
+            return res.status(400).json({ success: false, message: "Artist ID is required." });
+        }
+
+        const userId = req.user.userId || req.user._id; // Get the user ID from the request
+
+        // Find the user and remove the artistId from their followedArtists array
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { $pull: { followedArtists: artistId } }, // $pull to remove artist from followedArtists array
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Artist unfollowed successfully.",
+            followedArtists: updatedUser.followedArtists // Optionally return the updated followed artists list
+        });
+    } catch (err) {
+        console.error("Error unfollowing artist:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
 export const selectInterests = async (req, res) => {
     try {
         const { artistIds } = req.body;

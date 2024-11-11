@@ -32,7 +32,7 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
                 if (response.data.success) {
                     setLiked(false); // Toggle the like state locally
                     onDeleteLike(song._id); // Notify parent to remove the song from liked list
-                    toast.success(response.data.message);
+                    toast.success("Song unliked");
                 } else {
                     toast.error(response.data.message || 'Failed to unlike song');
                 }
@@ -44,7 +44,7 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
                 if (response.data.success) {
                     setLiked(true); // Toggle the like state locally
                     onToggleLike(song._id, true); // Notify parent to add the song to liked list
-                    toast.success(response.data.message);
+                    // toast.success(response.data.message);
                 } else {
                     toast.error(response.data.message || 'Failed to like song');
                 }
@@ -54,7 +54,7 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
             if (error.response) {
                 toast.error(`Error: ${error.response.data?.message || 'Unexpected error occurred'}`);
             } else {
-                toast.error('Network error or server down.');
+                // toast.error('Network error or server down.');
             }
         }
     };

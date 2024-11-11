@@ -121,3 +121,37 @@ export const getSavedPlaylistsByUser = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+export const removePlaylist = async (req, res) => {
+    const { playlistId } = req.body;  // The playlistId is passed from the front-end body
+
+    try {
+        // 1. Find the Playlist by ID
+        const playlist = await Playlist.findById(playlistId);
+        if (!playlist) {
+            return res.status(404).json({ success: false, message: 'Playlist not found' });
+        }
+
+        // 2. Remove the Playlist from the User's createdPlaylists
+        const userId = req.user.userId || req.user._id;  // Get the user ID from the token
+        await UserModel.findByIdAndUpdate(
+            userId,
+            { $pull: { createdPlaylists: playlistId } },  // $pull removes the playlist from the createdPlaylists array
+            { new: true }
+        );
+
+        // 3. Delete the Playlist
+        await Playlist.findByIdAndDelete(playlistId);  // Delete the playlist from the database
+
+        res.status(200).json({
+            success: true,
+            message: 'Playlist removed successfully',
+        });
+    } catch (error) {
+        console.error('Error removing playlist:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to remove playlist',
+            error: error.message,
+        });
+    }
+};
