@@ -14,7 +14,8 @@ const IconText = ({ iconName, displayText, active }) => {
     favorite: <FaHeart className="text-2xl"/>,
     history: <FaHistory className="text-2xl"/>,
     public: <FaGlobe className="text-2xl"/>,
-    artist :<AiOutlineUser className="text-2xl"/>
+    artist :<AiOutlineUser className="text-2xl"/>,
+    room:<FaUserFriends className = "text-2xl"/>
   };
 
   return (

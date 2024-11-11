@@ -1,49 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import '../App.css';
-const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
+
+const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
     const [liked, setLiked] = useState(isLiked);
 
     useEffect(() => {
-        setLiked(isLiked); // Update local liked state based on prop
+        setLiked(isLiked); // Sync liked state with parent when it changes
     }, [isLiked]);
 
     const handleLike = async () => {
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            toast.error('User is not authenticated. Please log in.');
+            return;
+        }
+
+        const headers = { Authorization: token };
+        const songId = { songId: song._id };
+        let response;
+
         try {
-            const token = sessionStorage.getItem('token');
-            if (!token) {
-                toast.error('User is not authenticated. Please log in.');
-                return;
-            }
-
-            const headers = { Authorization: token };
-            const songId = { songId: song._id };
-            let response;
-
+            // Send the request to either like or unlike the song
             if (liked) {
-                response = await axios.delete(
-                    'http://localhost:8080/auth/delete-like-song',
-                    { data: songId, headers }
-                );
-                setLiked(false);
-                onToggleLike(true);
+                // Unliking the song
+                response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
+                    data: songId,
+                    headers,
+                });
+                // Inform parent to update the state
+                if (response.data.success) {
+                    setLiked(false); // Toggle the like state locally
+                    onDeleteLike(song._id); // Notify parent to remove the song from liked list
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message || 'Failed to unlike song');
+                }
             } else {
-                response = await axios.post(
-                    'http://localhost:8080/auth/like-song',
-                    songId,
-                    { headers }
-                );
-                setLiked(true);
-                onToggleLike(false);
+                // Liking the song
+                response = await axios.post('http://localhost:8080/auth/like-song', songId, {
+                    headers,
+                });
+                if (response.data.success) {
+                    setLiked(true); // Toggle the like state locally
+                    onToggleLike(song._id, true); // Notify parent to add the song to liked list
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message || 'Failed to like song');
+                }
             }
-
-            if (response.data.success) {
-                toast.success(response.data.message);
-            } else {
-                toast.error(response.data.message || 'Unexpected response from server');
-            }
-
         } catch (error) {
             console.error('Error liking/unliking song:', error);
             if (error.response) {
@@ -55,42 +60,44 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike }) => {
     };
 
     return (
-        <div 
-            onClick={onSelect} 
-            className='card'
-        >
-            <div className='bg-black  w-64 h-80 p-4 rounded-lg'>
-            <div className="relative">
-                <img src={song.image} alt={song.name} className="w-full h-40 object-cover rounded-md" />
-                
-                {/* Heart icon button */}
-                <button 
-                    onClick={(e) => { e.stopPropagation(); handleLike(); }} 
-                    className="absolute ml-32 mt-16 text-2xl"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                    <span 
-                        role="img" 
-                        aria-label="heart" 
-                        className={`transition duration-200 ${liked ? 'text-red-500' : 'text-gray-400'}`}
+        <div className="bg-transparent">
+            <div
+                className="w-72 h-[420px] rounded-md shadow-md text-white 
+                    flex flex-col cursor-pointer transform transition-transform duration-200 
+                    hover:scale-105 hover:border-2 gas kr"
+                onClick={onSelect} // Added onSelect to handle song selection
+            >
+                <img
+                    src={song.image || 'defaultImg'} // Added fallback for image
+                    alt={song.name}
+                    className="object-cover w-full h-64 rounded-t-md"
+                />
+
+                <div className="flex-grow p-4 space-y-4 flex flex-col justify-between align-middle relative">
+                    <div className="space-y-2">
+                        <h2 className="text-xl font-semibold tracking-wide text-white truncate">{song.name}</h2>
+                        <p className="text-white text-sm truncate">
+                            {song.desc}
+                        </p>
+                        <p className="text-gray-400 text-sm">Duration: {song.duration}</p>
+                    </div>
+
+                    {/* Like Button at the bottom */}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); handleLike(); }} 
+                        className="absolute right-2 bottom-0 text-2xl"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                     >
-                        {liked ? '❤️' : '🤍'}
-                    </span>
-                </button>
-
-                   {/* Song details */}
-
-                <div className="mt-3">
-                <h3 className="text-lg font-semibold text-white">{song.name}</h3>
-                <p className="text-gray-400 text-sm">{song.desc}</p>
-                <p className="text-gray-400 text-sm mt-1">Duration: {song.duration}</p>
+                        <div
+                            role="img" 
+                            aria-label="heart" 
+                            className={`transition duration-200 ${liked ? 'text-red-500' : 'text-gray-400'}`}
+                        >
+                            {liked ? '❤️' : '🤍'}
+                        </div>
+                    </button>
+                </div>
             </div>
-            </div>
-            </div>
-           
-
-          
-            
         </div>
     );
 };

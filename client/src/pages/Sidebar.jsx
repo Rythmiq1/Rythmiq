@@ -12,7 +12,7 @@ function Sidebar() {
 
   return (
     <div
-      className={`sidebar-container bg-gray-900 text-white h-full ${isSidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out group`}
+      className={`sidebar-container bg-gradient-to-b from-[#007379] text-white h-full ${isSidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out group`}
       onMouseEnter={() => setIsSidebarOpen(true)}  // Open sidebar on hover
       onMouseLeave={() => setIsSidebarOpen(false)}  // Close sidebar on hover out
     >
@@ -54,6 +54,9 @@ function Sidebar() {
           <IconText iconName="artist" displayText="Artists" active={activeLink === '/artists'} />
         </Link>
       
+        <Link to="/room" onClick={() => setActiveLink('/room')} className="sidebar-link">
+          <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
+        </Link>
 
 
       {isSidebarOpen && (

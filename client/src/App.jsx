@@ -23,6 +23,7 @@ import SocketRoom from './pages/SocketRoom';
 import Artists from './pages/Artists';
 import ArtistPage from './pages/ArtistPage';
 
+
 const App = () => {
     const [notifications, setNotifications] = useState([]);
     const [notificationCount, setNotificationCount] = useState(0);
@@ -124,6 +125,7 @@ const App = () => {
                                 <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                                 <Route path="/artists" element={<Artists/>} />
                                 <Route path="/artists/:id" element={<ArtistPage/>} />
+                                
 
                             </Routes>
                         </div>

@@ -80,13 +80,7 @@ const LikedSongs = ({ onSongSelect }) => {
                   <p className="text-sm">{song.desc}</p>
                 </div>
               </div>
-              {/* <button
-                onClick={() => handlePlayClick(song.name)}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200"
-                aria-label={`Play ${song.name}`}>
-                  <span className="text-lg">&#9658;</span>
-              </button> */}
-
+           
               <button className={buttonStyling} onClick={() => playSong(song)} aria-label={`Play ${song.name}`}> 
               <span className="text-lg">&#9658;</span>
               </button>

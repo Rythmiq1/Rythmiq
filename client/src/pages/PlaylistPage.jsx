@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer'; 
-
+import LikedCard from '../components/LikedCard';
 const PlaylistPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); // Updated here
@@ -62,33 +62,38 @@ const PlaylistPage = () => {
             toast.error('User is not authenticated. Please log in.');
             return;
         }
-
+    
         const headers = { Authorization: token };
-        const songIdObj = { songId };
-
+    
         try {
             let response;
             const isLiked = likedSongs.includes(songId);
+    
             if (isLiked) {
+                // Sending DELETE request to remove the like
                 response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
-                    data: songIdObj,
-                    headers
+                    data: { songId },
+                    headers,
                 });
             } else {
-                response = await axios.post('http://localhost:8080/auth/like-song', songIdObj, { headers });
+                // Sending POST request to add the like
+                response = await axios.post('http://localhost:8080/auth/like-song', { songId }, { headers });
             }
-
+    
             if (response.data.success) {
                 setLikedSongs((prevLikedSongs) => 
                     isLiked ? prevLikedSongs.filter(id => id !== songId) : [...prevLikedSongs, songId]
                 );
                 toast.success(isLiked ? 'Song unliked!' : 'Song liked!');
+            } else {
+                toast.error('Failed to update like status');
             }
         } catch (error) {
             console.error('Error liking/unliking song:', error);
-            toast.error('Failed to update like status');
+            // toast.error('Failed to update like status');
         }
     };
+    
 
     if (loading) return <div className="text-white text-xl">Loading...</div>;
     if (!playlist) return <div className="text-white text-xl">Playlist not found</div>;
@@ -98,9 +103,9 @@ const PlaylistPage = () => {
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-32">
                 {playlist.songs.map((song) => (
-                    <Card 
+                    <LikedCard 
                         key={song._id} 
                         song={song} 
                         isLiked={likedSongs.includes(song._id)} 
