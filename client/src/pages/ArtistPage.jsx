@@ -67,7 +67,7 @@ const ArtistPage = ({ currentSong, setCurrentSong }) => {
   }
 
   return (
-    <div className="artist-page p-0 m-0 mb-20">
+    <div className="ml-2 rounded-lg artist-page p-0 m-0 mb-20">
       <div className="relative w-full h-[500px]  mt-2">
         <img
           src={artist.image}

@@ -58,7 +58,7 @@ const Share = () => {
   if (!playlist) return <div className="text-white">Playlist not found!</div>;
 
   return (
-    <div className="w-full h-full min-h-screen bg-gradient-to-b from-[#006161] to-black p-8 text-white flex flex-col">
+    <div className="ml-2 rounded-lg w-full h-full min-h-screen bg-gradient-to-b from-[#006161] to-black p-8 text-white flex flex-col">
       <div className="flex items-center w-full h-full">
         <img
           src={playlist.image}

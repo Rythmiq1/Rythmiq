@@ -38,7 +38,7 @@ const History = ({ setCurrentSong }) => {
   };
 
   return (
-    <div className="flex flex-col items-center p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-xl w-full h-full mx-auto">
+    <div className="ml-2 rounded-lg flex flex-col items-center p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-xl w-full h-full mx-auto">
       <h2 className="text-3xl mb-4 text-white font-semibold text-center">Recently Listened</h2>
       
       <div className="w-11/12 md:w-3/4 lg:w-2/3 rounded-lg p-6 shadow-md overflow-y-auto max-h-[70vh]" style={{ backgroundColor: '#00827f' }}>

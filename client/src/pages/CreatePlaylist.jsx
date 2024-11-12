@@ -85,7 +85,7 @@ const CreatePlaylist = () => {
   }
 
   return (
-    <div className="w-full h-screen p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl overflow-y-auto max-h-[calc(110vh-200px)]">
+    <div className="ml-2 rounded-lg w-full h-screen p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-2xl mt-10 text-white transition-all duration-300 transform hover:shadow-3xl overflow-y-auto max-h-[calc(110vh-200px)]">
       <h2 className="text-2xl font-bold text-center mb-6">Create Your Playlist</h2>
       <div className='flex flex-col gap-4 mb-6'>
         <p>Upload Image</p>

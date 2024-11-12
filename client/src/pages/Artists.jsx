@@ -97,7 +97,7 @@ const Artists = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 bg-gradient-to-b from-[#006161] to-black mb-20">
+    <div className="ml-2 rounded-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 bg-gradient-to-b from-[#006161] to-black mb-20">
       {artists.map((artist, index) => (
         <div key={artist._id} 
              className="max-w-[16rem] rounded-md shadow-md dark:bg-gray-50 dark:text-gray-800 

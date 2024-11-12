@@ -65,7 +65,7 @@ const LikedSongs = ({ onSongSelect }) => {
   }
 
   return (
-    <div className="liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
+    <div className="ml-2 rounded-lg liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
       <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
       {likedSongs.length === 0 ? (
         <p className="text-white">No liked songs available.</p>

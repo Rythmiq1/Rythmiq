@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer'; 
 import LikedCard from '../components/LikedCard';
-const PlaylistPage = () => {
+
+const PlaylistPage = ({ setCurrentSong }) => {
     const { id } = useParams();
-    const navigate = useNavigate(); // Updated here
     const [playlist, setPlaylist] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentSong, setCurrentSong] = useState(null); 
     const [likedSongs, setLikedSongs] = useState([]); 
 
     useEffect(() => {
@@ -53,7 +52,7 @@ const PlaylistPage = () => {
     }, [id]);
 
     const handleSelectSong = (song) => {
-        setCurrentSong(song);
+        setCurrentSong(song); // Use the prop to set the current song
     };
 
     const handleLikeToggle = async (songId) => {
@@ -70,13 +69,11 @@ const PlaylistPage = () => {
             const isLiked = likedSongs.includes(songId);
     
             if (isLiked) {
-                // Sending DELETE request to remove the like
                 response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
                     data: { songId },
                     headers,
                 });
             } else {
-                // Sending POST request to add the like
                 response = await axios.post('http://localhost:8080/auth/like-song', { songId }, { headers });
             }
     
@@ -90,31 +87,29 @@ const PlaylistPage = () => {
             }
         } catch (error) {
             console.error('Error liking/unliking song:', error);
-            // toast.error('Failed to update like status');
+            toast.error('Failed to update like status');
         }
     };
-    
 
     if (loading) return <div className="text-white text-xl">Loading...</div>;
     if (!playlist) return <div className="text-white text-xl">Playlist not found</div>;
 
     return (
-        <div className="flex flex-col justify-start min-h-screen bg-gray-800 p-4 mt-16">
+        <div className="ml-2 rounded-lg flex flex-col justify-start min-h-screen bg-gray-800 p-4 mt-16">
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-32">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                 {playlist.songs.map((song) => (
                     <LikedCard 
                         key={song._id} 
                         song={song} 
                         isLiked={likedSongs.includes(song._id)} 
                         onSelect={() => handleSelectSong(song)} 
-                        onToggleLike={handleLikeToggle} 
+                        onToggleLike={() => handleLikeToggle(song._id)} 
                     />
                 ))}
             </div>
-            {currentSong && <MusicPlayer song={currentSong} />}
         </div>
     );
 };

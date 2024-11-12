@@ -64,7 +64,7 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
             <div
                 className="w-72 h-[420px] rounded-md shadow-md text-white 
                     flex flex-col cursor-pointer transform transition-transform duration-200 
-                    hover:scale-105 hover:border-2 gas kr"
+                    hover:scale-95 hover:border-2 gas kr"
                 onClick={onSelect} // Added onSelect to handle song selection
             >
                 <img

@@ -17,7 +17,6 @@ import Home from './pages/Home';
 import Player from './pages/Player';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Songs from './pages/Songs';
 import Share from './pages/Share';
 import SocketRoom from './pages/SocketRoom';
 import Artists from './pages/Artists';
@@ -127,10 +126,10 @@ const App = () => {
                 <div className='App2'>
                     <ToastContainer />
                     <div className="h-screen w-screen flex overflow-x-auto overflow-y-auto scrollbar-hide">
-                        <div className="h-screen bg-black flex flex-col justify-between overflow-hid">
+                        <div className="h-screen bg-black flex flex-col justify-between overflow-hid z-10">
                             <Sidebar />
                         </div>
-                        <div className="h-screen w-screen bg-app-black scrollbar-hide">
+                        <div className="h-screen w-screen bg-app-black scrollbar-hide z-9">
                         <Navbar notificationCount={notificationCount+1} setNotificationCount={setNotificationCount} notifications={notifications} />
                             <Routes>
 

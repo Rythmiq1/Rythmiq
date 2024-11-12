@@ -9,11 +9,10 @@ import LikedCard from '../components/LikedCard';
 import { FaShareAlt, FaTrash } from 'react-icons/fa';
 import { IoIosShareAlt } from "react-icons/io";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
-const LibraryPage = () => {
+const LibraryPage = ({setCurrentSong}) => {
     const [playlists, setPlaylists] = useState([]); // My Playlists state
     const [likedSongs, setLikedSongs] = useState([]); // Liked Songs state
-    const [savedPlaylists, setSavedPlaylists] = useState([]); // Saved Playlists state
-    const [currentSong, setCurrentSong] = useState(null); // Currently playing song
+    const [savedPlaylists, setSavedPlaylists] = useState([]); // Saved Playlists stateplaying song
     const [showShareModal, setShowShareModal] = useState(false); // Modal visibility
     const [shareUrl, setShareUrl] = useState(''); // Shared URL
     const [loading, setLoading] = useState(true); // Loading state
@@ -173,18 +172,18 @@ const LibraryPage = () => {
     if (loading) return <div className="text-white text-xl">Loading...</div>;
 
     return (
-      <div className="flex w-screen flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16 mb-20">
+      <div className="ml-2 rounded-lg flex  w-screen flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16 ">
     <ToastContainer />
     <h2 className="text-2xl font-semibold text-white mb-4">Your Playlists:</h2>
 
-    {/* Horizontal Scroll Container */}
-    <div className="flex overflow-x-auto space-x-5 w-screen scrollbar-hide bg-transparent">
+ 
+    <div className="ml-4 flex overflow-x-auto space-x-5 w-screen scrollbar-hide bg-transparent">
         {playlists?.map((playlist) => (
             <div
                 key={playlist._id}
                 className="w-full h-[420px] rounded-md shadow-md dark:text-gray-800 
                     flex flex-col cursor-pointer transform transition-transform duration-200 
-                    hover:scale-105 hover:border-2 gas kr"
+                    hover:scale-95 hover:border-2 gas kr"
             >
                 {/* Playlist Image */}
                 <img
@@ -227,24 +226,24 @@ const LibraryPage = () => {
 </div>
 
             <h2 className="text-2xl font-semibold text-white mt-8 mb-4">Liked Songs:</h2>
-            <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
+            <div className="ml-4 flex overflow-x-auto space-x-4 scrollbar-hide">
                 {likedSongs.map((song) => (
                     <LikedCard
-                        key={song._id}
-                        song={song}
-                        isLiked={likedSongs.some((s) => s._id === song._id)}
-                        onSelect={() => handleSelectSong(song)}
-                        onToggleLike={handleLikeToggle}
+                    key={song._id} 
+                    song={song} 
+                    isLiked={likedSongs.includes(song._id)} 
+                    onSelect={() => handleSelectSong(song)} 
+                    onToggleLike={() => handleLikeToggle(song._id)} 
                     />
                 ))}
             </div>
 
-            {currentSong && <MusicPlayer song={currentSong} />}
+            
 
             {/* Share Modal */}
             {showShareModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 ">
-    <div className="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-lg transform transition-all duration-300 ease-in-out scale-105">
+                <div className="ml-4 fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 ">
+    <div className="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-lg transform transition-all duration-300 ease-in-out scale-95">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Share this Playlist</h2>
         <p className="mb-6 text-gray-600 truncate">{shareUrl}</p>
         <div className="flex justify-center space-x-4">
@@ -266,25 +265,26 @@ const LibraryPage = () => {
 
             )}
 
-<div className="text-blue-50 mt-8">
-  <h2 className="text-white text-xl font-bold">Your Saved Playlists</h2>
+<div className="text-blue-50 mt-8 mb-20">
+  <h2 className="text-white text-xl font-bold mb-4">Your Saved Playlists</h2>
   
   {savedPlaylists?.length === 0 ? (
     <p>No playlists saved.</p>
   ) : (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 cursor-pointer">
+    <div className="ml-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 cursor-pointer">
       {savedPlaylists.map((playlist) => (
         <div
           key={playlist._id}
           className="max-w-[16rem] w-72 rounded-md shadow-md bg-white text-white 
             flex flex-col cursor-pointer transform transition-transform duration-200 
-            hover:scale-105 hover:border-2 gas kr"
+            hover:scale-95 hover:border-2 gas kr"
         >
           <div className="flex flex-col items-center">
             <img
               src={playlist.image || defaultImg}
               alt={playlist.name}
               className="object-cover w-full h-64 rounded-t-md"
+              onClick={() => handlePlaylistClick(playlist._id)}
             />
 
             <div className="flex-grow p-4 space-y-4 flex flex-col justify-between">

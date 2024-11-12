@@ -52,7 +52,7 @@ const Search = ({ onSongSelect }) => {
   };
 
   return (
-    <div className="p-4 rounded-lg bg-gradient-to-b from-[#006161] to-black" >
+    <div className="ml-2 rounded-lg p-4 rounded-lg bg-gradient-to-b from-[#006161] to-black" >
       <h2 className="text-3xl mb-4 text-white">Search Songs</h2>
       <input
         type="text"

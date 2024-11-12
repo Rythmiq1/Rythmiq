@@ -74,17 +74,17 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
 
   return (
     <>
-      <div className="navbar fixed top-0 right-0 w-full h-16 bg-black bg-opacity-30 text-white px-6 py-4  flex items-center justify-end space-x-6 ">
+      <div className="rounded-lg  navbar fixed top-0 right-0 w-full  bg-black  text-white px-6 py-1  flex items-center justify-end space-x-6 z-10">
         <div className="flex items-center space-x-4">
           {loggedInUser ? (
             <>
               <div className="relative">
-                <button onClick={toggleNotificationBox} className="text-gray-700 bg-transparent focus:outline-none rounded mr-10">
-                  <MdNotificationsNone className="w-6 h-6 bg-transparent text-white" />
+                <button onClick={toggleNotificationBox} className="text-gray-700 bg-transparent border-none ">
+                  <MdNotificationsNone className="text-3xl bg-transparent text-white" />
                 </button>
 
                 {notificationCount > 0 && (
-                  <span className="absolute top-6 right-16 bg-red-500 text-white text-xs rounded-full px-2">
+                  <span className="absolute top-6 right-8 bg-red-500 text-white text-xs rounded-full px-2">
                     {notificationCount}
                   </span>
                 )}
@@ -142,7 +142,7 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
         </div>
       </div>
 
-      <div className="mt-16"></div>
+      <div className="mt-20"></div>
     </>
   );
 }
