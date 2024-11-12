@@ -32,7 +32,7 @@ const ArtistPage = ({ currentSong, setCurrentSong }) => {
   }, [id]);
 
   const handleSongSelection = (song) => {
-    setCurrentSong(song); // Update the current song
+    setCurrentSong(song); 
 
     // If audio is already playing, stop it
     if (audioRef.current) {
@@ -81,7 +81,6 @@ const ArtistPage = ({ currentSong, setCurrentSong }) => {
 
       <div>
         <p className="ml-4 text-white mt-24 mb-4">{artist.bio}</p>
-        {/* Play/Pause Button */}
         <button
           className="bg-white ml-6 rounded-full p-4 text-[#006161] hover:bg-[#006161] hover:text-white"
           onClick={handlePlayPause}
@@ -108,10 +107,8 @@ const ArtistPage = ({ currentSong, setCurrentSong }) => {
         ))}
       </div>
 
-      {/* Optionally display the current song */}
       {currentSong && (
         <div className="current-song mt-8 text-white">
-          {/* Show the currently playing song if needed */}
           <h3>Now Playing: {currentSong.name}</h3>
         </div>
       )}

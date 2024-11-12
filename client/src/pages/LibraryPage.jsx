@@ -191,12 +191,12 @@ const LibraryPage = () => {
                 <img
                     src={playlist.image || defaultImg}
                     alt={playlist.name}
-                    className="object-cover object-top  rounded-t-md h-56 dark:bg-gray-500"
+                    className="object-cover object-top rounded-t-md h-56 dark:bg-gray-500"
                     onClick={() => handlePlaylistClick(playlist._id)}
                 />
 
                 {/* Playlist Details */}
-                <div className="flex-grow p-4 space-y-4 w-80 flex flex-col justify-between">
+                <div className="flex-grow p-4 space-y-4 w-60 flex flex-col justify-between">
                     <div className="space-y-2">
                         <h2 className="text-xl text-white font-semibold tracking-wide">{playlist.name}</h2>
                         <p className="text-white text-sm">{playlist.description}</p>
@@ -233,41 +233,12 @@ const LibraryPage = () => {
                     <LikedCard
                     key={song._id} 
                     song={song} 
-                    isLiked={likedSongs.includes(song._id)} 
+                    isLiked={!likedSongs.includes(song._id)} 
                     onSelect={() => handleSelectSong(song)} 
                     onToggleLike={() => handleLikeToggle(song._id)} 
                     />
                 ))}
             </div>
-
-            
-
-            {/* Share Modal */}
-            {/* {showShareModal && (
-                            <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 ">
-                <div className="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-lg transform transition-all duration-300 ease-in-out scale-105">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Share this Playlist</h2>
-                    <p className="mb-6 text-gray-600 truncate">{shareUrl}</p>
-                    <div className="flex justify-center space-x-4">
-                        <button
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
-                            onClick={handleCopyLink}
-                        >
-                            Copy Link
-                        </button>
-                        <button
-                            className="bg-gray-400 hover:bg-gray-500 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
-                            onClick={closeModal}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            
-
-            )} */}
 
 
 {showShareModal && (

@@ -10,14 +10,13 @@ const Player = () => {
   
   const [bgColorIndex, setBgColorIndex] = useState(0);
 
-  // Array of pastel colors for the background
+  
   const colors = [
-    '#A8E6CF', // Pastel Green
-    '#FF8B94', // Pastel Red
-    '#FFB7B2', // Pastel Pink
-    '#B2EBF2', // Pastel Cyan
-    // '#FFF9B0', // Pastel Yellow
-    '#D1C4E9', // Pastel Purple
+    '#A8E6CF', 
+    '#FF8B94', 
+    '#FFB7B2', 
+    '#B2EBF2', 
+    '#D1C4E9', 
   ];
   
   

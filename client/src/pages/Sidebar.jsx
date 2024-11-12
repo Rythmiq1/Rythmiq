@@ -3,9 +3,7 @@ import logo from "../assets/images/logo-bg.png";
 import logoh from "../assets/images/browser-logo.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
-import { FaMusic } from 'react-icons/fa'; // Music icon from Font Awesome
-import { AiOutlineUser } from 'react-icons/ai'; // Artist icon from Ant Design
-import { FaInfoCircle } from 'react-icons/fa';  
+
 function Sidebar() {
   const [activeLink, setActiveLink] = useState('/home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -35,8 +33,6 @@ function Sidebar() {
           </div>
         )}
       </div>
-
-      {/* Sidebar Links */}
       <div className="py-3 space-y-4">
         <Link to="/home" onClick={() => setActiveLink('/home')} className="sidebar-link">
           <IconText iconName="home" displayText="Home" active={activeLink === '/home'} />

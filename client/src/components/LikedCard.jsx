@@ -65,10 +65,10 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
                 className="w-72 h-[420px] rounded-md shadow-md text-white 
                     flex flex-col cursor-pointer transform transition-transform duration-200 
                     hover:scale-95 hover:border-2 gas kr"
-                onClick={onSelect} // Added onSelect to handle song selection
+                onClick={onSelect} 
             >
                 <img
-                    src={song.image || 'defaultImg'} // Added fallback for image
+                    src={song.image || 'defaultImg'} 
                     alt={song.name}
                     className="object-cover w-full h-64 rounded-t-md"
                 />
@@ -82,7 +82,6 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
                         <p className="text-gray-400 text-sm">Duration: {song.duration}</p>
                     </div>
 
-                    {/* Like Button at the bottom */}
                     <button 
                         onClick={(e) => { e.stopPropagation(); handleLike(); }} 
                         className="absolute right-2 bottom-0 text-2xl"

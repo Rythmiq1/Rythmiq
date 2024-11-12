@@ -73,79 +73,71 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
   };
 
   return (
-    <>
-      <div className="rounded-lg  navbar fixed top-0 right-0 w-full  bg-black  text-white px-6 py-1  flex items-center justify-end space-x-6 z-10">
-        <div className="flex items-center space-x-4">
-          {loggedInUser ? (
-            <>
-              
-
-              <div className="relative flex items-center">
-            <div className="relative group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl mr-4 cursor-pointer">
-              
-              <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
-
-              <span className="absolute left-[-130px] hidden group-hover:inline-block text-sm text-white">Welcome, {loggedInUser}!</span>
-            </div>
-          </div>
-
-          <div className="relative">
-          <button onClick={toggleNotificationBox} className="bg-transparent mr-3 border-none">
-  <MdNotificationsNone className="w-6 h-6 bg-transparent text-white " />
-</button>
-
-
-                {notificationCount > 0 && (
-                  <span className="absolute top-6 right-8 bg-red-500 text-white text-xs rounded-full px-2">
-                    {notificationCount}
-                  </span>
-                )}
-
-                {isNotificationVisible && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg overflow-hidden z-50">
-                    <div className="px-4 py-2 font-semibold text-lg text-gray-700 border-b">
-                      Notifications
-                    </div>
-                    <div className="max-h-64 overflow-y-auto">
-                      {notifications && notifications.length === 0 ? (
-                        <p className="px-4 py-2 text-gray-600">No new notifications</p>
-                      ) : (
-                        notifications.map((notification) => (
-                          <div key={notification.id} className="flex items-start px-4 py-3 border-b hover:bg-gray-100">
-                            <div className="w-8 h-8 flex items-center justify-center mr-3">
-                              <MdNotificationsNone className="w-6 h-6 text-gray-500" />
-                            </div>
-                            <div className="text-sm flex-1">
-                              <p className="text-gray-600">{notification.message}</p>
-                              <p className="text-gray-400 text-xs mt-1">{notification.time}</p>
-                            </div>
-                            <a href="#" className="text-sm hover:underline ml-2">View</a>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    <div className="px-4 py-2 text-center">
-                      <a href="#" className="text-sm hover:underline">See all</a>
-                    </div>
-                  </div>
-                )}
+  <>
+    <div className="rounded-lg navbar fixed top-0 right-0 w-full bg-black text-white px-6 py-1 flex items-center justify-end space-x-2 z-10">
+      <div className="flex items-center space-x-2">
+        {loggedInUser ? (
+          <>
+            <div className="relative flex items-center">
+              <div className="relative group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl mr-2 cursor-pointer">
+                <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
+                <span className="absolute left-[-130px] hidden group-hover:inline-block text-sm text-white">Welcome, {loggedInUser}!</span>
               </div>
+            </div>
 
+            <div className="relative">
+              <button onClick={toggleNotificationBox} className="bg-transparent mr-1 border-none">
+                <MdNotificationsNone className="w-6 h-6 bg-transparent text-white" />
+              </button>
+              {notificationCount > 0 && (
+                <span className="absolute top-6 right-8 bg-red-500 text-white text-xs rounded-full px-2">
+                  {notificationCount}
+                </span>
+              )}
 
-              <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <button type='submit' className={buttonStyling} onClick={() => navigate("/login?signin=true")}>Sign Up</button>
-              <button type='submit' className={buttonStyling} onClick={() => navigate("/login")}>Log In</button>
-            </>
-          )}
-        </div>
+              {isNotificationVisible && (
+                <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg overflow-hidden z-50">
+                  <div className="px-4 py-2 font-semibold text-lg text-gray-700 border-b">Notifications</div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {notifications && notifications.length === 0 ? (
+                      <p className="px-4 py-2 text-gray-600">No new notifications</p>
+                    ) : (
+                      notifications.map((notification) => (
+                        <div key={notification.id} className="flex items-start px-4 py-3 border-b hover:bg-gray-100">
+                          <div className="w-8 h-8 flex items-center justify-center mr-3">
+                            <MdNotificationsNone className="w-6 h-6 text-gray-500" />
+                          </div>
+                          <div className="text-sm flex-1">
+                            <p className="text-gray-600">{notification.message}</p>
+                            <p className="text-gray-400 text-xs mt-1">{notification.time}</p>
+                          </div>
+                          <a href="#" className="text-sm hover:underline ml-2">View</a>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <div className="px-4 py-2 text-center">
+                    <a href="#" className="text-sm hover:underline">See all</a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button type="submit" className={buttonStyling} onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <button type="submit" className={buttonStyling} onClick={() => navigate("/login?signin=true")}>Sign Up</button>
+            <button type="submit" className={buttonStyling} onClick={() => navigate("/login")}>Log In</button>
+          </>
+        )}
       </div>
+    </div>
 
-      <div className="mt-20"></div>
-    </>
-  );
+    <div className="mt-20"></div>
+  </>
+);
+
 }
 
 export default Navbar;

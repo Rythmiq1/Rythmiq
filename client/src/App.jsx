@@ -131,7 +131,7 @@ const App = () => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-screen bg-app-black scrollbar-hide z-9">
-                        <Navbar notificationCount={notificationCount} setNotificationCount={setNotificationCount} notifications={notifications} />
+                        <Navbar notificationCount={notificationCount+1} setNotificationCount={setNotificationCount} notifications={notifications} />
                             <Routes>
 
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />

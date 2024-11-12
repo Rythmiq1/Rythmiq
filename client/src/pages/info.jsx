@@ -8,7 +8,7 @@ function Info() {
   return (
     <div className="min-h-screen flex flex-row gap-10 items-center justify-center bg-gradient-to-b from-[#006161] to-black text-white">
 
-      {/* Jatin's Card */}
+
       <div className="w-[400px] h-[500px] max-w-sm shadow-xl p-10 rounded-lg bg-transparent bg-opacity-15 relative overflow-hidden 
       flex flex-col items-center text-center space-y-6 gas xe" >
         
@@ -16,7 +16,7 @@ function Info() {
 
         
         <h1 className="text-3xl font-bold text-white">Jatin Rajput</h1>
-        <p className="text-lg text-gray-300">A young UX/UI designer with a passion for mobile and web design.</p>
+        <p className="text-lg text-gray-300"></p>
         
         <div className="flex space-x-5 ">
           <a href="mailto:your-email@example.com" target="_blank" rel="noopener noreferrer">
@@ -38,7 +38,7 @@ function Info() {
         <img src={yashi} alt="Yashika Jain" className="w-40 h-40 object-cover rounded-full transform hover:scale-110 transition duration-300" />
         
         <h1 className="text-3xl font-bold text-white">Yashika Jain</h1>
-        <p className="text-lg text-gray-300">A young UX/UI designer with a passion for mobile and web design.</p>
+        <p className="text-lg text-gray-300"></p>
         
         <div className="flex space-x-5">
           <a href="mailto:yashika.2023ca116@mnnit.ac.in" target="_blank" rel="noopener noreferrer">
@@ -60,7 +60,7 @@ function Info() {
         <img src={kitty} alt="Sneha Agrawal" className="w-40 h-40 object-cover rounded-full transform hover:scale-110 transition duration-300" />
         
         <h1 className="text-3xl font-bold text-white">Sneha Agrawal</h1>
-        <p className="text-lg text-gray-300">A young UX/UI designer with a passion for mobile and web design.</p>
+        <p className="text-lg text-gray-300"></p>
         
         <div className="flex space-x-5">
           <a href="mailto:sneha.2023ca98@mnnit.ac.in">
