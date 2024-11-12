@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import { FaLock, FaLink, FaMusic ,FaUser, FaPlay } from 'react-icons/fa';
 
 const socket = io('http://localhost:8080', {
   transports: ['websocket', 'polling'],
@@ -168,12 +169,35 @@ const SocketRoom = ({ setCurrentSong }) => {
   };
 
   return (
-    <div className="bg-[url('https://i.pinimg.com/564x/72/2e/86/722e8695d738442928238a422c72421e.jpg')] bg-cover bg-center min-h-screen">
+    <div className="bg-[url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')] bg-cover bg-center min-h-screen">
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4 text-white">Music Room</h2>
+          
+        <div className="flex items-center ml-[45%] space-x-4 px-10 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all w-52 group">
+  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
+  <FaLock className="text-2xl text-white" />
+  </div>
 
-        <div className="flex items-center space-x-4">
-          <button onClick={createRoom} className="bg-blue-500 text-white p-2">
+  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
+  <FaLink className="text-2xl text-white" />
+  </div>
+  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
+  <FaUser className="text-2xl text-white" />
+  </div>
+
+  {/* The content that will appear on hover */}
+  <div className="absolute top-0 left-0 mt-0 w-full h-full flex justify-center items-center group-hover:opacity-100 opacity-0 transition-opacity duration-300">
+    <div className="flex justify-center items-center space-x-8">
+      {/* Outer Container with Light Transparent Background */}
+      <div className="flex space-x-8 p-6 rounded-lg bg-white/30 backdrop-blur-md shadow-xl">
+  
+        {/* Create Room Component */}
+        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
+          <h2 className="text-black font-bold text-lg mb-4">Create Room</h2>
+          <button 
+            onClick={createRoom} 
+            className="bg-blue-500 text-white p-2 w-48 rounded-lg hover:bg-blue-600"
+          >
             Create Room
           </button>
           {roomId && (
@@ -182,94 +206,124 @@ const SocketRoom = ({ setCurrentSong }) => {
                 type="text"
                 value={roomId}
                 readOnly
-                className="border p-2 w-48"
+                className="border p-2 w-48 my-4 text-center rounded-lg"
                 id="roomIdInput"
               />
-              <button onClick={copyRoomId} className="bg-green-500 text-white p-2">
+              <button 
+                onClick={copyRoomId} 
+                className="bg-green-500 text-white p-2 w-48 rounded-lg hover:bg-green-600"
+              >
                 Copy Room ID
               </button>
             </>
           )}
         </div>
-
-        <div className="mt-4">
+  
+        {/* Join Room Component */}
+        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
+          <h2 className="text-black font-bold text-lg mb-4">Join Room</h2>
           <input
             type="text"
             placeholder="Enter Room ID to Join"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
-            className="border p-2 mb-2 w-48"
+            className="border p-2 w-48 mb-4 text-center rounded-lg"
           />
-          <button onClick={joinRoom} className="bg-blue-500 text-white p-2" disabled={isJoining}>
+          <button 
+            onClick={joinRoom} 
+            className="bg-blue-500 text-white p-2 w-48 rounded-lg hover:bg-blue-600"
+            disabled={isJoining}
+          >
             {isJoining ? 'Joining...' : 'Join Room'}
           </button>
         </div>
+  
 
-        {roomId && (
-          <div className="mt-4">
-            {userId === adminId && (
-              <button onClick={togglePlay} className="bg-green-500 text-white p-2">
-                {isPlaying ? 'Pause' : 'Play'}
-              </button>
+        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
+          <h2 className="text-black font-bold text-lg mb-2">Users in room:</h2>
+          <ul className="space-y-2 w-full">
+            {users.length > 0 ? (
+              users.map((user, index) => (
+                <li 
+                  key={index}
+                  className="bg-white/30 backdrop-blur-md p-2 rounded-lg shadow-sm text-black text-center"
+                >
+                  {user.userId}
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500 text-center">No users in room</li>
             )}
-          </div>
-        )}
-
-        <div className="mt-4">
-          <h3 className="text-lg text-white">Users in room:</h3>
-          <ul className="text-white">
-            {users.map((user, index) => (
-              <li key={index}>{user.userId}</li>
-            ))}
           </ul>
         </div>
 
+      </div>
+    </div>
+  </div>
+</div>
+
+          
         {error && (
           <div className="mt-4 text-red-500">
             <h3>Error: {error}</h3>
           </div>
         )}
+<div className="flex items-center mt-[5%] ml-[95%] w-10 h-32 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all group">
+  {/* Music Icon */}
+  <div className="relative flex justify-center items-center w-full h-full rounded-full transition-all hover:bg-white/20">
+    <FaMusic className="text-2xl text-white"/>
+  </div>
 
-        <div className="mt-4">
-          <h3 className="text-lg text-white">Available Music:</h3>
-          <ul className="text-white">
-            {musicList.length > 0 ? (
-              musicList.map((song, index) => (
-                <li
-                  key={index}
-                  className="cursor-pointer hover:text-blue-500 flex justify-between items-center"
-                >
-                  {song.name} - {song.artist}
-                  {userId === adminId && (
-                    <button
-                      onClick={() => playSong(song)}
-                      className="bg-blue-500 text-white p-2 ml-2"
-                    >
-                      Play
-                    </button>
-                  )}
-                </li>
-              ))
-            ) : (
-              <p>No music available</p>
+  {/* Hover Content: Music List */}
+  <div className="absolute top-0 left-[-350px]  w-[300px] h-[600px] p-4 rounded-lg bg-white/30 backdrop-blur-md shadow-xl group-hover:opacity-100 opacity-0 transition-opacity duration-300 overflow-hidden">
+    <h3 className="text-xl font-semibold text-white mb-4 text-center">Top Playlist</h3>
+    <ul className="space-y-4 w-full h-full overflow-y-auto scrollbar-hide">
+      {musicList.length > 0 ? (
+        musicList.map((song, index) => (
+          <li
+            key={index}
+            className="flex items-center justify-between bg-white bg-opacity-60 rounded-md p-4 hover:bg-opacity-80 transition duration-300"
+          >
+            <div className="flex items-center space-x-4">
+              <div>
+                <p className="text-lg font-medium text-gray-900">{song.name}</p>
+                <p className="text-sm text-gray-600">{song.artist}</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+            
+            {userId === adminId && (
+              <FaPlay
+                onClick={() => playSong(song)}
+                className=" text-teal-600 text-2xl"
+              />
+                
+              
             )}
-          </ul>
-        </div>
+            </div>
+          </li>
+        ))
+      ) : (
+        <p className="text-gray-600 text-center">No music available</p>
+      )}
+    </ul>
 
-        {selectedSong && (
-          <div className="mt-4">
-            <p className="text-white">Current Song: {selectedSong.name}</p>
-            <input
-              type="range"
-              value={currentTime}
-              max={selectedSong.duration || 100}
-              onChange={(e) => handleTimeUpdate(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-        )}
-      </div>
+    {/* Music Progress Bar */}
+    {selectedSong && (
+    <div className="mt-6">
+      <input
+        type="range"
+        value={currentTime}
+        max={selectedSong.duration || 100}
+        onChange={(e) => handleTimeUpdate(Number(e.target.value))}
+        className="w-full mt-2 appearance-none bg-gray-300 rounded-lg h-2"
+      />
     </div>
+  )}
+  </div>
+  </div>
+</div>
+</div>
   );
 };
 
