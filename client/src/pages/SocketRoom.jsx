@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { FaLock, FaLink, FaMusic } from 'react-icons/fa';
+import { FaLock, FaLink, FaMusic ,FaUser, FaPlay } from 'react-icons/fa';
 
 const socket = io('http://localhost:8080', {
   transports: ['websocket', 'polling'],
@@ -181,6 +181,9 @@ const SocketRoom = ({ setCurrentSong }) => {
   <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
   <FaLink className="text-2xl text-white" />
   </div>
+  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
+  <FaUser className="text-2xl text-white" />
+  </div>
 
   {/* The content that will appear on hover */}
   <div className="absolute top-0 left-0 mt-0 w-full h-full flex justify-center items-center group-hover:opacity-100 opacity-0 transition-opacity duration-300">
@@ -288,14 +291,14 @@ const SocketRoom = ({ setCurrentSong }) => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">{song.duration}</span>
+            
             {userId === adminId && (
-              <button
+              <FaPlay
                 onClick={() => playSong(song)}
-                className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600"
-              >
-                ▶
-              </button>
+                className=" text-teal-600 text-2xl"
+              />
+                
+              
             )}
             </div>
           </li>
