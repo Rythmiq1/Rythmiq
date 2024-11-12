@@ -13,14 +13,14 @@
 }
 
 body {
-  background: url(https://img.freepik.com/free-vector/glowing-musical-pentagram-background-with-sound-notes_1017-31220.jpg?t=st=1730986886~exp=1730990486~hmac=1bb1fcd47778b95c05d5cfc5a7ba52986b6676ada5ce914488ba9fbcc13eca67&w=1060);
-  background-repeat: no-repeat;
+  background: url(https://i.pinimg.com/originals/36/f0/4d/36f04de1adb760fd1795c8bd6602aeb3.gif) no-repeat center center fixed;
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   height: 100vh;
+  margin: 0;
 }
 
 h1 {
@@ -110,7 +110,7 @@ input::placeholder {  color: black;
 }
 
 .container {
-  background-color: rgba(33, 188, 215, 0.637);
+  background-color: rgba(250, 249, 249, 0.34);
   border-radius: 10px;
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.784), 0 0 20px rgba(0, 0, 0, 0.3);
 
@@ -321,11 +321,11 @@ input::placeholder {  color: black;
 }
 
 .overlay {
-  background: #1d718eec;
+  background-color: rgba(81, 77, 77, 0.847);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
-  color: #ffffff;
+  color: white;
   position: relative;
   left: -100%;
   height: 100%;
@@ -435,7 +435,7 @@ input::placeholder {  color: black;
 .switch-btn {
   background: transparent;
   border: 1px solid #18608a;
-  color: #18608a;
+  color: #022a41;
   padding: 10px 20px;
   margin-top: 20px;
   margin-left: 28%;
@@ -447,7 +447,7 @@ input::placeholder {  color: black;
 }
 .switch-btn:hover {
   background: #18608a;
-  color: #fff;
+  color: black;
 }
 
 .form-container.hidden {

@@ -144,6 +144,7 @@ const handleLogin = async (e) => {
 };
 
   return (
+    <div className='point'>
     <div className={`container ${isSignInActive ? '' : 'right-panel-active'}`} id="container">
       <div className={`form-container sign-up-container ${isSignInActive ? 'hidden' : ''}`}>
         <form onSubmit={handleSignup}>
@@ -210,6 +211,7 @@ const handleLogin = async (e) => {
       </div>
 
       <ToastContainer />
+    </div>
     </div>
   );
 }
