@@ -3,7 +3,9 @@ import logo from "../assets/images/logo-bg.png";
 import logoh from "../assets/images/browser-logo.png";
 import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
-
+import { FaMusic } from 'react-icons/fa'; // Music icon from Font Awesome
+import { AiOutlineUser } from 'react-icons/ai'; // Artist icon from Ant Design
+import { FaInfoCircle } from 'react-icons/fa';  
 function Sidebar() {
   const [activeLink, setActiveLink] = useState('/home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -61,19 +63,23 @@ function Sidebar() {
           <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
         </Link>
 
-        {/* Footer Links */}
-        {isSidebarOpen && (
-          <div className="px-5 pb-5">
-            <div className="mt-4 text-gray-400 text-xs space-y-1">
-              {["About Us", "Cookies", "Privacy Center", "Privacy Policy", "Legal"].map((text, index) => (
-                <p key={index} className="hover:text-white cursor-pointer transition duration-200 transform hover:scale-105">
-                  {text}
-                </p>
-              ))}
-            </div>
+        <Link to="/info" onClick={() => setActiveLink('/info')} className="sidebar-link">
+          <IconText iconName="info" displayText="Info" active={activeLink === '/info'} />
+        </Link>
+
+
+      {isSidebarOpen && (
+        <div className="px-5 pb-5">
+          <div className="mt-4 text-gray-400 text-xs space-y-1">
+            {["About Us", "Cookies", "Privacy Center", "Privacy Policy", "Legal"].map((text, index) => (
+              <p key={index} className="hover:text-white cursor-pointer transition duration-200 transform hover:scale-105">
+                {text}
+              </p>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+    </div>
     </div>
   );
 }

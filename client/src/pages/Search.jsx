@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { FaPlay } from 'react-icons/fa';
 
 const Search = ({ onSongSelect }) => {
-  const buttonStyling = "flex space-x-1 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-1 ring-purple-400 px-6 py-2 hover:bg-white hover:text-gray-800 hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out";
+  const buttonStyling = "flex space-x-1 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-xl px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
 
   const [searchQuery, setSearchQuery] = useState('');
   const [songs, setSongs] = useState([]);
@@ -27,14 +27,14 @@ const Search = ({ onSongSelect }) => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token'); // Check for token
+    const token = sessionStorage.getItem('token');
 
     if (!token) {
-      toast.info('Please log in to search for songs.'); // Show login prompt if no token
-      return; // Don't fetch songs if token is not present
+      toast.info('Please log in to search for songs.'); 
+      return;
     }
 
-    fetchSongs(); // Fetch songs if token exists
+    fetchSongs(); 
   }, []);
 
   const handleSearch = (e) => {
@@ -66,8 +66,7 @@ const Search = ({ onSongSelect }) => {
 
         {filteredSongs.length > 0 ? (
           filteredSongs.map((song) => (
-            <div
-              key={song._id}
+            <div key={song._id}
               className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 bg-transparent text-sm mr-5"
               
             >
@@ -79,6 +78,9 @@ const Search = ({ onSongSelect }) => {
               <button className={buttonStyling} onClick={() => playSong(song)}>
                 <FaPlay className="text-lg" />
               </button>
+
+          
+
             </div>
           ))
         ) : (

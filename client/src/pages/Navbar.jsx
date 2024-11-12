@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { MdNotificationsNone } from "react-icons/md";
 import axios from 'axios';
@@ -64,7 +65,6 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
     navigate("/login"); 
   };
 
-  // Extract initials from the logged-in user's name
   const getInitials = (name) => {
     return name
       .split(" ")
@@ -78,10 +78,22 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
         <div className="flex items-center space-x-4">
           {loggedInUser ? (
             <>
-              <div className="relative">
-                <button onClick={toggleNotificationBox} className="text-gray-700 bg-transparent border-none ">
-                  <MdNotificationsNone className="text-3xl bg-transparent text-white" />
-                </button>
+              
+
+              <div className="relative flex items-center">
+            <div className="relative group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl mr-4 cursor-pointer">
+              
+              <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
+
+              <span className="absolute left-[-130px] hidden group-hover:inline-block text-sm text-white">Welcome, {loggedInUser}!</span>
+            </div>
+          </div>
+
+          <div className="relative">
+          <button onClick={toggleNotificationBox} className="bg-transparent mr-3 border-none">
+  <MdNotificationsNone className="w-6 h-6 bg-transparent text-white " />
+</button>
+
 
                 {notificationCount > 0 && (
                   <span className="absolute top-6 right-8 bg-red-500 text-white text-xs rounded-full px-2">
@@ -119,17 +131,6 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
                 )}
               </div>
 
-              <div className="relative flex items-center">
-                {/* User's Initials Circle */}
-                <div className="group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl mr-4 cursor-pointer">
-                  {/* Initials */}
-                  <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
-                  {/* "Welcome, User!" text on hover */}
-                  <span className="group-hover:block hidden text-sm text-white">
-                    Welcome, {loggedInUser}!
-                  </span>
-                </div>
-              </div>
 
               <button type='submit' className={buttonStyling} onClick={handleLogout}>Logout</button>
             </>
@@ -148,3 +149,5 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
 }
 
 export default Navbar;
+
+

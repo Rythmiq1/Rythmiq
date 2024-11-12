@@ -22,6 +22,7 @@ import SocketRoom from './pages/SocketRoom';
 import Artists from './pages/Artists';
 import ArtistPage from './pages/ArtistPage';
 import axios from 'axios'
+import Info from './pages/info';
 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
@@ -130,7 +131,7 @@ const App = () => {
                             <Sidebar />
                         </div>
                         <div className="h-screen w-screen bg-app-black scrollbar-hide z-9">
-                        <Navbar notificationCount={notificationCount+1} setNotificationCount={setNotificationCount} notifications={notifications} />
+                        <Navbar notificationCount={notificationCount} setNotificationCount={setNotificationCount} notifications={notifications} />
                             <Routes>
 
                                 <Route path="/" element={<Navigate to={userId ? "/home" : "/login"} />} />
@@ -147,6 +148,7 @@ const App = () => {
                                 <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                                 <Route path="/artists" element={<Artists/>} />
                                 <Route path="/artists/:id" element={<ArtistPage currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
+                                <Route path='/info' element={<Info/>} />
                                 
 
                             </Routes>
