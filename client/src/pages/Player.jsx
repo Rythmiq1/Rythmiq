@@ -21,7 +21,7 @@ const Player = () => {
   ];
   
   
-  // Define the button styling
+ 
   const buttonStyling =
     'flex space-x-3 mr-2 font-semibold bg-gradient-to-r from-indigo-600 to-pink-500 text-gray-100 rounded-sm ring-2 ring-purple-400 px-6 py-2 hover:bg-white hover:text-white hover:ring-slate-300 mx-8 shadow-lg shadow-indigo-300/50 transition duration-300 ease-in-out';
 

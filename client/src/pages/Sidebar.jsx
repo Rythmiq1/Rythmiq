@@ -5,7 +5,7 @@ import IconText from '../components/IconText';
 import { Link } from 'react-router-dom';
 import { FaMusic } from 'react-icons/fa'; // Music icon from Font Awesome
 import { AiOutlineUser } from 'react-icons/ai'; // Artist icon from Ant Design
-
+import { FaInfoCircle } from 'react-icons/fa';  
 function Sidebar() {
   const [activeLink, setActiveLink] = useState('/home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);  // Track sidebar open state
@@ -21,7 +21,7 @@ function Sidebar() {
   <img
     src={isSidebarOpen ? logo : logoh}  // Switch logo based on sidebar state
     alt="logo"
-    className="cursor-pointer transition-all duration-300" style={isSidebarOpen ? { width: 'auto', height: 'auto' } : { width: '180px', height: '60px' }}
+    className="cursor-pointer transition-all duration-300" style={isSidebarOpen ? { width: 'auto', height: '120px' } : { width: '180px', height: '60px' }}
   />
 </div>
 
@@ -58,6 +58,10 @@ function Sidebar() {
           <IconText iconName="room" displayText="Room" active={activeLink === '/room'} />
         </Link>
 
+        <Link to="/info" onClick={() => setActiveLink('/info')} className="sidebar-link">
+          <IconText iconName="info" displayText="Info" active={activeLink === '/info'} />
+        </Link>
+
 
       {isSidebarOpen && (
         <div className="px-5 pb-5">
@@ -76,4 +80,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-

@@ -9,6 +9,8 @@ import LikedCard from '../components/LikedCard';
 import { FaShareAlt, FaTrash } from 'react-icons/fa';
 import { IoIosShareAlt } from "react-icons/io";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
+import { FaWhatsapp, FaFacebook, FaInstagram } from 'react-icons/fa';
+
 const LibraryPage = () => {
     const [playlists, setPlaylists] = useState([]); // My Playlists state
     const [likedSongs, setLikedSongs] = useState([]); // Liked Songs state
@@ -242,29 +244,77 @@ const LibraryPage = () => {
             {currentSong && <MusicPlayer song={currentSong} />}
 
             {/* Share Modal */}
-            {showShareModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 ">
-    <div className="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-lg transform transition-all duration-300 ease-in-out scale-105">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Share this Playlist</h2>
-        <p className="mb-6 text-gray-600 truncate">{shareUrl}</p>
-        <div className="flex justify-center space-x-4">
-            <button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
-                onClick={handleCopyLink}
-            >
-                Copy Link
-            </button>
-            <button
-                className="bg-gray-400 hover:bg-gray-500 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
-                onClick={closeModal}
-            >
-                Close
-            </button>
-        </div>
-    </div>
+            {/* {showShareModal && (
+                            <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 ">
+                <div className="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-lg transform transition-all duration-300 ease-in-out scale-105">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Share this Playlist</h2>
+                    <p className="mb-6 text-gray-600 truncate">{shareUrl}</p>
+                    <div className="flex justify-center space-x-4">
+                        <button
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
+                            onClick={handleCopyLink}
+                        >
+                            Copy Link
+                        </button>
+                        <button
+                            className="bg-gray-400 hover:bg-gray-500 text-white font-medium px-5 py-2 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
+                            onClick={closeModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+            )} */}
+
+
+{showShareModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+  <div className="bg-black p-6 rounded-lg max-w-md w-full text-center shadow-2xl transform transition-all duration-300 ease-in-out scale-105 relative">
+      
+      {/* Close Button */}
+      <button 
+          className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white font-medium px-2 py-1 rounded-full transition duration-200 transform hover:scale-105 focus:outline-none"
+          onClick={closeModal}>
+          X
+      </button>
+      
+      {/* Modal Content */}
+      <h2 className="text-2xl font-bold mb-4 text-white">Share this Playlist</h2>
+
+      {/* Scrollable Link with Copy Button */}
+      <div className="flex items-center justify-between mb-4 gap-4">
+        
+          <div className="flex-1 text-gray-300 bg-gray-800 px-2 py-1 rounded-md overflow-x-auto whitespace-nowrap scrollbar-hide"
+              style={{ maxWidth: '70%' }}>{shareUrl}</div>
+
+          <button 
+              className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition duration-200 transform hover:scale-105 focus:outline-none"
+              onClick={handleCopyLink}>
+              Copy Link</button>
+
+      </div>
+
+      {/* Social Share Options */}
+      <div className="mt-3 flex justify-around">
+          <button className="flex flex-col items-center text-white hover:text-green-500 transition duration-200 bg-transparent border-none outline-none">
+              <FaWhatsapp size={30} />
+          </button>
+          <button className="flex flex-col items-center text-white hover:text-blue-700 transition duration-200 bg-transparent border-none outline-none">
+              <FaFacebook size={30} />
+          </button>
+          <button className="flex flex-col items-center text-white hover:text-pink-500 transition duration-200 bg-transparent border-none outline-none">
+              <FaInstagram size={30} />
+          </button>
+      </div>
+  </div>
 </div>
 
-            )}
+)}
+
 
 <div className="text-blue-50 mt-8">
   <h2 className="text-white text-xl font-bold">Your Saved Playlists</h2>

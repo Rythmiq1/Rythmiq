@@ -23,6 +23,7 @@ import SocketRoom from './pages/SocketRoom';
 import Artists from './pages/Artists';
 import ArtistPage from './pages/ArtistPage';
 import axios from 'axios'
+import Info from './pages/info';
 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
@@ -148,6 +149,7 @@ const App = () => {
                                 <Route path='/room' element={<SocketRoom currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
                                 <Route path="/artists" element={<Artists/>} />
                                 <Route path="/artists/:id" element={<ArtistPage currentSong={currentSong} setCurrentSong={handleSongSelection} />} />
+                                <Route path='/info' element={<Info/>} />
                                 
 
                             </Routes>

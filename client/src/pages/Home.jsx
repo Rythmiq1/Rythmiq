@@ -112,19 +112,13 @@ const PlayListView = ({ titleText, cardData }) => {
 
 const SongListView = ({ titleText, cardData, onSongSelect }) => {
   return (
-    <div className='text-white mt-8'>
+    <div className='text-white mt-8 mb-10'>
       <div className='text-2xl font-semibold mb-5'>{titleText}</div>
       <div className='w-full flex overflow-x-auto space-x-4 scrollbar-hide'>
-        {cardData.map((song) => (
-          <div
-            key={song._id}
-            onClick={() => onSongSelect(song)}  // Pass the selected song to the parent (Home)
-          >
-            <SongCard 
-              name={song.name} 
-              desc={song.desc} 
-              image={song.image} 
-            />
+        {cardData.map((song) =>
+         (
+          < div key={song._id} onClick={() => onSongSelect(song)}  >
+            <SongCard name={song.name} desc={song.desc} image={song.image}  />
           </div>
         ))}
       </div>
@@ -136,17 +130,7 @@ const SongListView = ({ titleText, cardData, onSongSelect }) => {
 
 const PlaylistCard = ({ name, desc, image }) => {
   return (
-    // <div className="w-80 h-60 px-4 py-2 rounded-lg bg-black bg-opacity-40 hover:bg-opacity-50 cursor-pointer transition duration-200 gas xe">
-    //   <img 
-    //     src={image} 
-    //     alt={name} 
-    //     className='w-full h-40 object-cover rounded-md' 
-    //   />
-    //   <div className='mt-2'>
-    //     <h3 className='text-lg font-semibold text-white'>{name}</h3>
-    //     <p className='text-gray-400 text-sm'>{desc}</p>
-    //   </div>
-    // </div>
+  
     <div className="flex flex-wrap gap-6 justify-around">
   <div
     className="max-w-[20rem] w-56 rounded-md shadow-md bg-black dark:text-gray-800 
@@ -164,7 +148,7 @@ const PlaylistCard = ({ name, desc, image }) => {
     </div>
   </div>
 
-  {/* Repeat the card for each additional item */}
+  
 </div>
 
   );
@@ -172,17 +156,7 @@ const PlaylistCard = ({ name, desc, image }) => {
 
 const SongCard = ({ name, desc, image }) => {
   return (
-    // <div className="w-80 h-60 px-4 py-2 rounded-lg bg-gray-800 bg-opacity-50 hover:bg-opacity-50 cursor-pointer transition duration-200">
-    //   <img 
-    //     src={image} 
-    //     alt={name} 
-    //     className='w-full h-40 object-cover rounded-md' 
-    //   />
-    //   <div className='mt-2'>
-    //     <h3 className='text-lg font-semibold text-white'>{name}</h3>
-    //     <p className='text-gray-400 text-sm'>{desc}</p>
-    //   </div>
-    // </div>
+
 
     <div className="px-4 py-2 rounded-lg cursor-pointer transition duration-200">
     <div
