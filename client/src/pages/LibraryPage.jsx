@@ -136,7 +136,7 @@ const LibraryPage = () => {
 
     return (
       <div className="flex flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16 mb-20">
-    <ToastContainer />
+    <ToastContainer/>
     <h2 className="text-2xl font-semibold text-white mb-4">Your Playlists:</h2>
 
     {/* Horizontal Scroll Container */}

@@ -99,14 +99,14 @@ const PlaylistPage = () => {
     if (!playlist) return <div className="text-white text-xl">Playlist not found</div>;
 
     return (
-        <div className="flex flex-col justify-start min-h-screen bg-gray-800 p-4 mt-16">
+        <div className="flex flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16">
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-32">
                 {playlist.songs.map((song) => (
                     <LikedCard 
-                        key={song._id} 
+                        key={song._id}
                         song={song} 
                         isLiked={likedSongs.includes(song._id)} 
                         onSelect={() => handleSelectSong(song)} 

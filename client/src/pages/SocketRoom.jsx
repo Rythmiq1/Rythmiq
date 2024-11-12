@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import { FaLock, FaLink, FaMusic } from 'react-icons/fa';
 
 const socket = io('http://localhost:8080', {
   transports: ['websocket', 'polling'],
@@ -174,11 +175,11 @@ const SocketRoom = ({ setCurrentSong }) => {
           
         <div className="flex items-center ml-[45%] space-x-4 px-10 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all w-52 group">
   <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
-    <span className="text-2xl">🔒</span> 
+  <FaLock className="text-2xl text-white" />
   </div>
 
   <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
-    <span className="text-2xl">🔗</span>
+  <FaLink className="text-2xl text-white" />
   </div>
 
   {/* The content that will appear on hover */}
@@ -234,43 +235,59 @@ const SocketRoom = ({ setCurrentSong }) => {
           </button>
         </div>
   
+
+        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
+          <h2 className="text-black font-bold text-lg mb-2">Users in room:</h2>
+          <ul className="space-y-2 w-full">
+            {users.length > 0 ? (
+              users.map((user, index) => (
+                <li 
+                  key={index}
+                  className="bg-white/30 backdrop-blur-md p-2 rounded-lg shadow-sm text-black text-center"
+                >
+                  {user.userId}
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500 text-center">No users in room</li>
+            )}
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
 
-
-        <div className="mt-4">
-          <h3 className="text-lg text-white">Users in room:</h3>
-          <ul className="text-white">
-            {users.map((user, index) => (
-              <li key={index}>{user.userId}</li>
-            ))}
-          </ul>
-        </div>
-
+          
         {error && (
           <div className="mt-4 text-red-500">
             <h3>Error: {error}</h3>
           </div>
         )}
+<div className="flex items-center mt-[5%] ml-[95%] w-10 h-32 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all group">
+  {/* Music Icon */}
+  <div className="relative flex justify-center items-center w-full h-full rounded-full transition-all hover:bg-white/20">
+    <FaMusic className="text-2xl text-white"/>
+  </div>
 
-<div className="bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg w-10/12 mx-auto mt-20">
-  <h3 className="text-2xl font-semibold text-white mb-4">Top Playlist</h3>
-  <ul className="space-y-4 w-full h-[600px] overflow-y-auto scrollbar-hide">
-    {musicList.length > 0 ? (
-      musicList.map((song, index) => (
-        <li
-          key={index}
-          className="flex items-center justify-between bg-white bg-opacity-60 rounded-md p-4 hover:bg-opacity-80 transition duration-300"
-        >
-          <div className="flex items-center space-x-4">
-            <div>
-              <p className="text-lg font-medium text-gray-900">{song.name}</p>
-              <p className="text-sm text-gray-600">{song.artist}</p>
+  {/* Hover Content: Music List */}
+  <div className="absolute top-0 left-[-350px]  w-[300px] h-[600px] p-4 rounded-lg bg-white/30 backdrop-blur-md shadow-xl group-hover:opacity-100 opacity-0 transition-opacity duration-300 overflow-hidden">
+    <h3 className="text-xl font-semibold text-white mb-4 text-center">Top Playlist</h3>
+    <ul className="space-y-4 w-full h-full overflow-y-auto scrollbar-hide">
+      {musicList.length > 0 ? (
+        musicList.map((song, index) => (
+          <li
+            key={index}
+            className="flex items-center justify-between bg-white bg-opacity-60 rounded-md p-4 hover:bg-opacity-80 transition duration-300"
+          >
+            <div className="flex items-center space-x-4">
+              <div>
+                <p className="text-lg font-medium text-gray-900">{song.name}</p>
+                <p className="text-sm text-gray-600">{song.artist}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">{song.duration}</span>
             {userId === adminId && (
               <button
@@ -280,16 +297,16 @@ const SocketRoom = ({ setCurrentSong }) => {
                 ▶
               </button>
             )}
-           
-          </div>
-        </li>
-      ))
-    ) : (
-      <p className="text-gray-600">No music available</p>
-    )}
-  </ul>
+            </div>
+          </li>
+        ))
+      ) : (
+        <p className="text-gray-600 text-center">No music available</p>
+      )}
+    </ul>
 
-  {selectedSong && (
+    {/* Music Progress Bar */}
+    {selectedSong && (
     <div className="mt-6">
       <input
         type="range"
@@ -300,9 +317,10 @@ const SocketRoom = ({ setCurrentSong }) => {
       />
     </div>
   )}
+  </div>
+  </div>
 </div>
 </div>
-    </div>
   );
 };
 
