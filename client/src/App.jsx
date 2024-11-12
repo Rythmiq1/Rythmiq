@@ -116,7 +116,8 @@ const App = () => {
     return (
         <div className="App">
             {isAuthRoute ? (
-                <div className="App1">
+                <div className="App1 ">
+                    
                     <Routes>
                         <Route path="/" element={userId ? <Navigate to="/home" /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<Login_signup />} />
