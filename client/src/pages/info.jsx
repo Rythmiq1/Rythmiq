@@ -6,7 +6,7 @@ import { FaEnvelope, FaLinkedin, FaGithub } from 'react-icons/fa';
 
 function Info() {
   return (
-    <div className="min-h-screen flex flex-row gap-10 items-center justify-center bg-gradient-to-b from-[#006161] to-black text-white">
+    <div className="ml-2 rounded-lg min-h-screen flex flex-row gap-10 items-center justify-center bg-gradient-to-b from-[#006161] to-black text-white">
 
 
       <div className="w-[400px] h-[500px] max-w-sm shadow-xl p-10 rounded-lg bg-transparent bg-opacity-15 relative overflow-hidden 

@@ -95,7 +95,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
     if (!playlist) return <div className="text-white text-xl">Playlist not found</div>;
 
     return (
-        <div className="ml-2 rounded-lg flex flex-col justify-start min-h-screen bg-gray-800 p-4 mt-16">
+        <div className="ml-2 rounded-lg flex flex-col justify-start min-h-screen bg-gradient-to-b from-[#006161] to-black p-4 mt-16">
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>

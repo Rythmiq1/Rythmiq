@@ -183,7 +183,7 @@ const LibraryPage = () => {
         {playlists?.map((playlist) => (
             <div
                 key={playlist._id}
-                className="w-full h-[420px] rounded-md shadow-md dark:text-gray-800 
+                className="w-38 h-[420px] rounded-md shadow-md dark:text-gray-800 
                     flex flex-col cursor-pointer transform transition-transform duration-200 
                     hover:scale-95 hover:border-2 gas kr"
             >
@@ -191,7 +191,7 @@ const LibraryPage = () => {
                 <img
                     src={playlist.image || defaultImg}
                     alt={playlist.name}
-                    className="object-cover object-top rounded-t-md h-56 dark:bg-gray-500"
+                    className="object-cover object-top rounded-t-md w-44 h-56 dark:bg-gray-500"
                     onClick={() => handlePlaylistClick(playlist._id)}
                 />
 
@@ -241,9 +241,9 @@ const LibraryPage = () => {
             </div>
 
 
-{showShareModal && (
+            {showShareModal && (
   <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-  <div className="bg-black p-6 rounded-lg max-w-md w-full text-center shadow-2xl transform transition-all duration-300 ease-in-out scale-105 relative">
+    <div className="bg-black p-6 rounded-lg max-w-md w-full text-center shadow-2xl transform transition-all duration-300 ease-in-out scale-105 relative">
       
       {/* Close Button */}
       <button 
@@ -257,33 +257,46 @@ const LibraryPage = () => {
 
       {/* Scrollable Link with Copy Button */}
       <div className="flex items-center justify-between mb-4 gap-4">
-        
-          <div className="flex-1 text-gray-300 bg-gray-800 px-2 py-1 rounded-md overflow-x-auto whitespace-nowrap scrollbar-hide"
-              style={{ maxWidth: '70%' }}>{shareUrl}</div>
-
-          <button 
-              className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition duration-200 transform hover:scale-105 focus:outline-none"
-              onClick={handleCopyLink}>
-              Copy Link</button>
-
+        <div className="flex-1 text-gray-300 bg-gray-800 px-2 py-1 rounded-md overflow-x-auto whitespace-nowrap scrollbar-hide" style={{ maxWidth: '70%' }}>
+          {shareUrl}
+        </div>
+        <button 
+            className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition duration-200 transform hover:scale-105 focus:outline-none"
+            onClick={handleCopyLink}>
+            Copy Link
+        </button>
       </div>
 
       {/* Social Share Options */}
       <div className="mt-3 flex justify-around">
-          <button className="flex flex-col items-center text-white hover:text-green-500 transition duration-200 bg-transparent border-none outline-none">
+          {/* WhatsApp Share */}
+          <button 
+              className="flex flex-col items-center text-white hover:text-green-500 transition duration-200 bg-transparent border-none outline-none"
+              onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(shareUrl)}`, '_blank')}
+          >
               <FaWhatsapp size={30} />
           </button>
-          <button className="flex flex-col items-center text-white hover:text-blue-700 transition duration-200 bg-transparent border-none outline-none">
+
+          {/* Facebook Share */}
+          <button 
+              className="flex flex-col items-center text-white hover:text-blue-700 transition duration-200 bg-transparent border-none outline-none"
+              onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')}
+          >
               <FaFacebook size={30} />
           </button>
-          <button className="flex flex-col items-center text-white hover:text-pink-500 transition duration-200 bg-transparent border-none outline-none">
+
+          {/* Instagram Share */}
+          <button 
+              className="flex flex-col items-center text-white hover:text-pink-500 transition duration-200 bg-transparent border-none outline-none"
+              onClick={() => window.open(`https://www.instagram.com/?url=${encodeURIComponent(shareUrl)}`, '_blank')}
+          >
               <FaInstagram size={30} />
           </button>
       </div>
+    </div>
   </div>
-</div>
-
 )}
+
 
 <div className="text-blue-50 mt-8 mb-20">
   <h2 className="text-white text-xl font-bold mb-4">Your Saved Playlists</h2>

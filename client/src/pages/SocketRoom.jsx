@@ -169,7 +169,7 @@ const SocketRoom = ({ setCurrentSong }) => {
   };
 
   return (
-    <div className="bg-[url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')] bg-cover bg-center min-h-screen">
+    <div className="ml-2 rounded-lg bg-[url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')] bg-cover bg-center min-h-screen">
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4 text-white">Music Room</h2>
           

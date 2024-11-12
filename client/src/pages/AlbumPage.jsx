@@ -66,7 +66,7 @@ const AlbumPage = ({ setCurrentSong }) => {
     if (error) return <div className="text-white text-xl">Error: {error}</div>;
 
     return (
-        <div className="flex flex-col items-center justify-start min-h-screen   bg-gradient-to-b from-[#006161] to-black p-4 mt-16">
+        <div className="ml-2 rounded-lg flex flex-col items-center justify-start min-h-screen   bg-gradient-to-b from-[#006161] to-black p-4 mt-16">
             <ToastContainer />
             {album ? (
                 <>

@@ -137,7 +137,6 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
     <div className="mt-20"></div>
   </>
 );
-
 }
 
 export default Navbar;
