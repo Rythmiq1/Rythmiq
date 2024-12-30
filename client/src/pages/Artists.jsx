@@ -110,8 +110,8 @@ const Artists = () => {
 
           <div className="flex-grow p-4 space-y-4 flex flex-col justify-between">
             <div className="space-y-2">
-              <h2 className="text-xl text-white font-semibold tracking-wide">{artist.name}</h2>
-              <p className="text-white text-sm">{artist.bio || artist.description}</p>
+              <h2 className="text-xl font-semibold tracking-wide">{artist.name}</h2>
+              <p className="dark:text-gray-800 text-sm">{artist.bio || artist.description}</p>
             </div>
             <button type="button"
               className={`flex items-center justify-center w-full p-2 text-lg tracking-wide 

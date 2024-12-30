@@ -16,8 +16,8 @@ const SocketRoom = ({ setCurrentSong }) => {
   const [selectedSong, setSelectedSong] = useState(null);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
-  const [currentTime, setCurrentTime] = useState(0); // Track current time
-  const [adminId, setAdminId] = useState(null); // Track the room admin
+  const [currentTime, setCurrentTime] = useState(0); 
+  const [adminId, setAdminId] = useState(null);
 
   const userId = sessionStorage.getItem('userId');
 
