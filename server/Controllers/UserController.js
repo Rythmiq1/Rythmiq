@@ -401,40 +401,32 @@ const analyzeSongHistory = (songHistory) => {
 
 export const getRecommendations = async (req, res) => {
     try {
-      // Step 1: Get the user's ID from the request (you can modify this based on your authentication method)
       const userId = req.user?.userId || req.user?._id;
-
-  
-      // Step 2: Fetch the user from the database (including interests)
+    
       const user = await UserModel.findById(userId).populate('interests');
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
-  
-      // Step 3: Get the song history (sent from the frontend)
-      const songHistory = req.body.songHistory || [];
       
-      // Step 4: Analyze the song history to get the top types (genres) of songs
+      const songHistory = req.body.songHistory || [];
+    
       let topTypes = [];
       if (songHistory.length > 0) {
-        // Extract the song types (genres) from the song history
+       
         topTypes = analyzeSongHistory(songHistory);
       } else {
-        // If song history is empty, fallback to default types
-        topTypes = ["pop", "rock", "hip-hop", "electronic"]; // Example default types
+        
+        topTypes = ["pop", "rock", "hip-hop", "electronic"];
       }
-  
-      // Step 5: Fetch songs by the top types (from the Song model)
-      const songsByType = await Song.find({ type: { $in: topTypes } }).limit(20);
-  
       
+      const songsByType = await Song.find({ type: { $in: topTypes } }).limit(20);
       const artistIds = user.interests.map(artist => artist._id);
       const artists = await Artist.find({ _id: { $in: artistIds } }).populate('songs');
-    //   console.log("Fetched Artists:", artists); // Debugging log
+    
 
     let songsByInterest = [];
     artists.forEach(artist => {
-    // console.log("Artist's Songs:", artist.songs); // Debugging log
+    
     songsByInterest = [...songsByInterest, ...artist.songs];
     });
       const combinedSongs = [...songsByType, ...songsByInterest];

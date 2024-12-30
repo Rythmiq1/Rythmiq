@@ -99,7 +99,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
             <ToastContainer />
             <h2 className="text-3xl font-semibold text-white mb-4">{playlist.name}</h2>
             <p className="text-gray-400 mb-6">{playlist.description}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-72">
                 {playlist.songs.map((song) => (
                     <LikedCard 
                         key={song._id}

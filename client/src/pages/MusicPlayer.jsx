@@ -43,7 +43,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
       navigate('/player', { state: { currentSong } }); 
     } else {
       setIsZoomed(false);
-      navigate(-1);
+      navigate('/');
     }
 };
 
