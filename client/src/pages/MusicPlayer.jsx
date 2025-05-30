@@ -11,7 +11,7 @@ import zoom from "../assets/zoomin.png";
 import shrink from "../assets/zoomout.png";
 // import mute from "../assets/mute.png";
 import { useNavigate } from 'react-router-dom'; 
-
+import BASE_URL from "../config"; 
 
 
 const MusicPlayer = ({ currentSong, songs, onSongChange }) => {

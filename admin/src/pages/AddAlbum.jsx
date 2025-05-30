@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import upload_area from '../assets/upload_area.png';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
-const url = 'http://localhost:8080';
+import BASE_URL from "../config"; 
+const url = `${BASE_URL}`;
 
 const AddAlbum = () => {
   const [image, setImage] = useState(null); // Use null instead of false for file input

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
-const url = 'http://localhost:8080';
+import BASE_URL from "../config"; 
+const url = `${BASE_URL}`;
 const ListAlbum = () => {
   const [data, setData] = useState([]);
   const fetchAlbums = async () => {

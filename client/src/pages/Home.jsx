@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import BASE_URL from "../config"; 
 function Home({ onSongSelect,recommendations  }) {
   const [playlistsData, setPlaylistsData] = useState([]); // For playlists
   const [songsData, setSongsData] = useState([]); // For all songs
@@ -13,7 +13,7 @@ function Home({ onSongSelect,recommendations  }) {
     // Fetch both playlists and songs data
     const fetchPlaylists = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/album/list');
+        const response = await axios.get(`${BASE_URL}/album/list`);
         if (Array.isArray(response.data.albums)) {
           setPlaylistsData(response.data.albums); // Set playlists data
         } else {
@@ -27,7 +27,7 @@ function Home({ onSongSelect,recommendations  }) {
 
     const fetchSongs = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/song/list');
+        const response = await axios.get(`${BASE_URL}/song/list`);
         if (Array.isArray(response.data.songs)) {
           setSongsData(shuffleArray(response.data.songs)); // Shuffle songs and set data
         } else {
@@ -42,7 +42,7 @@ function Home({ onSongSelect,recommendations  }) {
     // Fetch last 5 songs for "Sound of India" section
     const fetchLastFiveSongs = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/song/last5');
+        const response = await axios.get(`${BASE_URL}/song/last5`);
         if (Array.isArray(response.data.songs)) {
           setLastFiveSongs(response.data.songs); // Set last 5 songs data
         } else {

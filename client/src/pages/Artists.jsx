@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';  // Import axios for API requests
 import { toast } from 'react-toastify';
-
+import BASE_URL from "../config"; 
 const Artists = () => {
   const navigate = useNavigate();
   const [artists, setArtists] = useState([]);
@@ -12,7 +12,7 @@ const Artists = () => {
     // Fetch the list of artists
     const fetchArtists = async () => {
       try {
-        const response = await fetch('http://localhost:8080/artist/artists');
+        const response = await fetch(`${BASE_URL}/artist/artists`);
         const data = await response.json();
         
         if (data.success) {
@@ -34,7 +34,7 @@ const Artists = () => {
           return;
         }
 
-        const response = await axios.get('http://localhost:8080/auth/all-followed-artists', {
+        const response = await axios.get(`${BASE_URL}/auth/all-followed-artists`, {
           headers: { Authorization: token }
         });
 
@@ -64,7 +64,7 @@ const Artists = () => {
 
     try {
       const action = followedArtists.has(artistId) ? 'unfollow-artist' : 'follow-artist';
-      const url = `http://localhost:8080/auth/${action}`;
+      const url = `${BASE_URL}/auth/${action}`;
 
       const response = await axios.post(url, { artistId }, {
         headers: { Authorization: token }

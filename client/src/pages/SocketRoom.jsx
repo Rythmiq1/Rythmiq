@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { FaLock, FaLink, FaMusic ,FaUser, FaPlay } from 'react-icons/fa';
-
-const socket = io('http://localhost:8080', {
+import BASE_URL from "../config"; 
+const socket = io(`${BASE_URL}`, {
   transports: ['websocket', 'polling'],
   withCredentials: true,
 });
@@ -24,7 +24,7 @@ const SocketRoom = ({ setCurrentSong }) => {
   useEffect(() => {
     const fetchSongs = async () => {
       try {
-        const response = await fetch('http://localhost:8080/song/list');
+        const response = await fetch(`${BASE_URL}/song/list`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaFillDrip } from 'react-icons/fa'; // Import the icon
-
+import BASE_URL from "../config"; 
 
 const Player = () => {
   const location = useLocation();

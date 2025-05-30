@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { FiMoreHorizontal } from 'react-icons/fi';
-
+import BASE_URL from "../config"; 
 const ArtistPage = ({ currentSong, setCurrentSong }) => {
   const { id } = useParams();
   const [artist, setArtist] = useState(null);
@@ -13,7 +13,7 @@ const ArtistPage = ({ currentSong, setCurrentSong }) => {
   useEffect(() => {
     const fetchArtist = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/artist/artists/${id}`);
+        const response = await fetch(`${BASE_URL}/artist/artists/${id}`);
         const data = await response.json();
 
         if (data.success) {

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlay } from 'react-icons/fa';
-
+import BASE_URL from "../config"; 
 const Search = ({ onSongSelect }) => {
   const buttonStyling = "flex space-x-1 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-xl px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
 
   const [searchQuery, setSearchQuery] = useState('');
   const [songs, setSongs] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
-  const url = 'http://localhost:8080';
+  const url = `${BASE_URL}`;
 
   const fetchSongs = async () => {
     try {

@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer'; 
 import LikedCard from '../components/LikedCard';
-
+import BASE_URL from "../config"; 
 const PlaylistPage = ({ setCurrentSong }) => {
     const { id } = useParams();
     const [playlist, setPlaylist] = useState(null);
@@ -16,7 +16,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
         const fetchPlaylist = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8080/playlist/${id}`, {
+                const response = await axios.get(`${BASE_URL}/playlist/${id}`, {
                     headers: { Authorization: token },
                 });
                 if (response.data.success) {
@@ -35,7 +35,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
         const fetchLikedSongs = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await axios.get('http://localhost:8080/auth/get-liked', {
+                const response = await axios.get(`${BASE_URL}/auth/get-liked`, {
                     headers: { Authorization: token },
                 });
                 if (response.data && response.data.success) {
@@ -69,12 +69,12 @@ const PlaylistPage = ({ setCurrentSong }) => {
             const isLiked = likedSongs.includes(songId);
     
             if (isLiked) {
-                response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
+                response = await axios.delete(`${BASE_URL}/auth/delete-like-song`, {
                     data: { songId },
                     headers,
                 });
             } else {
-                response = await axios.post('http://localhost:8080/auth/like-song', { songId }, { headers });
+                response = await axios.post(`${BASE_URL}/auth/like-song`, { songId }, { headers });
             }
     
             if (response.data.success) {

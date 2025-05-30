@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import upload_area from '../assets/upload_area.png';
-
+import BASE_URL from "../config"; 
 const CreatePlaylist = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -21,7 +21,7 @@ const CreatePlaylist = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:8080/song/list', {
+        const response = await axios.get(`${BASE_URL}/song/list`, {
           headers: { Authorization: token } 
         });
         if (response.data.success) {
@@ -57,7 +57,7 @@ const CreatePlaylist = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/playlist/create',
+        `${BASE_URL}/playlist/create`,
         formData,
         {
           headers: {
