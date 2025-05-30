@@ -1,148 +1,184 @@
 import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
-import { FaMusic, FaPlay } from 'react-icons/fa';
-import BASE_URL from "../config";
+import {
+  FaLock,
+  FaLink,
+  FaMusic,
+  FaUser,
+  FaPause,
+  FaPlay,
+  FaExpand
+} from 'react-icons/fa';
+import BASE_URL from '../config';
 
 const socket = io(BASE_URL, {
   transports: ['websocket', 'polling'],
   withCredentials: true,
 });
 
-const SocketRoom = ({ setCurrentSong }) => {
-  // —— refs & state —— 
-  const audioRef = useRef(null);
+const SocketRoom = () => {
   const [roomId, setRoomId] = useState('');
+  const [isJoining, setIsJoining] = useState(false);
+  const [adminId, setAdminId] = useState(null);
   const [users, setUsers] = useState([]);
   const [musicList, setMusicList] = useState([]);
   const [selectedSong, setSelectedSong] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [adminId, setAdminId] = useState(null);
-  const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
   const [showRoomPanel, setShowRoomPanel] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const userId = sessionStorage.getItem('userId');
+  const audioRef = useRef();
 
-  const userId = sessionStorage.getItem('userId') || '';
+  
+  const handlePlayClick = song => {
 
+    setSelectedSong(song);
+    setCurrentTime(0);
+    setIsPlaying(true);
+    if (audioRef.current) {
+      audioRef.current.src = song.file;
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
+   
+    socket.emit('playSong', {
+      roomId,
+      song,
+      userId,
+      newTime: 0
+    });
+  };
+
+ 
+  const handlePlay = () => {
+    if (userId !== adminId || !selectedSong) return;
+    const time = audioRef.current?.currentTime || 0;
+    socket.emit('playSong', {
+      roomId,
+      song: selectedSong,
+      userId,
+      newTime: time
+    });
+  };
+
+  const handlePause = () => {
+    if (userId !== adminId || !selectedSong) return;
+    const ts = audioRef.current.currentTime;
+   
+    setIsPlaying(false);
+    audioRef.current.pause();
+   
+    socket.emit('pauseSong', { roomId, userId, currentTime: ts });
+  };
+
+  const handleTimeUpdate = val => {
+    setCurrentTime(val);
+    if (userId === adminId) {
+      socket.emit('updateTime', { roomId, userId, newTime: val });
+      if (audioRef.current) audioRef.current.currentTime = val;
+    }
+  };
+
+  const selectSong = song => {
+    setSelectedSong(song);
+    setCurrentTime(0);
+    setIsPlaying(false);
+  };
 
   useEffect(() => {
     if (!userId) return;
 
-    
+    socket.emit('join-room', userId);
+
     fetch(`${BASE_URL}/song/list`)
-      .then(r => r.json())
+      .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.songs)) setMusicList(data.songs);
       })
-      .catch(e => setError(e.message));
+      .catch(err => setError(err.message));
 
-    socket.on('connect', () =>
-      console.log('Socket connected:', socket.id)
-    );
+    socket.on('userJoined', ({ users }) => setUsers(users));
 
-    socket.on('userJoined', data => setUsers(data.users));
-
-    socket.on('playSong', ({ song, roomId: rid }) => {
-      if (song) {
-        setSelectedSong(song);
-        setCurrentSong(song);
-        setIsPlaying(true);
+    socket.on('playSong', ({ song, newTime }) => {
+    
+      setSelectedSong(song);
+      setIsPlaying(true);
+      setCurrentTime(newTime || 0);
+      if (audioRef.current) {
+        audioRef.current.src = song.file;
+        audioRef.current.currentTime = newTime || 0;
+        audioRef.current.play();
       }
     });
 
-    // **time sync**  
-    socket.on('updateTime', ({ roomId: rid, newTime }) => {
-      if (rid === roomId) {
-        setCurrentTime(newTime);
-        if (audioRef.current) {
-          audioRef.current.currentTime = newTime;
-        }
+    socket.on('pauseSong', ({ currentTime: ts }) => {
+      setIsPlaying(false);
+      setCurrentTime(ts);
+      if (audioRef.current) {
+        audioRef.current.currentTime = ts;
+        audioRef.current.pause();
       }
+    });
+
+    socket.on('updateTime', ({ newTime }) => {
+      setCurrentTime(newTime);
+      if (audioRef.current) audioRef.current.currentTime = newTime;
     });
 
     return () => {
       socket.off('userJoined');
       socket.off('playSong');
+      socket.off('pauseSong');
       socket.off('updateTime');
     };
-  }, [userId, roomId, setCurrentSong]);
+  }, [userId]);
 
-  const generateRoomId = () =>
-    'room-' + Math.random().toString(36).substr(2, 9);
-
+  
   const createRoom = () => {
-    if (!userId) return alert('Login first');
-    const rid = generateRoomId();
-    setRoomId(rid);
+    if (!userId) return alert('Login required');
+    const id = 'room-' + Math.random().toString(36).substr(2, 9);
+    setRoomId(id);
     setAdminId(userId);
-    socket.emit('createRoom', { roomId: rid, userId }, resp => {
-      if (!resp.success) setError('Create room failed');
+    socket.emit('createRoom', { roomId: id, userId }, res => {
+      if (!res.success) console.error('Create failed');
     });
   };
 
   const joinRoom = () => {
-    if (!roomId) return alert('Room ID required');
+    if (!roomId || !userId) return alert('Room ID & login required');
     setIsJoining(true);
-    socket.emit('joinRoom', { roomId, userId }, resp => {
+    socket.emit('joinRoom', { roomId, userId }, res => {
+      if (res.success) setAdminId(res.adminId);
       setIsJoining(false);
-      if (resp.success) setAdminId(resp.adminId);
-      else setError('Join failed');
     });
   };
 
-  const playSong = song => {
-    if (userId !== adminId) return alert('Only admin can play');
-    setSelectedSong(song);
-    setCurrentSong(song);
-    setIsPlaying(true);
-    socket.emit('playSong', { roomId, song, userId });
+  const copyRoomId = () => {
+    navigator.clipboard.writeText(roomId);
+    alert('Room ID copied!');
   };
-
-  const handleTimeUpdate = newTime => {
-  setCurrentTime(newTime);
-  if (audioRef.current) audioRef.current.currentTime = newTime;
-
-  socket.emit('updateTime', {
-    roomId,
-    userId,     
-    newTime
-  });
-};
-
-
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center"
+      className="min-h-screen bg-cover bg-center hide-scrollbar"
       style={{
         backgroundImage:
-          "url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')"
+          "url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')",
       }}
     >
       <div className="container mx-auto px-4 py-6">
-        {/* 1) AUDIO ELEMENT */}
-        <audio
-          ref={audioRef}
-          src={selectedSong?.file}
-          autoPlay={isPlaying}
-          onTimeUpdate={e => {
-            const t = e.target.currentTime;
-            setCurrentTime(t);
-          }}
-          className="hidden"
-        />
-
         <h1 className="text-4xl font-extrabold text-white text-center drop-shadow-lg mb-8">
           Music Room
         </h1>
 
-        {/* 2) TOGGLE BUTTONS */}
+       
         <div className="flex justify-center space-x-6 mb-8">
           <button
             onClick={() => {
-              setShowRoomPanel(v => !v);
-              setShowMusicPanel(false);
+              setShowRoomPanel(p => !p);
+              if (showMusicPanel) setShowMusicPanel(false);
             }}
             className="px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-2xl transform hover:scale-105 transition"
           >
@@ -150,8 +186,8 @@ const SocketRoom = ({ setCurrentSong }) => {
           </button>
           <button
             onClick={() => {
-              setShowMusicPanel(v => !v);
-              setShowRoomPanel(false);
+              setShowMusicPanel(p => !p);
+              if (showRoomPanel) setShowRoomPanel(false);
             }}
             className="px-6 py-3 bg-gradient-to-br from-green-400 to-teal-600 rounded-full shadow-2xl transform hover:scale-105 transition"
           >
@@ -159,10 +195,10 @@ const SocketRoom = ({ setCurrentSong }) => {
           </button>
         </div>
 
-        {/* 3) ROOM PANEL */}
+      
         {showRoomPanel && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Create Room */}
+           
             <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl flex flex-col items-center">
               <h2 className="text-white text-xl font-semibold mb-4">
                 Create Room
@@ -181,10 +217,7 @@ const SocketRoom = ({ setCurrentSong }) => {
                     className="mt-4 w-full p-2 bg-white bg-opacity-80 rounded-md text-center text-gray-800"
                   />
                   <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(roomId);
-                      alert('Copied!');
-                    }}
+                    onClick={copyRoomId}
                     className="mt-2 w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
                   >
                     Copy ID
@@ -193,7 +226,7 @@ const SocketRoom = ({ setCurrentSong }) => {
               )}
             </div>
 
-            {/* Join Room */}
+           
             <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl flex flex-col items-center">
               <h2 className="text-white text-xl font-semibold mb-4">
                 Join Room
@@ -214,7 +247,7 @@ const SocketRoom = ({ setCurrentSong }) => {
               </button>
             </div>
 
-            {/* Users */}
+            
             <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
               <h2 className="text-white text-xl font-semibold mb-4 text-center">
                 Users
@@ -231,7 +264,7 @@ const SocketRoom = ({ setCurrentSong }) => {
                   ))
                 ) : (
                   <li className="py-2 text-center text-white/70">
-                    No users
+                    No users yet
                   </li>
                 )}
               </ul>
@@ -245,7 +278,7 @@ const SocketRoom = ({ setCurrentSong }) => {
           </div>
         )}
 
-        {/* 4) MUSIC PANEL */}
+        
         {showMusicPanel && (
           <div className="max-w-3xl mx-auto bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl mb-8">
             <h2 className="text-white text-2xl font-bold mb-6 text-center">
@@ -256,20 +289,33 @@ const SocketRoom = ({ setCurrentSong }) => {
                 musicList.map((song, i) => (
                   <li
                     key={i}
-                    className="flex justify-between items-center bg-white bg-opacity-30 rounded-xl p-4 hover:bg-opacity-50 transition"
+                    onClick={() => selectSong(song)}
+                    className={`flex justify-between items-center rounded-xl p-4 transition cursor-pointer
+                      ${selectedSong === song ? 'bg-white bg-opacity-50' : 'bg-white bg-opacity-30 hover:bg-opacity-50'}`}
                   >
                     <div>
                       <p className="text-lg font-semibold text-white">
                         {song.name}
                       </p>
-                      <p className="text-sm text-white/80">
-                        {song.artist}
-                      </p>
+                      <p className="text-sm text-white/80">{song.artist}</p>
                     </div>
-                    {userId === adminId && (
+                   
+                    {userId === adminId && selectedSong === song && !isPlaying && (
                       <FaPlay
-                        onClick={() => playSong(song)}
-                        className="text-2xl text-white hover:text-teal-300 transition cursor-pointer"
+                        onClick={e => {
+                          e.stopPropagation();
+                          handlePlayClick(song);
+                        }}
+                        className="text-2xl text-white hover:text-teal-300 transition"
+                      />
+                    )}
+                    {userId === adminId && selectedSong === song && isPlaying && (
+                      <FaPause
+                        onClick={e => {
+                          e.stopPropagation();
+                          handlePause();
+                        }}
+                        className="text-2xl text-white hover:text-red-400 transition"
                       />
                     )}
                   </li>
@@ -286,13 +332,64 @@ const SocketRoom = ({ setCurrentSong }) => {
                   value={currentTime}
                   max={selectedSong.duration || 100}
                   onChange={e => handleTimeUpdate(+e.target.value)}
-                  className="w-full h-2 rounded-lg appearance-none bg-white bg-opacity-50"
+                  className="w-full h-2 rounded-lg appearance-none bg-white bg-opacity-50 transition"
                 />
               </div>
             )}
           </div>
         )}
       </div>
+
+      
+      <div className="fixed bottom-0 left-0 w-full bg-gradient-to-r from-gray-900/80 to-black/80 backdrop-blur-lg py-3 px-6 flex items-center justify-between space-x-4 shadow-inner">
+        
+        <div className="flex-1 overflow-hidden">
+          <div className="text-white font-semibold truncate">
+            {selectedSong ? selectedSong.name : 'No song playing'}
+          </div>
+          <div className="text-gray-300 text-sm truncate">
+            {selectedSong ? selectedSong.artist : ''}
+          </div>
+        </div>
+
+        
+        <input
+          type="range"
+          min={0}
+          max={selectedSong?.duration || 100}
+          value={currentTime}
+          onChange={e => handleTimeUpdate(+e.target.value)}
+          className="w-2/5 h-1 rounded-lg appearance-none bg-white bg-opacity-50 hover:bg-opacity-70 transition"
+        />
+
+       
+        <div className="flex items-center space-x-4">
+          {selectedSong && (
+            isPlaying ? (
+              <button
+                onClick={handlePause}
+                disabled={userId !== adminId}
+                className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition"
+              >
+                <FaPause size={20} className="text-white" />
+              </button>
+            ) : (
+              <button
+                onClick={handlePlay}
+                disabled={userId !== adminId}
+                className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition"
+              >
+                <FaPlay size={20} className="text-white" />
+              </button>
+            )
+          )}
+          <button className="p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition">
+            <FaExpand size={18} className="text-white" />
+          </button>
+        </div>
+      </div>
+
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </div>
   );
 };

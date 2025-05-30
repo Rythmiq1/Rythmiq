@@ -81,7 +81,7 @@ app.get('/ping', (req, res) => res.send('pong'));
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get("/auth/google/callback",
-passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+passport.authenticate("google", { failureRedirect: "https://rythmiq.onrender.com/login" }),
 async (req, res) => {
   const user = req.user;
   const token = jwt.sign(
@@ -95,9 +95,9 @@ async (req, res) => {
   );
   const isNewUser = user.interests.length === 0;
   if (isNewUser) {
-    res.redirect(`http://localhost:5173/interest?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
+    res.redirect(`https://rythmiq.onrender.com/interest?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
   } else {
-    res.redirect(`http://localhost:5173/home?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
+    res.redirect(`https://rythmiq.onrender.com/home?token=${token}&name=${encodeURIComponent(user.name)}&userId=${user._id}`);
   }
 });
 
@@ -172,34 +172,35 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('userJoined', { userId, users: rooms[roomId].users });
   });
 
-  // Handle song playback (when a song is played by a user)
-  socket.on('playSong', ({ roomId, song, userId }) => {
-    if (rooms[roomId]) {
-      rooms[roomId].song = song;  // Store the song object
-      rooms[roomId].isPlaying = true;
+  socket.on('playSong', ({ roomId, song, userId, newTime = 0 }) => {
+    if (!rooms[roomId]) return console.warn(`Room ${roomId} missing`);
+    rooms[roomId].song = song;
+    rooms[roomId].isPlaying = true;
+    rooms[roomId].currentTime = newTime;
 
-      console.log(`User with ID ${userId} is playing song in room ${roomId}: ${song.name}`);
+    console.log(`▶️ [${roomId}] ${userId} played "${song.name}" @ ${newTime}s`);
 
-      // Emit the song to all users in the room
-      io.to(roomId).emit('playSong', { song, userId });
-
-      // Emit the current song time (starting from 0)
-      io.to(roomId).emit('syncTime', 0);
-    } else {
-      console.log(`Room ${roomId} does not exist for playSong event.`);
-    }
+    // Broadcast to everyone: playSong with the timestamp
+    io.to(roomId).emit('playSong', { song, newTime });
   });
 
-  // Handle time update (called when a user updates their time)
-  socket.on('updateTime', ({ roomId, userId, newTime }) => {
-    if (rooms[roomId]) {
-      rooms[roomId].currentTime = newTime;  // Update the current time in the room
+  // Handle pause — admin must send their currentTime
+  socket.on('pauseSong', ({ roomId, userId, currentTime }) => {
+    if (!rooms[roomId]) return console.warn(`Room ${roomId} missing`);
+    rooms[roomId].isPlaying = false;
+    rooms[roomId].currentTime = currentTime;
 
-      // Emit the updated time to all users in the room, except the one who sent it
-      socket.to(roomId).emit('updateTime', { userId, newTime });
-    } else {
-      console.log(`Room ${roomId} does not exist for updateTime event.`);
-    }
+    console.log(`⏸️ [${roomId}] ${userId} paused @ ${currentTime}s`);
+
+    // Broadcast pause + the exact time
+    io.to(roomId).emit('pauseSong', { currentTime });
+  });
+
+  // Keep the existing updateTime so dragging the slider still works
+  socket.on('updateTime', ({ roomId, userId, newTime }) => {
+    if (!rooms[roomId]) return;
+    rooms[roomId].currentTime = newTime;
+    socket.to(roomId).emit('updateTime', { newTime });
   });
 
   // Handle play/pause toggle (called when play/pause is toggled)

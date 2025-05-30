@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlay } from 'react-icons/fa';
-import BASE_URL from "../config"; 
-const Search = ({ onSongSelect }) => {
-  const buttonStyling = "flex space-x-1 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-xl px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
+import BASE_URL from "../config";
 
+const Search = ({ onSongSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [songs, setSongs] = useState([]);
   const [filteredSongs, setFilteredSongs] = useState([]);
@@ -28,13 +27,11 @@ const Search = ({ onSongSelect }) => {
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
-
     if (!token) {
-      toast.info('Please log in to search for songs.'); 
+      toast.info('Please log in to search for songs.');
       return;
     }
-
-    fetchSongs(); 
+    fetchSongs();
   }, []);
 
   const handleSearch = (e) => {
@@ -47,47 +44,54 @@ const Search = ({ onSongSelect }) => {
   };
 
   const playSong = (song) => {
-    console.log("Selected Song:", song);
     onSongSelect(song);
   };
 
   return (
-    <div className="ml-2 rounded-lg p-4 rounded-lg bg-gradient-to-b from-[#006161] to-black" >
-      <h2 className="text-3xl mb-4 text-white">Search Songs</h2>
+    <div className="mt-4 p-6 rounded-3xl bg-gradient-to-b from-[#004d4d] to-black shadow-2xl scrollbar-hide">
+      <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">Search Songs</h2>
+
       <input
         type="text"
         value={searchQuery}
         onChange={handleSearch}
-        placeholder="Type to search for a song..."
-        className="p-2 border border-gray-300 rounded w-full mb-4 text-black"
+        placeholder="Search for songs..."
+        className="w-full p-3 text-lg rounded-xl mb-6 bg-white text-black focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-md"
       />
-      <div>
-        
 
+      <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
         {filteredSongs.length > 0 ? (
           filteredSongs.map((song) => (
-            <div key={song._id}
-              className="grid grid-cols-[1fr_1fr_1fr] sm:grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 bg-transparent text-sm mr-5"
-              
+            <div
+              key={song._id}
+              className="flex flex-col sm:flex-row items-center sm:justify-between gap-4 bg-white/10 rounded-xl p-4 hover:bg-white/20 transition-all duration-300 shadow-md"
             >
-              <img className="w-12" src={song.image} alt={song.title} />
-              <p className="text-white font-semibold ml-12">{song.name}</p>
-              <p className="text-white ml-44">{song.album ? song.album.name : "N/A"}</p>
-              <p className="text-white">{song.duration}</p>
+              <div className="flex items-center gap-4 w-full sm:w-[40%]">
+                <img src={song.image} alt={song.title} className="w-14 h-14 rounded-lg object-cover" />
+                <div>
+                  <p className="text-white font-semibold text-base sm:text-lg">{song.name}</p>
+                  <p className="text-gray-300 text-sm">{song.album ? song.album.name : "Unknown Album"}</p>
+                </div>
+              </div>
 
-              <button className={buttonStyling} onClick={() => playSong(song)}>
-                <FaPlay className="text-lg" />
+              <div className="flex items-center justify-between w-full sm:w-[40%] text-sm sm:text-base text-gray-300 sm:pl-6">
+                <p>{song.duration}</p>
+              </div>
+
+              <button
+                className="flex items-center gap-2 px-5 py-2 bg-white text-teal-600 border-2 border-teal-600 rounded-full font-semibold hover:bg-teal-600 hover:text-white transition-all shadow-lg"
+                onClick={() => playSong(song)}
+              >
+                <FaPlay />
+                <span className="hidden sm:inline">Play</span>
               </button>
-
-          
-
             </div>
           ))
         ) : (
-          <p className="py-2 text-white">
-            No songs found matching your search. 
-            <span className="text-pink-500 font-semibold">
-              Please feel free to join our Admin Facility to upload songs!
+          <p className="text-white text-base sm:text-lg mt-4">
+            No songs found.{" "}
+            <span className="text-pink-400 font-semibold">
+              Join our Admin Facility to upload your favorites!
             </span>
           </p>
         )}

@@ -1,93 +1,102 @@
 import React, { useState, useEffect } from 'react';
-import BASE_URL from "../config"; 
+import { FaPlay } from 'react-icons/fa';
+import BASE_URL from "../config";
+
 const LikedSongs = ({ onSongSelect }) => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const playSong = (song) => {
-    console.log("Selected Song:", song); 
-    onSongSelect(song); 
-  };
-
-
-  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-full px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
-
   useEffect(() => {
     const fetchLikedSongs = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/auth/get-liked`, {
-          method: 'GET',
+        const res = await fetch(`${BASE_URL}/auth/get-liked`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${sessionStorage.getItem('token')}` // or however you're storing the token
-          }
+            'Authorization': sessionStorage.getItem('token'),
+          },
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch liked songs.');
-        }
-
-        const data = await response.json();
-        setLikedSongs(data.data); // assuming 'data' field contains liked songs array
-      } catch (error) {
-        setError(error.message);
+        if (!res.ok) throw new Error('Couldn’t load liked songs');
+        const { data } = await res.json();
+        setLikedSongs(data || []);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchLikedSongs();
   }, []);
 
-  const handlePlayClick = (title) => 
-  {
-    console.log(`Playing ${title}`);
-    
-  };
-
   if (loading) {
     return (
-      <div className="liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
-        <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
-        <p className="text-white">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#005050] to-black">
+        <p className="text-white text-lg">Loading your liked songs…</p>
       </div>
     );
   }
-
   if (error) {
     return (
-      <div className="liked-songs-container p-5">
-        <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
-        <p className="text-white">Error: {error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#005050] to-black">
+        <p className="text-red-400 text-lg">Error: {error}</p>
       </div>
     );
   }
 
   return (
-    <div className="ml-2 rounded-lg liked-songs-container p-5 bg-gradient-to-b from-[#006161] to-black">
-      <h1 className="text-2xl font-bold mb-4 text-white">Liked Songs</h1>
-      {likedSongs.length === 0 ? (
-        <p className="text-white">No liked songs available.</p>
-      ) : (
-        <ul>
-          {likedSongs.map((song) => (
-            <li key={song._id} className="flex items-center justify-between py-2 text-white">
-              <div className="flex items-center">
-                <img src={song.image} alt={song.name} className="w-16 h-16 mr-4" />
-                <div className="flex-1">
-                  <span className="font-semibold">{song.name} - {song.artist}</span>
-                  <p className="text-sm">{song.desc}</p>
-                </div>
-              </div>
-           
-              <button className={buttonStyling} onClick={() => playSong(song)} aria-label={`Play ${song.name}`}> 
-              <span className="text-lg">&#9658;</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="min-h-screen bg-gradient-to-b from-[#006161] to-black py-8 px-4 sm:px-6 lg:px-12">
+      <div className="max-w-7xl mx-auto text-white">
+        <h1 className="text-4xl font-bold mb-6 text-center">❤️ Your Liked Songs</h1>
+
+        {likedSongs.length === 0 ? (
+          <p className="text-center text-gray-300">No liked songs yet.</p>
+        ) : (
+          <div className="bg-black/20 rounded-2xl overflow-hidden shadow-lg">
+            <ul className="divide-y divide-gray-700 max-h-[70vh] overflow-y-auto">
+              {likedSongs.map((song, idx) => (
+                <li
+                  key={song._id}
+                  className={`flex flex-col sm:flex-row items-center sm:items-stretch p-4 hover:bg-white/10 transition ${
+                    idx % 2 === 0 ? 'bg-black/10' : ''
+                  }`}
+                >
+                 
+                  <img
+                    src={song.image}
+                    alt={song.name}
+                    className="w-24 h-24 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0"
+                  />
+
+                  
+                  <div className="flex-1 px-4 py-2 flex flex-col justify-center">
+                    <span className="text-lg font-semibold line-clamp-1">
+                      {song.name}
+                    </span>
+                    <span className="text-sm text-gray-300 line-clamp-1">
+                      {song.artist || 'Unknown Artist'}
+                    </span>
+                    {song.desc && (
+                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                        {song.desc}
+                      </p>
+                    )}
+                  </div>
+
+              
+                  <button
+                    onClick={() => onSongSelect(song)}
+                    aria-label={`Play ${song.name}`}
+                    className="mt-2 sm:mt-auto sm:ml-4 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-700 text-white font-semibold rounded-full shadow hover:scale-105 transition"
+                  >
+                    <FaPlay />
+                    <span className="hidden sm:inline">Play</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

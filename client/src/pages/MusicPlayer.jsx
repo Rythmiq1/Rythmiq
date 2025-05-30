@@ -4,12 +4,10 @@ import { IoIosPause , IoMdSkipForward} from "react-icons/io";
 import { IoMdSkipBackward } from "react-icons/io";
 import { FaPlay } from "react-icons/fa";
 import { SlLoop } from "react-icons/sl";
-// import { BsArrowsAngleExpand } from "react-icons/bs";
 import { IoVolumeHighOutline, IoVolumeMuteOutline  } from "react-icons/io5";
 import rhythmiq from "../assets/images/Rhythmiq.png";
 import zoom from "../assets/zoomin.png";
 import shrink from "../assets/zoomout.png";
-// import mute from "../assets/mute.png";
 import { useNavigate } from 'react-router-dom'; 
 import BASE_URL from "../config"; 
 
@@ -26,16 +24,6 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   const navigate = useNavigate(); 
   const [isZoomed, setIsZoomed] = useState(true);
 
-  // const toggleImage = () => {
-  //   if (!isZoomed) 
-  //   {
-  //     setIsZoomed(true);  // Set to zoomed
-  //     navigate('/player');  // Navigate to /player
-  //   } else {
-  //     setIsZoomed(false);  // Set to not zoomed
-  //     navigate('/');  // Navigate back to home
-  //   }
-  // };
 
   const toggleImage = () => {
     if (!isZoomed) {
@@ -61,11 +49,11 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   }, [safeSongs]);
 
   useEffect(() => {
-    // console.log("Songs structure: ", safeSongs);
+ 
     
   }, [safeSongs]);
 
-  // Function to play/pause the audio
+
   const handlePlayPause = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -77,7 +65,7 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
     setIsPlaying(!isPlaying);
   };
 
-  // When metadata is loaded, set the duration
+  
   const handleMetadataLoaded = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
@@ -87,15 +75,15 @@ const MusicPlayer = ({ currentSong, songs, onSongChange }) => {
   const toggleMute = () => {
     if (audioRef.current) {
       if (isMuted) {
-        audioRef.current.volume = currentVolume; // Restore previous volume
+        audioRef.current.volume = currentVolume; 
       } else {
-        audioRef.current.volume = 0; // Mute the audio
+        audioRef.current.volume = 0; 
       }
-      setIsMuted(!isMuted); // Toggle mute state
+      setIsMuted(!isMuted); 
     }
   };
 
-  // When audio ends, reset play state (or loop if enabled)
+  
   const handleAudioEnd = () => {
     if (isLooping) {
       // If loop is enabled, restart the song

@@ -1,71 +1,85 @@
 import React, { useEffect, useState } from 'react';
 import { FaPlay, FaTrash } from 'react-icons/fa';
-import BASE_URL from "../config"; 
+
 const History = ({ setCurrentSong }) => {
   const [songHistory, setSongHistory] = useState([]);
 
-  const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-teal-500 border-2 border-teal-500 rounded-full px-6 py-2 hover:bg-teal-500 hover:text-white hover:border-teal-500 mx-8 shadow-lg shadow-teal-300/50 transition duration-300 ease-in-out";
-
   useEffect(() => {
-    const fetchHistory = () => {
+    const loadHistory = () => {
       const history = JSON.parse(sessionStorage.getItem('songHistory')) || [];
       setSongHistory(history);
     };
-    fetchHistory();
-    const handleStorageChange = (event) => {
-      if (event.key === 'songHistory') {
-        fetchHistory();
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    loadHistory();
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'songHistory') loadHistory();
+    });
+    return () => window.removeEventListener('storage', loadHistory);
   }, []);
 
-  const handlePlayClick = (song) => {
-    setCurrentSong(song); 
-    const updatedHistory = songHistory.filter(s => s._id !== song._id); 
-    updatedHistory.unshift(song);
-    setSongHistory(updatedHistory);
-    sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
+  const playSong = (song) => {
+    setCurrentSong(song);
+    const updated = [song, ...songHistory.filter(s => s._id !== song._id)];
+    setSongHistory(updated);
+    sessionStorage.setItem('songHistory', JSON.stringify(updated));
   };
 
-  const handleDeleteClick = (songToDelete) => {
-    const updatedHistory = songHistory.filter(song => song._id !== songToDelete._id);
-    setSongHistory(updatedHistory);
-    sessionStorage.setItem('songHistory', JSON.stringify(updatedHistory));
+  const deleteSong = (song) => {
+    const updated = songHistory.filter(s => s._id !== song._id);
+    setSongHistory(updated);
+    sessionStorage.setItem('songHistory', JSON.stringify(updated));
   };
 
   return (
-    <div className="ml-2 rounded-lg flex flex-col items-center p-8 bg-gradient-to-b from-[#006161] to-black rounded-lg shadow-xl w-full h-full mx-auto">
-      <h2 className="text-3xl mb-4 text-white font-semibold text-center">Recently Listened</h2>
+    
+    <section className="min-h-screen w-screen bg-gradient-to-b from-[#006161] to-black">
       
-      <div className="w-11/12 md:w-3/4 lg:w-2/3 rounded-lg p-6 shadow-md overflow-y-auto max-h-[70vh]" style={{ backgroundColor: '#00827f' }}>
-        {songHistory.length > 0 ? (
-          songHistory.map((song, index) => (
-            <div key={index} className="flex justify-between items-center p-3 rounded-lg mb-2 hover:bg-gray-600 transition duration-200" style={{ backgroundColor: '#20b2aa' }}>
-              <div className="flex items-center">
-                <FaPlay 
-                  className="text-white cursor-pointer mr-3" 
-                  onClick={() => handlePlayClick(song)} 
-                />
-                <p className="text-white font-medium">{song.name}</p>
-              </div>
-              <div className="flex items-center">
-                <p className="text-gray-400 mr-4">{song.duration}</p>
-                <FaTrash 
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => handleDeleteClick(song)} 
-                />
-              </div>
-            </div>
-          ))
+      <div className="pt-10 pb-16 px-4 sm:px-6 lg:px-12">
+        <h2 className="text-3xl font-semibold text-white mb-6 text-center">
+          ⏱️ Recently Listened
+        </h2>
+
+        {songHistory.length === 0 ? (
+          <p className="text-center text-gray-300">No songs played yet.</p>
         ) : (
-          <p className="text-white">No songs played yet.</p>
+          <div className="max-w-7xl mx-auto">
+            <ul className="divide-y divide-gray-700 max-h-[70vh] overflow-y-auto">
+              {songHistory.map((song, idx) => (
+                <li
+                  key={song._id}
+                  className={`flex flex-col sm:flex-row items-center justify-between py-4 px-2 transition hover:bg-white/10 ${
+                    idx % 2 === 0 ? 'bg-black/10' : ''
+                  }`}
+                >
+                  
+                  <div className="flex items-center w-full sm:w-2/3">
+                    <button
+                      onClick={() => playSong(song)}
+                      className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition mr-4"
+                      aria-label={`Play ${song.name}`}
+                    >
+                      <FaPlay className="text-white" />
+                    </button>
+                    <span className="text-white font-medium line-clamp-1">{song.name}</span>
+                  </div>
+
+                 
+                  <div className="flex items-center justify-end w-full sm:w-1/3 mt-3 sm:mt-0 space-x-6">
+                    <span className="text-gray-300 text-sm">{song.duration}</span>
+                    <button
+                      onClick={() => deleteSong(song)}
+                      className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-full transition"
+                      aria-label={`Remove ${song.name}`}
+                    >
+                      <FaTrash className="text-red-400 hover:text-red-600" />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
