@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import MusicPlayer from './MusicPlayer';
 import axios from 'axios';
 import LikedCard from '../components/LikedCard';
-
+import BASE_URL from "../config"; 
 const AlbumPage = ({ setCurrentSong }) => {
     const { id } = useParams();
     const [album, setAlbum] = useState(null);
@@ -14,12 +14,13 @@ const AlbumPage = ({ setCurrentSong }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentSong, setCurrentSongState] = useState(null);
+   
 
     // Fetch album data
     useEffect(() => {
         const fetchAlbum = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/album/${id}`);
+                const response = await fetch(`${BASE_URL}/album/${id}`);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 const data = await response.json();
@@ -43,7 +44,7 @@ const AlbumPage = ({ setCurrentSong }) => {
     const fetchLikedSongs = async () => {
         try {
             const token = sessionStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/auth/get-liked', {
+            const response = await axios.get(`${BASE_URL}/auth/get-liked`, {
                 headers: {
                     Authorization: token,
                 },

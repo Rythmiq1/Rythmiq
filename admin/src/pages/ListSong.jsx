@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import BASE_URL from "../config"; 
 const ListSong = () => {
   const [data, setData] = useState([]);
-  const url = 'http://localhost:8080';
+  const url = `${BASE_URL}`;
 
   const fetchSongs = async () => {
     try {

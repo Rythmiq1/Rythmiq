@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { handleError, handleSuccess } from '../utils/Error';
 import '../App.css';
 import { ToastContainer } from 'react-toastify';
-
+import BASE_URL from "../config"; 
 function Login_signup() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,7 +28,7 @@ function Login_signup() {
   };
 
   const loginwithgoogle = () => {
-    window.open("http://localhost:8080/auth/google/callback", "_self");
+    window.open(`${BASE_URL}/auth/google/callback`, "_self");
   };
 
   const [signupInfo, setSignupInfo] = useState({
@@ -51,7 +51,7 @@ function Login_signup() {
         return handleError('All fields are required');
     }
     try {
-        const url = "http://localhost:8080/auth/signup";
+        const url = `${BASE_URL}/auth/signup`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -106,7 +106,7 @@ const handleLogin = async (e) => {
         return handleError('All fields are required');
     }
     try {
-        const url = "http://localhost:8080/auth/login";
+        const url = `${BASE_URL}/auth/login`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {

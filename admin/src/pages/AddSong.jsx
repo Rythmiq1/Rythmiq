@@ -5,8 +5,8 @@ import upload_added from '../assets/upload_added.png';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
-const url = "http://localhost:8080";
+import BASE_URL from "../config"; 
+const url = `${BASE_URL}`;
 
 const AddSong = () => {
   const [image, setImage] = useState(null);

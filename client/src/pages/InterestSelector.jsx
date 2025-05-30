@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import BASE_URL from "../config"; 
 const InterestSelector = ({ userId }) => {
     const [selectedArtists, setSelectedArtists] = useState([]); 
     const [artists, setArtists] = useState([]);  // State to store artists
@@ -40,7 +40,7 @@ const InterestSelector = ({ userId }) => {
             }
 
             try {
-                const response = await fetch('http://localhost:8080/artist/artists', {
+                const response = await fetch(`${BASE_URL}/artist/artists`, {
                     method: 'GET',
                     headers: {
                         'Authorization': token,  // Send token in the header
@@ -96,7 +96,7 @@ const InterestSelector = ({ userId }) => {
         const requestBody = { artistIds: selectedArtists };  // Prepare the request body
 
         try {
-            const response = await fetch('http://localhost:8080/auth/select-interest', {
+            const response = await fetch(`${BASE_URL}/auth/select-interest`, {
                 method: 'POST',
                 headers: {
                     'Authorization': token,

@@ -7,8 +7,8 @@ import AddSong from './pages/AddSong';
 import ListAlbum from './pages/ListAlbum';
 import ListSong from './pages/ListSong';
 import Sidebar from './components/Sidebar';
-
-export const url = 'http://localhost:8080';
+import BASE_URL from "../config"; 
+export const url = `${BASE_URL}`;
 
 const App = () => {
   return (

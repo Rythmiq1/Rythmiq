@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import BASE_URL from "../config"; 
 const LikedSongs = ({ onSongSelect }) => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const LikedSongs = ({ onSongSelect }) => {
   useEffect(() => {
     const fetchLikedSongs = async () => {
       try {
-        const response = await fetch('http://localhost:8080/auth/get-liked', {
+        const response = await fetch(`${BASE_URL}/auth/get-liked`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

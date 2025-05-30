@@ -23,7 +23,7 @@ import Artists from './pages/Artists';
 import ArtistPage from './pages/ArtistPage';
 import axios from 'axios'
 import Info from './pages/info';
-
+import BASE_URL from "./config"; 
 const App = () => {
     const [notifications, setNotifications] = useState([]);
     const [notificationCount, setNotificationCount] = useState(0);
@@ -57,7 +57,7 @@ const App = () => {
           // Send the updated history to the backend to get recommendations
           const headers = token ? { Authorization: token} : {}; // Optional token header
     
-          axios.post('http://localhost:8080/auth/recommendations', { songHistory: updatedHistory }, { headers })
+          axios.post(`${BASE_URL}/auth/recommendations`, { songHistory: updatedHistory }, { headers })
             .then(response => {
             //   console.log('Recommendations received:', response.data);
               setRecommendations(response.data.recommendations); // Store recommendations
@@ -83,7 +83,7 @@ const App = () => {
     useEffect(() => {
         if (!userId) return; // Don't initialize socket until userId is available
     
-        const socketIo = io('http://localhost:8080', {
+        const socketIo = io(`${BASE_URL}`, {
             withCredentials: true
         });
     

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { MdNotificationsNone } from "react-icons/md";
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import BASE_URL from "../config"; 
 function Navbar({ notificationCount, setNotificationCount, notifications }) {
   const buttonStyling = "flex space-x-3 mr-2 font-semibold bg-white text-[#006161] border-2 border-[#006161] rounded-sm px-6 py-2 hover:bg-[#006161] hover:text-white hover:border-[#006161] mx-8 shadow-lg shadow-[#006161]/50 transition duration-300 ease-in-out";
 
@@ -42,7 +42,7 @@ function Navbar({ notificationCount, setNotificationCount, notifications }) {
       const storedToken = sessionStorage.getItem('token');
       if (storedToken) {
         try {
-          const response = await axios.get("http://localhost:8080/login/success", {
+          const response = await axios.get(`${BASE_URL}/login/success`, {
             headers: { Authorization: storedToken },
             withCredentials: true,
           });

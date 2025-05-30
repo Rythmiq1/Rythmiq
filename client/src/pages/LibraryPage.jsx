@@ -10,7 +10,7 @@ import { FaShareAlt, FaTrash } from 'react-icons/fa';
 import { IoIosShareAlt } from "react-icons/io";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
 import { FaWhatsapp, FaFacebook, FaInstagram } from 'react-icons/fa';
-
+import BASE_URL from "../config"; 
 const LibraryPage = () => {
     const [playlists, setPlaylists] = useState([]); // My Playlists state
     const [likedSongs, setLikedSongs] = useState([]); // Liked Songs state
@@ -29,7 +29,7 @@ const LibraryPage = () => {
                 const token = sessionStorage.getItem('token');
                 
                 // Fetch playlists
-                const playlistsResponse = await axios.get('http://localhost:8080/playlist/my-playlists', {
+                const playlistsResponse = await axios.get(`${BASE_URL}/playlist/my-playlists`, {
                     headers: { Authorization: token },
                 });
                 if (playlistsResponse.data.success) {
@@ -39,7 +39,7 @@ const LibraryPage = () => {
                 }
     
                 // Fetch liked songs
-                const likedSongsResponse = await axios.get('http://localhost:8080/auth/get-liked', {
+                const likedSongsResponse = await axios.get(`${BASE_URL}/auth/get-liked`, {
                     headers: { Authorization: token },
                 });
                 if (likedSongsResponse.data.success) {
@@ -47,7 +47,7 @@ const LibraryPage = () => {
                 }
     
                 // Fetch saved playlists
-                const savedPlaylistsResponse = await axios.get('http://localhost:8080/auth/saved-playlists', {
+                const savedPlaylistsResponse = await axios.get(`${BASE_URL}/auth/saved-playlists`, {
                     headers: { Authorization: token },
                 });
                 if (savedPlaylistsResponse.data.success) {
@@ -86,7 +86,7 @@ const LibraryPage = () => {
             }
     
             // Make the DELETE request to the backend to remove the playlist
-            const response = await axios.delete('http://localhost:8080/playlist/delete-playlist', {
+            const response = await axios.delete(`${BASE_URL}/playlist/delete-playlist`, {
                 headers: {
                     Authorization: token,  // Include the user's auth token
                 },
@@ -129,7 +129,7 @@ const LibraryPage = () => {
             let response;
             if (isLiked) {
                 // Send request to unlike the song
-                response = await axios.delete('http://localhost:8080/auth/delete-like-song', {
+                response = await axios.delete(`${BASE_URL}/auth/delete-like-song`, {
                     data: songIdObj,
                     headers,
                 });
@@ -137,7 +137,7 @@ const LibraryPage = () => {
                 toast.success('Song unliked!');
             } else {
                 // Send request to like the song
-                response = await axios.post('http://localhost:8080/auth/like-song', songIdObj, { headers });
+                response = await axios.post(`${BASE_URL}/auth/like-song`, songIdObj, { headers });
                 if (!response.data.success) throw new Error('Failed to like the song');
                 toast.success('Song liked!');
             }

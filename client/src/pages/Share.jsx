@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaPlay, FaPlus, FaEllipsisH } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
+import BASE_URL from "../config"; 
 const Share = () => {
   const { playlistId } = useParams(); // Get playlist ID from URL
   const [playlist, setPlaylist] = useState(null); // State for playlist data
@@ -17,7 +17,7 @@ const Share = () => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/playlist/${playlistId}`);
+        const response = await axios.get(`${BASE_URL}/playlist/${playlistId}`);
         if (response.data.success) {
           setPlaylist(response.data.playlist);
         } else {
@@ -37,7 +37,7 @@ const Share = () => {
   const handleAddPlaylist = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:8080/auth/save-playlist/${playlistId}`,
+        `${BASE_URL}/auth/save-playlist/${playlistId}`,
         {}, 
         {
           headers: {
