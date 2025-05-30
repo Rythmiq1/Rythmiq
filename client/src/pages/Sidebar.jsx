@@ -10,7 +10,7 @@ function Sidebar() {
 
   return (
     <div
-      className={`rounded-lg z-10 sidebar-container bg-black text-white h-full ${isSidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out group`}
+      className={`overflow-auto scrollbar-hide rounded-lg z-10 sidebar-container bg-black text-white h-full ${isSidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out group`}
       onMouseEnter={() => setIsSidebarOpen(true)}
       onMouseLeave={() => setIsSidebarOpen(false)}
     >
@@ -24,7 +24,7 @@ function Sidebar() {
             style={{ width: 'auto', height: '140px', marginTop:'35px'}}
           />
         ) : (
-          <div className="w-12 h-12 bg-transparent rounded-full flex items-center justify-center">
+          <div className="overflow-auto scrollbar-hide w-12 h-12 bg-transparent rounded-full flex items-center justify-center">
             <img
               src={logoh}
               alt="Small Circle Logo"
@@ -33,7 +33,7 @@ function Sidebar() {
           </div>
         )}
       </div>
-      <div className="py-3 space-y-4">
+      <div className="py-3 space-y-4 overflow-auto scrollbar-hide">
         <Link to="/home" onClick={() => setActiveLink('/home')} className="sidebar-link">
           <IconText iconName="home" displayText="Home" active={activeLink === '/home'} />
         </Link>
@@ -65,7 +65,7 @@ function Sidebar() {
 
 
       {isSidebarOpen && (
-        <div className="px-5 pb-5">
+        <div className="px-5 pb-5 scrollbar-hide overflow-auto">
           <div className="mt-4 text-gray-400 text-xs space-y-1">
             {["About Us", "Cookies", "Privacy Center", "Privacy Policy", "Legal"].map((text, index) => (
               <p key={index} className="hover:text-white cursor-pointer transition duration-200 transform hover:scale-105">

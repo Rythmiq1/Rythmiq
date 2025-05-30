@@ -44,15 +44,15 @@ const LikedSongs = ({ onSongSelect }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#006161] to-black py-8 px-4 sm:px-6 lg:px-12">
-      <div className="max-w-7xl mx-auto text-white">
+    <div className="scrollbar-hide min-h-screen bg-gradient-to-b from-[#006161] to-black py-8 px-4 sm:px-6 lg:px-12">
+      <div className="max-w-7xl mx-auto text-white scrollbar-hide">
         <h1 className="text-4xl font-bold mb-6 text-center">❤️ Your Liked Songs</h1>
 
         {likedSongs.length === 0 ? (
           <p className="text-center text-gray-300">No liked songs yet.</p>
         ) : (
-          <div className="bg-black/20 rounded-2xl overflow-hidden shadow-lg">
-            <ul className="divide-y divide-gray-700 max-h-[70vh] overflow-y-auto">
+          <div className="scrollbar-hide bg-black/20 rounded-2xl overflow-hidden shadow-lg">
+            <ul className="scrollbar-hide divide-y divide-gray-700 max-h-[70vh] overflow-y-auto">
               {likedSongs.map((song, idx) => (
                 <li
                   key={song._id}
