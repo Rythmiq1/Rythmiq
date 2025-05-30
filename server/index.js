@@ -27,7 +27,7 @@ const server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000','https://rythmiq-backend.onrender.com'],
+  origin: ['http://localhost:5173', 'http://localhost:3000','https://rythmiq.onrender.com'],
   credentials: true,
 }));
 
