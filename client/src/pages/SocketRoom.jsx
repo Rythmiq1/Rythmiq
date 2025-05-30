@@ -1,329 +1,299 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
-import { FaLock, FaLink, FaMusic ,FaUser, FaPlay } from 'react-icons/fa';
-import BASE_URL from "../config"; 
-const socket = io(`${BASE_URL}`, {
+import { FaMusic, FaPlay } from 'react-icons/fa';
+import BASE_URL from "../config";
+
+const socket = io(BASE_URL, {
   transports: ['websocket', 'polling'],
   withCredentials: true,
 });
 
 const SocketRoom = ({ setCurrentSong }) => {
+  // —— refs & state —— 
+  const audioRef = useRef(null);
   const [roomId, setRoomId] = useState('');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [songUrl, setSongUrl] = useState('');
   const [users, setUsers] = useState([]);
   const [musicList, setMusicList] = useState([]);
   const [selectedSong, setSelectedSong] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [adminId, setAdminId] = useState(null);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
-  const [currentTime, setCurrentTime] = useState(0); 
-  const [adminId, setAdminId] = useState(null);
+  const [showRoomPanel, setShowRoomPanel] = useState(false);
+  const [showMusicPanel, setShowMusicPanel] = useState(false);
 
-  const userId = sessionStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId') || '';
+
 
   useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/song/list`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (Array.isArray(data.songs)) {
-          setMusicList(data.songs);
-        } else {
-          throw new Error('Data fetched for songs is not an array');
-        }
-      } catch (error) {
-        console.error('Error fetching songs:', error);
-        setError(error.message);
+    if (!userId) return;
+
+    
+    fetch(`${BASE_URL}/song/list`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data.songs)) setMusicList(data.songs);
+      })
+      .catch(e => setError(e.message));
+
+    socket.on('connect', () =>
+      console.log('Socket connected:', socket.id)
+    );
+
+    socket.on('userJoined', data => setUsers(data.users));
+
+    socket.on('playSong', ({ song, roomId: rid }) => {
+      if (song) {
+        setSelectedSong(song);
+        setCurrentSong(song);
+        setIsPlaying(true);
       }
-    };
+    });
 
-    if (userId) {
-      // Join user to the room
-      socket.emit('join-room', userId);
-
-      socket.on('connect', () => {
-        console.log('Connected to socket server with ID:', socket.id);
-      });
-
-      // Listen for users in room
-      socket.on('userJoined', (data) => {
-        setUsers(data.users);
-      });
-
-      // Listen for play status toggle
-      socket.on('togglePlay', (playing) => {
-        setIsPlaying(playing);
-      });
-
-      // Listen for playSong event
-      socket.on('playSong', (data) => {
-        console.log('Received playSong data:', data); // Check this log
-        if (data && data.song) {
-          setSelectedSong(data.song);
-          setCurrentSong(data.song); // Update current song prop in App.jsx
-          setSongUrl(data.song.file);
-          setIsPlaying(true);
-        } else {
-          console.error('Received undefined song data in playSong event');
+    // **time sync**  
+    socket.on('updateTime', ({ roomId: rid, newTime }) => {
+      if (rid === roomId) {
+        setCurrentTime(newTime);
+        if (audioRef.current) {
+          audioRef.current.currentTime = newTime;
         }
-      });
-
-      // Listen for time updates
-      socket.on('updateTime', (data) => {
-        if (data.roomId === roomId && data.userId !== userId) {
-          setCurrentTime(data.newTime); // Update the time for other users
-        }
-      });
-
-      fetchSongs();
-    }
+      }
+    });
 
     return () => {
       socket.off('userJoined');
-      socket.off('togglePlay');
       socket.off('playSong');
       socket.off('updateTime');
     };
   }, [userId, roomId, setCurrentSong]);
 
-  const playSong = (song) => {
-    if (roomId && userId === adminId) { // Check if current user is the admin
-      setSelectedSong(song);
-      setCurrentSong(song);
-      setSongUrl(song.file);
-      console.log(song.file)
-      socket.emit('playSong', { roomId, song, userId }); // Emit the song to everyone in the room
-    } else {
-      alert('Only the room admin can play or change the song.');
-    }
+  const generateRoomId = () =>
+    'room-' + Math.random().toString(36).substr(2, 9);
+
+  const createRoom = () => {
+    if (!userId) return alert('Login first');
+    const rid = generateRoomId();
+    setRoomId(rid);
+    setAdminId(userId);
+    socket.emit('createRoom', { roomId: rid, userId }, resp => {
+      if (!resp.success) setError('Create room failed');
+    });
   };
 
   const joinRoom = () => {
-    if (roomId && userId) {
-      setIsJoining(true);
-      socket.emit('joinRoom', { roomId, userId }, (response) => {
-        if (response && response.success) {
-          console.log(`Successfully joined room ${roomId}`);
-          setAdminId(response.adminId); // Set the admin ID when joining
-        } else {
-          console.error('Failed to join room');
-        }
-        setIsJoining(false);
-      });
-    } else {
-      alert('Room ID is required');
-    }
+    if (!roomId) return alert('Room ID required');
+    setIsJoining(true);
+    socket.emit('joinRoom', { roomId, userId }, resp => {
+      setIsJoining(false);
+      if (resp.success) setAdminId(resp.adminId);
+      else setError('Join failed');
+    });
   };
 
-  const createRoom = () => {
-    if (userId) {
-      const newRoomId = generateRoomId();
-      setRoomId(newRoomId);
-      setAdminId(userId); // Set the creator as the admin
-      socket.emit('createRoom', { roomId: newRoomId, userId }, (response) => {
-        if (response && response.success) {
-          console.log(`Room created with ID: ${newRoomId}`);
-        } else {
-          console.error('Failed to create room');
-        }
-      });
-    } else {
-      alert('User ID is required');
-    }
+  const playSong = song => {
+    if (userId !== adminId) return alert('Only admin can play');
+    setSelectedSong(song);
+    setCurrentSong(song);
+    setIsPlaying(true);
+    socket.emit('playSong', { roomId, song, userId });
   };
 
-  const togglePlay = () => {
-    if (roomId && userId === adminId) { // Check if current user is the admin
-      const newPlayingStatus = !isPlaying;
-      setIsPlaying(newPlayingStatus);
-      socket.emit('togglePlay', { roomId, isPlaying: newPlayingStatus, userId });
-    } else {
-      alert('Only the room admin can control playback.');
-    }
-  };
+  const handleTimeUpdate = newTime => {
+  setCurrentTime(newTime);
+  if (audioRef.current) audioRef.current.currentTime = newTime;
 
-  const handleTimeUpdate = (newTime) => {
-    setCurrentTime(newTime);
-    if (roomId && userId) {
-      socket.emit('updateTime', { roomId, userId, newTime }); // Emit time update to server
-    }
-  };
+  socket.emit('updateTime', {
+    roomId,
+    userId,     
+    newTime
+  });
+};
 
-  const generateRoomId = () => {
-    return 'room-' + Math.random().toString(36).substr(2, 9);
-  };
 
-  const copyRoomId = () => {
-    if (roomId) {
-      const textArea = document.createElement('textarea');
-      textArea.value = roomId;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      alert('Room ID copied to clipboard!');
-    }
-  };
 
   return (
-    <div className="ml-2 rounded-lg bg-[url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')] bg-cover bg-center min-h-screen">
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4 text-white">Music Room</h2>
-          
-        <div className="flex items-center ml-[45%] space-x-4 px-10 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all w-52 group">
-  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
-  <FaLock className="text-2xl text-white" />
-  </div>
+    <div
+      className="min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://i.pinimg.com/originals/e7/56/11/e7561144d424e4a76f087d3fb4d3a2ae.gif')"
+      }}
+    >
+      <div className="container mx-auto px-4 py-6">
+        {/* 1) AUDIO ELEMENT */}
+        <audio
+          ref={audioRef}
+          src={selectedSong?.file}
+          autoPlay={isPlaying}
+          onTimeUpdate={e => {
+            const t = e.target.currentTime;
+            setCurrentTime(t);
+          }}
+          className="hidden"
+        />
 
-  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
-  <FaLink className="text-2xl text-white" />
-  </div>
-  <div className="relative group flex items-center space-x-2 p-2 rounded-full transition-all hover:bg-white/20">
-  <FaUser className="text-2xl text-white" />
-  </div>
+        <h1 className="text-4xl font-extrabold text-white text-center drop-shadow-lg mb-8">
+          Music Room
+        </h1>
 
-  {/* The content that will appear on hover */}
-  <div className="absolute top-0 left-0 mt-0 w-full h-full flex justify-center items-center group-hover:opacity-100 opacity-0 transition-opacity duration-300">
-    <div className="flex justify-center items-center space-x-8">
-      {/* Outer Container with Light Transparent Background */}
-      <div className="flex space-x-8 p-6 rounded-lg bg-white/30 backdrop-blur-md shadow-xl">
-  
-        {/* Create Room Component */}
-        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
-          <h2 className="text-black font-bold text-lg mb-4">Create Room</h2>
-          <button 
-            onClick={createRoom} 
-            className="bg-blue-500 text-white p-2 w-48 rounded-lg hover:bg-blue-600"
+        {/* 2) TOGGLE BUTTONS */}
+        <div className="flex justify-center space-x-6 mb-8">
+          <button
+            onClick={() => {
+              setShowRoomPanel(v => !v);
+              setShowMusicPanel(false);
+            }}
+            className="px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-2xl transform hover:scale-105 transition"
           >
-            Create Room
+            {showRoomPanel ? 'Hide Room' : 'Show Room'}
           </button>
-          {roomId && (
-            <>
+          <button
+            onClick={() => {
+              setShowMusicPanel(v => !v);
+              setShowRoomPanel(false);
+            }}
+            className="px-6 py-3 bg-gradient-to-br from-green-400 to-teal-600 rounded-full shadow-2xl transform hover:scale-105 transition"
+          >
+            {showMusicPanel ? 'Hide Music' : 'Show Music'}
+          </button>
+        </div>
+
+        {/* 3) ROOM PANEL */}
+        {showRoomPanel && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Create Room */}
+            <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+              <h2 className="text-white text-xl font-semibold mb-4">
+                Create Room
+              </h2>
+              <button
+                onClick={createRoom}
+                className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition"
+              >
+                Create
+              </button>
+              {roomId && (
+                <>
+                  <input
+                    readOnly
+                    value={roomId}
+                    className="mt-4 w-full p-2 bg-white bg-opacity-80 rounded-md text-center text-gray-800"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(roomId);
+                      alert('Copied!');
+                    }}
+                    className="mt-2 w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
+                  >
+                    Copy ID
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Join Room */}
+            <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+              <h2 className="text-white text-xl font-semibold mb-4">
+                Join Room
+              </h2>
               <input
                 type="text"
+                placeholder="Room ID"
                 value={roomId}
-                readOnly
-                className="border p-2 w-48 my-4 text-center rounded-lg"
-                id="roomIdInput"
+                onChange={e => setRoomId(e.target.value)}
+                className="w-full p-2 bg-white bg-opacity-80 rounded-md text-gray-800 mb-4"
               />
-              <button 
-                onClick={copyRoomId} 
-                className="bg-green-500 text-white p-2 w-48 rounded-lg hover:bg-green-600"
+              <button
+                onClick={joinRoom}
+                disabled={isJoining}
+                className="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition disabled:opacity-50"
               >
-                Copy Room ID
+                {isJoining ? 'Joining…' : 'Join'}
               </button>
-            </>
-          )}
-        </div>
-  
-        {/* Join Room Component */}
-        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
-          <h2 className="text-black font-bold text-lg mb-4">Join Room</h2>
-          <input
-            type="text"
-            placeholder="Enter Room ID to Join"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="border p-2 w-48 mb-4 text-center rounded-lg"
-          />
-          <button 
-            onClick={joinRoom} 
-            className="bg-blue-500 text-white p-2 w-48 rounded-lg hover:bg-blue-600"
-            disabled={isJoining}
-          >
-            {isJoining ? 'Joining...' : 'Join Room'}
-          </button>
-        </div>
-  
+            </div>
 
-        <div className="flex flex-col bg-gray-100/80 w-80 h-60 justify-center items-center rounded-lg shadow-lg p-4">
-          <h2 className="text-black font-bold text-lg mb-2">Users in room:</h2>
-          <ul className="space-y-2 w-full">
-            {users.length > 0 ? (
-              users.map((user, index) => (
-                <li 
-                  key={index}
-                  className="bg-white/30 backdrop-blur-md p-2 rounded-lg shadow-sm text-black text-center"
-                >
-                  {user.userId}
-                </li>
-              ))
-            ) : (
-              <li className="text-gray-500 text-center">No users in room</li>
-            )}
-          </ul>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-          
-        {error && (
-          <div className="mt-4 text-red-500">
-            <h3>Error: {error}</h3>
+            {/* Users */}
+            <div className="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
+              <h2 className="text-white text-xl font-semibold mb-4 text-center">
+                Users
+              </h2>
+              <ul className="divide-y divide-white/50">
+                {users.length ? (
+                  users.map((u, i) => (
+                    <li
+                      key={i}
+                      className="py-2 text-center text-white font-medium"
+                    >
+                      {u.userId}
+                    </li>
+                  ))
+                ) : (
+                  <li className="py-2 text-center text-white/70">
+                    No users
+                  </li>
+                )}
+              </ul>
+            </div>
           </div>
         )}
-<div className="flex items-center mt-[5%] ml-[95%] w-10 h-32 rounded-full bg-white/30 backdrop-blur-md shadow-xl transition-all group">
-  {/* Music Icon */}
-  <div className="relative flex justify-center items-center w-full h-full rounded-full transition-all hover:bg-white/20">
-    <FaMusic className="text-2xl text-white"/>
-  </div>
 
-  {/* Hover Content: Music List */}
-  <div className="absolute top-0 left-[-350px]  w-[300px] h-[600px] p-4 rounded-lg bg-white/30 backdrop-blur-md shadow-xl group-hover:opacity-100 opacity-0 transition-opacity duration-300 overflow-hidden">
-    <h3 className="text-xl font-semibold text-white mb-4 text-center">Top Playlist</h3>
-    <ul className="space-y-4 w-full h-full overflow-y-auto scrollbar-hide">
-      {musicList.length > 0 ? (
-        musicList.map((song, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between bg-white bg-opacity-60 rounded-md p-4 hover:bg-opacity-80 transition duration-300"
-          >
-            <div className="flex items-center space-x-4">
-              <div>
-                <p className="text-lg font-medium text-gray-900">{song.name}</p>
-                <p className="text-sm text-gray-600">{song.artist}</p>
+        {error && (
+          <div className="max-w-lg mx-auto bg-red-600 bg-opacity-80 text-white p-4 rounded-lg text-center mb-8">
+            {error}
+          </div>
+        )}
+
+        {/* 4) MUSIC PANEL */}
+        {showMusicPanel && (
+          <div className="max-w-3xl mx-auto bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl p-6 shadow-2xl mb-8">
+            <h2 className="text-white text-2xl font-bold mb-6 text-center">
+              Top Playlist
+            </h2>
+            <ul className="space-y-4 max-h-80 overflow-y-auto scrollbar-hide">
+              {musicList.length ? (
+                musicList.map((song, i) => (
+                  <li
+                    key={i}
+                    className="flex justify-between items-center bg-white bg-opacity-30 rounded-xl p-4 hover:bg-opacity-50 transition"
+                  >
+                    <div>
+                      <p className="text-lg font-semibold text-white">
+                        {song.name}
+                      </p>
+                      <p className="text-sm text-white/80">
+                        {song.artist}
+                      </p>
+                    </div>
+                    {userId === adminId && (
+                      <FaPlay
+                        onClick={() => playSong(song)}
+                        className="text-2xl text-white hover:text-teal-300 transition cursor-pointer"
+                      />
+                    )}
+                  </li>
+                ))
+              ) : (
+                <p className="text-center text-white/70">No music found</p>
+              )}
+            </ul>
+
+            {selectedSong && (
+              <div className="mt-6">
+                <input
+                  type="range"
+                  value={currentTime}
+                  max={selectedSong.duration || 100}
+                  onChange={e => handleTimeUpdate(+e.target.value)}
+                  className="w-full h-2 rounded-lg appearance-none bg-white bg-opacity-50"
+                />
               </div>
-            </div>
-            <div className="flex items-center space-x-4">
-            
-            {userId === adminId && (
-              <FaPlay
-                onClick={() => playSong(song)}
-                className=" text-teal-600 text-2xl"
-              />
-                
-              
             )}
-            </div>
-          </li>
-        ))
-      ) : (
-        <p className="text-gray-600 text-center">No music available</p>
-      )}
-    </ul>
-
-    {/* Music Progress Bar */}
-    {selectedSong && (
-    <div className="mt-6">
-      <input
-        type="range"
-        value={currentTime}
-        max={selectedSong.duration || 100}
-        onChange={(e) => handleTimeUpdate(Number(e.target.value))}
-        className="w-full mt-2 appearance-none bg-gray-300 rounded-lg h-2"
-      />
+          </div>
+        )}
+      </div>
     </div>
-  )}
-  </div>
-  </div>
-</div>
-</div>
   );
 };
 
