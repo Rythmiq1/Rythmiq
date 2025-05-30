@@ -129,16 +129,16 @@ const LibraryPage = ({ setCurrentSong }) => {
   if (error) return <div className="text-red-500 text-center mt-20">{error}</div>;
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-b from-[#006161] to-black text-white">
+    <div className="min-h-screen p-6 bg-gradient-to-b from-[#006161] to-black text-white scrollbar-hide">
       <ToastContainer />
 
       
-      <section className="mb-12">
+      <section className="mb-12 scrollbar-hide">
   <h2 className="text-3xl font-bold mb-6">Your Playlists</h2>
   {playlists.length === 0 ? (
     <p className="text-gray-300">You have no playlists yet.</p>
   ) : (
-    <div className="flex space-x-6 overflow-x-auto scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-700 py-2 px-1">
+    <div className="scrollbar-hide flex space-x-6 overflow-x-auto scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-700 py-2 px-1">
       {playlists.map((playlist) => (
         <div
           key={playlist._id}
@@ -192,7 +192,7 @@ const LibraryPage = ({ setCurrentSong }) => {
 
 
       
-      <section className="mb-12">
+      <section className="mb-12 scrollbar-hide">
         <h2 className="text-3xl font-bold mb-6">Liked Songs</h2>
         {likedSongs.length === 0 ? (
           <p className="text-gray-300">You have not liked any songs yet.</p>
@@ -212,7 +212,7 @@ const LibraryPage = ({ setCurrentSong }) => {
       </section>
 
    
-      <section className="mb-20">
+      <section className="mb-20 scrollbar-hide">
         <h2 className="text-3xl font-bold mb-6">Your Saved Playlists</h2>
         {savedPlaylists.length === 0 ? (
           <p className="text-gray-300">No saved playlists yet.</p>
