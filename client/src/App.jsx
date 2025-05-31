@@ -77,7 +77,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-screen min-h-screen bg-black text-white overflow-hidden scrollbar-hide">
+    <div className="w-screen min-h-screen bg-black text-white  scrollbar-hide">
       {isAuthRoute ? (
         <div className="flex items-center justify-center min-h-screen w-full bg-gradient-to-br from-gray-900 to-black p-4">
           <Routes>
