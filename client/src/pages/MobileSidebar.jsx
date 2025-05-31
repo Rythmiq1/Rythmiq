@@ -19,9 +19,9 @@ function MobileSidebar({ isOpen, onClose }) {
   if (!isMobile || !isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
+    <div className="fixed inset-0 z-50 flex scrollbar-hide overflow-auto">
      
-      <div className="w-16 h-full bg-black text-white py-6 shadow-xl flex flex-col items-center space-y-6 relative">
+      <div className="overflow-auto scrollbar-hide w-16 h-full bg-black text-white py-6 shadow-xl flex flex-col items-center space-y-6 relative">
         
         <button
           onClick={onClose}
@@ -53,7 +53,7 @@ function MobileSidebar({ isOpen, onClose }) {
               setActiveLink(to);
               onClose();
             }}
-            className="group relative"
+            className="overflow-auto scrollbar-hide group relative"
           >
             <IconText iconName={icon} displayText="" active={activeLink === to} />
             <span className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-2 py-1 text-xs bg-white text-black rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
