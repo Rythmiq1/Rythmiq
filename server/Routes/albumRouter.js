@@ -3,9 +3,10 @@ import express from "express";
 import {upload} from "../Middlewares/multer.js";
 
 const albumRouter = express.Router();
+import { ensureAdmin } from '../Middlewares/Auth.js';
 
-albumRouter.post("/add", upload.single('image'), addAlbum);
-albumRouter.get("/list", listAlbum);
-albumRouter.delete("/remove", removeAlbum);
-albumRouter.get("/:albumId", getAlbumById);
+albumRouter.post("/add", ensureAdmin, upload.single('image'), addAlbum);
+albumRouter.get("/list", ensureAdmin, listAlbum);
+albumRouter.delete("/remove", ensureAdmin, removeAlbum);
+albumRouter.get("/:albumId", ensureAdmin, getAlbumById);
 export default albumRouter;

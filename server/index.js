@@ -16,7 +16,7 @@ import Userdb from './Models/User.js';
 import './Models/db.js';
 import songRouter from './Routes/songRoute.js';
 import { ensureAuthenticated } from './Middlewares/Auth.js';
-
+import AdminRouter from './Routes/adminRouter.js'
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
@@ -27,7 +27,7 @@ const server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000','https://rythmiq.onrender.com'],
+  origin: ['http://localhost:5173',"https://rythmiq-admin.onrender.com", 'http://localhost:3000','https://rythmiq.onrender.com'],
   credentials: true,
 }));
 
@@ -118,10 +118,10 @@ app.use("/song", songRouter);
 app.use("/album", albumRouter);
 app.use('/auth', AuthRouter);
 app.use('/artist', ArtistRouter);
-
+app.use('/admin',AdminRouter)
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:3000','https://rythmiq.onrender.com'], 
+    origin: ['http://localhost:5173', 'http://localhost:3000','https://rythmiq-admin.onrender.com','https://rythmiq.onrender.com'], 
     methods: ['GET', 'POST'], 
     allowedHeaders: ['Content-Type'], 
     credentials: true,  

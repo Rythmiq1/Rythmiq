@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import upload_song from "../assets/upload_song.png";
 import upload_area from "../assets/upload_area.png";
 import upload_added from "../assets/upload_added.png";
@@ -6,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import BASE_URL from "../config";
+
 const url = `${BASE_URL}`;
 
 const AddSong = () => {
@@ -19,32 +21,71 @@ const AddSong = () => {
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
   const [artistData, setArtistData] = useState([]);
+  const navigate = useNavigate();
+
+  // Helper to get token or redirect
+  const getTokenOrRedirect = () => {
+    const token = sessionStorage.getItem("adminToken");
+    if (!token) {
+      toast.error("You must be logged in as admin to view this page.");
+      navigate("/login"); // adjust path if your login route is different
+      return null;
+    }
+    return token;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = getTokenOrRedirect();
+      if (!token) return;
+
       try {
-        const albumResponse = await axios.get(`${url}/album/list`);
+        // Fetch albums (admin-protected)
+        const albumResponse = await axios.get(`${url}/album/list`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+
         if (albumResponse.data.success) {
           setAlbumData(albumResponse.data.albums);
         } else {
-          toast.error("Failed to fetch albums.");
+          toast.error(albumResponse.data.message || "Failed to fetch albums.");
         }
-        const artistResponse = await axios.get(`${url}/artist/artists`);
+
+        // Fetch artists (admin-protected)
+        const artistResponse = await axios.get(`${url}/artist/artists`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+
         if (artistResponse.data.success) {
           setArtistData(artistResponse.data.data);
         } else {
-          toast.error("Failed to fetch artists.");
+          toast.error(artistResponse.data.message || "Failed to fetch artists.");
         }
       } catch (error) {
-        toast.error("An error occurred while fetching data.");
+        console.error(error.response ? error.response.data : error.message);
+        if (error.response && error.response.status === 403) {
+          toast.error("Unauthorized. Please login again.");
+          sessionStorage.removeItem("adminToken");
+          navigate("/login");
+        } else {
+          toast.error("An error occurred while fetching data.");
+        }
       }
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    const token = getTokenOrRedirect();
+    if (!token) return;
+
     setLoading(true);
     try {
       const formData = new FormData();
@@ -55,9 +96,17 @@ const AddSong = () => {
       formData.append("album", album);
       formData.append("artist", artist);
       formData.append("type", type);
-      const response = await axios.post(`${url}/song/add`, formData);
+
+      const response = await axios.post(`${url}/song/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: token,
+        },
+      });
+
       if (response.data.success) {
         toast.success("Song Added Successfully");
+        // Reset form fields
         setName("");
         setDesc("");
         setAlbum("none");
@@ -66,24 +115,36 @@ const AddSong = () => {
         setImage(null);
         setSong(null);
       } else {
-        toast.error("Something went wrong");
+        toast.error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Error Occurred");
+      console.error(error.response ? error.response.data : error.message);
+      if (error.response && error.response.status === 403) {
+        toast.error("Unauthorized. Please login again.");
+        sessionStorage.removeItem("adminToken");
+        navigate("/login");
+      } else {
+        toast.error("Error Occurred");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  return loading ? (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin"></div>
-    </div>
-  ) : (
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full bg-white rounded-xl shadow-xl p-8 space-y-6">
         <h2 className="text-2xl font-bold text-gray-800 text-center">Add New Song</h2>
         <form onSubmit={onSubmitHandler} className="space-y-5">
+          {/* Upload Song Input */}
           <div>
             <label htmlFor="song" className="block text-sm font-medium text-gray-700 mb-1">
               Upload Song
@@ -111,6 +172,7 @@ const AddSong = () => {
             </label>
           </div>
 
+          {/* Upload Image Input */}
           <div>
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
               Upload Image
@@ -142,6 +204,7 @@ const AddSong = () => {
             </label>
           </div>
 
+          {/* Song Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Song Name
@@ -158,6 +221,7 @@ const AddSong = () => {
             />
           </div>
 
+          {/* Song Description */}
           <div>
             <label htmlFor="desc" className="block text-sm font-medium text-gray-700 mb-1">
               Song Description
@@ -174,6 +238,7 @@ const AddSong = () => {
             />
           </div>
 
+          {/* Song Type */}
           <div className="flex flex-col gap-1">
             <label htmlFor="type" className="block text-sm font-medium text-gray-700">
               Song Type
@@ -197,6 +262,7 @@ const AddSong = () => {
             </select>
           </div>
 
+          {/* Album Selection */}
           <div className="flex flex-col gap-1">
             <label htmlFor="album" className="block text-sm font-medium text-gray-700">
               Album
@@ -221,6 +287,7 @@ const AddSong = () => {
             </select>
           </div>
 
+          {/* Artist Selection */}
           <div className="flex flex-col gap-1">
             <label htmlFor="artist" className="block text-sm font-medium text-gray-700">
               Artist
