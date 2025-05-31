@@ -19,53 +19,60 @@ function MobileSidebar({ isOpen, onClose }) {
   if (!isMobile || !isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex scrollbar-hide overflow-auto">
-     
-      <div className="overflow-auto scrollbar-hide w-16 h-full bg-black text-white py-6 shadow-xl flex flex-col items-center space-y-6 relative">
-        
-        <button
-          onClick={onClose}
-          className="bg-inherit border-0 absolute top-0 right-1  w-8 h-8 text-white hover:text-gray-400"
-        >
-          <X size={25} />Close
-        </button>
+    <div className="fixed inset-0 z-50 flex">
 
-       
-        <img src={logo} alt="Logo" className="h-10 mt-10 mb-6" />
+  <div className="w-16 h-full bg-black text-white shadow-xl flex flex-col relative">
+    
 
-        
-        {[
-          { to: '/home', icon: 'home', text: 'Home' },
-          { to: '/search', icon: 'search', text: 'Search' },
-          { to: '/library', icon: 'library_music', text: 'Your Library' },
-          { to: '/playlist', icon: 'library_add', text: 'Create Playlist' },
-          { to: '/liked-songs', icon: 'favorite', text: 'Liked Songs' },
-          { to: '/history', icon: 'history', text: 'History' },
-          { to: '/artists', icon: 'artist', text: 'Artists' },
-          { to: '/room', icon: 'room', text: 'Room' },
-          { to: '/info', icon: 'info', text: 'Info' },
-          
-        ].map(({ to, icon, text }) => (
-          <Link
-            key={to}
-            to={to}
-            onClick={() => {
-              setActiveLink(to);
-              onClose();
-            }}
-            className="overflow-auto scrollbar-hide group relative"
-          >
-            <IconText iconName={icon} displayText="" active={activeLink === to} />
-            <span className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-2 py-1 text-xs bg-white text-black rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-              {text}
-            </span>
-          </Link>
-        ))}
-      </div>
-
+    <div className="overflow-y-auto overflow-x-hidden scrollbar-hide flex flex-col items-center space-y-6 py-6">
       
-      <div className="flex-1 bg-black bg-opacity-70" onClick={onClose} />
+  
+      <button
+        onClick={onClose}
+        className="bg-inherit border-0 absolute top-2 right-1 w-8 h-8 text-white hover:text-gray-400"
+      >
+        <X size={25} />
+      </button>
+
+
+      <img src={logo} alt="Logo" className="h-10 mt-12 mb-6" />
+
+      {[
+        { to: '/home', icon: 'home', text: 'Home' },
+        { to: '/search', icon: 'search', text: 'Search' },
+        { to: '/library', icon: 'library_music', text: 'Your Library' },
+        { to: '/playlist', icon: 'library_add', text: 'Create Playlist' },
+        { to: '/liked-songs', icon: 'favorite', text: 'Liked Songs' },
+        { to: '/history', icon: 'history', text: 'History' },
+        { to: '/artists', icon: 'artist', text: 'Artists' },
+        { to: '/room', icon: 'room', text: 'Room' },
+        { to: '/info', icon: 'info', text: 'Info' },
+      ].map(({ to, icon, text }) => (
+        <Link
+          key={to}
+          to={to}
+          onClick={() => {
+            setActiveLink(to);
+            onClose();
+          }}
+          className="relative  group flex justify-center items-center w-10 h-10"
+        >
+          <IconText
+            iconName={icon}
+            displayText=""
+            active={activeLink === to}
+          />
+          <span className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-2 py-1 text-xs bg-white text-black rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+            {text}
+          </span>
+        </Link>
+      ))}
     </div>
+  </div>
+
+  <div className="flex-1 bg-black bg-opacity-70" onClick={onClose} />
+</div>
+
   );
 }
 
