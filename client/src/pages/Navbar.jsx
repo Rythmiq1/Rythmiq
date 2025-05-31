@@ -1,42 +1,59 @@
-import React, { useState, useEffect } from "react";
-import { MdNotificationsNone } from "react-icons/md";
-import { Menu } from "lucide-react";
-import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 import BASE_URL from "../config";
+import { Menu, Bell, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function Navbar({ notificationCount, setNotificationCount, notifications, onMobileMenuClick }) {
-  const buttonStyling = "flex space-x-3 font-semibold bg-white text-[#006161] border-2 border-[#006161] rounded-sm px-4 py-2 hover:bg-[#006161] hover:text-white shadow-lg shadow-[#006161]/50 transition duration-300 ease-in-out";
+  const buttonStyling =
+    "flex items-center space-x-2 font-semibold bg-white text-teal-600 border-2 border-teal-600 rounded px-4 py-2 hover:bg-teal-600 hover:text-white transition-shadow shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-300";
 
-  const [loggedInUser, setLoggedInUser] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState("");
   const [userdata, setUserdata] = useState({});
-  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const notifRef = useRef(null);
+  const bellRef = useRef(null);
+
   const location = useLocation();
   const navigate = useNavigate();
 
-  const toggleNotificationBox = () => {
-    setIsNotificationVisible(prev => !prev);
+  const toggleNotifications = () => {
+    setIsNotifOpen((prev) => !prev);
     if (notificationCount > 0) setNotificationCount(0);
+    setIsDropdownOpen(false);
   };
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    setLoggedInUser("");
+    setUserdata({});
+    navigate("/login");
+  };
+
+  const getInitials = (name) =>
+    name?.split(" ").map((word) => word[0].toUpperCase()).join("") || "";
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const token = params.get('token');
-    const name = params.get('name');
-    const id = params.get('userId');
+    const token = params.get("token");
+    const name = params.get("name");
+    const id = params.get("userId");
 
     if (token && name) {
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('loggedInUser', name);
-      sessionStorage.setItem('userId', id);
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("loggedInUser", name);
+      sessionStorage.setItem("userId", id);
       setLoggedInUser(name);
     } else {
-      const storedUser = sessionStorage.getItem('loggedInUser');
+      const storedUser = sessionStorage.getItem("loggedInUser");
       if (storedUser) setLoggedInUser(storedUser);
     }
 
     const getUser = async () => {
-      const storedToken = sessionStorage.getItem('token');
+      const storedToken = sessionStorage.getItem("token");
       if (storedToken) {
         try {
           const response = await axios.get(`${BASE_URL}/login/success`, {
@@ -45,7 +62,7 @@ function Navbar({ notificationCount, setNotificationCount, notifications, onMobi
           });
           setUserdata(response.data.user);
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error("Error fetching user data:", error);
         }
       }
     };
@@ -53,92 +70,185 @@ function Navbar({ notificationCount, setNotificationCount, notifications, onMobi
     getUser();
   }, [location]);
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    setLoggedInUser('');
-    setUserdata({});
-    navigate("/login");
-  };
+  useEffect(() => {
+    if (!isNotifOpen) return;
 
-  const getInitials = name =>
-    name?.split(" ").map(w => w[0].toUpperCase()).join("");
+    const handleClickOutside = (event) => {
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target) &&
+        bellRef.current &&
+        !bellRef.current.contains(event.target)
+      ) {
+        setIsNotifOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNotifOpen]);
 
   return (
     <>
-      <div className="fixed top-0 right-0 w-full bg-black text-white px-4 py-2 flex items-center justify-between z-50 shadow-md">
-  
+      <div className="fixed top-0 left-0 w-full bg-black text-white px-4 py-2 flex items-center justify-between z-50 shadow-md">
         <div className="flex items-center md:hidden">
-          <button onClick={onMobileMenuClick} className="text-white focus:outline-none">
+          <button
+            onClick={onMobileMenuClick}
+            className="bg-transparent border-none text-white p-2 focus:outline-none z-50"
+            aria-label="Open mobile menu"
+          >
             <Menu size={28} />
           </button>
         </div>
 
-
-        <div className="flex items-center space-x-4 ml-auto">
+        <div className="flex items-center space-x-5 ml-auto relative text-gray-100">
           {loggedInUser ? (
             <>
-          
-              <div className="relative group w-10 h-10 flex items-center justify-center rounded-full bg-[#006161] text-white font-bold text-xl cursor-pointer">
-                <span className="group-hover:hidden">{getInitials(loggedInUser)}</span>
-                <span className="absolute left-[-130px] hidden group-hover:inline-block text-sm text-white">
+              <div className="relative group">
+                <div
+                  onClick={() => setIsDropdownOpen((prev) => !prev)}
+                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-600 to-teal-800 text-white font-semibold flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform select-none"
+                >
+                  {getInitials(loggedInUser)}
+                </div>
+
+                <span className="hidden md:block absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-2 py-1 rounded-md bg-gray-900 bg-opacity-80 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
                   Welcome, {loggedInUser}!
                 </span>
+
+                <AnimatePresence>
+                  {isDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-12 w-64 bg-gray-900 text-white rounded-xl shadow-2xl p-3 backdrop-blur-md border border-gray-700 z-50 md:hidden"
+                    >
+                      <button
+                        onClick={toggleNotifications}
+                        className="bg-inherit border-none flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Bell className="bg-inherit w-5 h-5 text-teal-300" />
+                          <span className="text-sm">Notifications</span>
+                        </div>
+                        {notificationCount > 0 && (
+                          <span className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-0.5">
+                            {notificationCount}
+                          </span>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setIsDropdownOpen(false);
+                        }}
+                        className="bg-inherit border-none flex items-center gap-3 w-full px-4 py-3 mt-2 rounded-lg hover:bg-gray-800 transition-colors"
+                      >
+                        <LogOut className="w-5 h-5 text-red-400" />
+                        <span className="text-sm">Logout</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-             
-              <div className="relative">
-                <button onClick={toggleNotificationBox} className="relative bg-transparent border-none p-1">
-                  <MdNotificationsNone className="w-6 h-6 text-white" />
+              <div className="relative hidden md:block" ref={bellRef}>
+                <button
+                  onClick={toggleNotifications}
+                  aria-label="Toggle notifications"
+                  className="bg-inherit border-none relative p-1 rounded-md hover:bg-gray-300 hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-teal-300"
+                >
+                  <Bell className="bg-inherit w-6 h-6 text-gray-100" />
                   {notificationCount > 0 && (
-                    <span className="absolute top-[-4px] right-[-4px] bg-red-500 text-white text-xs rounded-full px-1.5">
+                    <span className="bg-inherit absolute -top-1 -right-1 bg-red-600 text-white text-xs font-semibold rounded-full px-1.5 select-none">
                       {notificationCount}
                     </span>
                   )}
                 </button>
+              </div>
 
-                {isNotificationVisible && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg overflow-hidden z-50">
-                    <div className="px-4 py-2 font-semibold text-lg text-gray-700 border-b">Notifications</div>
-                    <div className="max-h-64 overflow-y-auto">
+              <AnimatePresence>
+                {isNotifOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    ref={notifRef}
+                    className="absolute right-0 top-14 w-80 max-h-80 overflow-hidden rounded-lg bg-gray-900 text-white shadow-2xl border border-gray-700 z-50"
+                  >
+                    <div className="px-5 py-3 border-b border-gray-700 font-semibold text-lg">
+                      Notifications
+                    </div>
+                    <div className="max-h-64 overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
-                        <p className="px-4 py-2 text-gray-600">No new notifications</p>
+                        <p className="p-4 text-center text-gray-400">No new notifications</p>
                       ) : (
-                        notifications.map((notification, index) => (
-                          <div key={index} className="flex items-start px-4 py-3 border-b hover:bg-gray-100">
-                            <div className="w-8 h-8 flex items-center justify-center mr-3">
-                              <MdNotificationsNone className="w-6 h-6 text-gray-500" />
-                            </div>
-                            <div className="text-sm flex-1">
-                              <p className="text-gray-600">{notification.message}</p>
-                              {notification.time && (
-                                <p className="text-gray-400 text-xs mt-1">{notification.time}</p>
+                        notifications.map((notif, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-start gap-3 px-5 py-3 border-b border-gray-700 hover:bg-gray-800 transition"
+                          >
+                            <Bell className="w-5 h-5 flex-shrink-0 text-teal-300 mt-1" />
+                            <div className="flex-grow text-sm text-gray-200">
+                              <p>{notif.message}</p>
+                              {notif.time && (
+                                <p className="mt-1 text-xs text-gray-500">{notif.time}</p>
                               )}
                             </div>
-                            <a href="#" className="text-sm hover:underline ml-2">View</a>
+                            <a
+                              href="#"
+                              className="text-sm text-teal-300 hover:underline self-start"
+                            >
+                              View
+                            </a>
                           </div>
                         ))
                       )}
                     </div>
-                    <div className="px-4 py-2 text-center">
-                      <a href="#" className="text-sm hover:underline">See all</a>
+                    <div className="px-5 py-3 text-center border-t border-gray-700">
+                      <a href="#" className="text-sm text-gray-400 hover:underline">
+                        See all
+                      </a>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </AnimatePresence>
 
-              <button className={buttonStyling} onClick={handleLogout}>Logout</button>
+              <button
+  onClick={handleLogout}
+  className={`hidden md:flex items-center gap-2 ${buttonStyling}`}
+>
+  <LogOut className="w-5 h-5" />
+  Logout
+</button>
+
             </>
           ) : (
             <>
-              <button className={buttonStyling} onClick={() => navigate("/login?signin=true")}>Sign Up</button>
-              <button className={buttonStyling} onClick={() => navigate("/login")}>Log In</button>
+              <button
+                className={buttonStyling}
+                onClick={() => navigate("/login?signin=true")}
+              >
+                <span>Sign Up</span>
+              </button>
+              <button
+                className={buttonStyling}
+                onClick={() => navigate("/login")}
+              >
+                <span>Log In</span>
+              </button>
             </>
           )}
         </div>
       </div>
 
-      
-      <div className="mt-6 scrollbar-hide" />
+      <div className="mt-6" />
     </>
   );
 }
