@@ -157,7 +157,7 @@ const InterestSelector = ({ userId }) => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 ">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 scrollbar-hide overflow-auto">
       <h1 className="text-center text-2xl sm:text-3xl font-semibold mb-6">
         Select Artists
       </h1>
@@ -166,7 +166,7 @@ const InterestSelector = ({ userId }) => {
         <p className="text-red-500 text-center mb-4">{errorMessage}</p>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center scrollbar-hide overflow-auto">
         {shuffledArtists.length === 0 ? (
           <p className="text-center col-span-full">Loading artists...</p>
         ) : (
