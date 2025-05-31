@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BASE_URL from "../config";
 import upload_area from "../assets/upload_area.png";
 
@@ -12,9 +14,30 @@ const AddAlbum = () => {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Helper to get the token or redirect to login
+  const getTokenOrRedirect = () => {
+    const token = sessionStorage.getItem("adminToken");
+    if (!token) {
+      toast.error("You must be logged in as admin to access this page.");
+      navigate("/login"); // adjust if your login route is different
+      return null;
+    }
+    return token;
+  };
+
+  // On mount, check if token exists; if not, redirect
+  useEffect(() => {
+    getTokenOrRedirect();
+  }, []);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    const token = getTokenOrRedirect();
+    if (!token) return;
+
     setLoading(true);
     try {
       const formData = new FormData();
@@ -22,7 +45,14 @@ const AddAlbum = () => {
       formData.append("desc", desc);
       formData.append("image", image);
       formData.append("bgColour", colour);
-      const response = await axios.post(`${url}/album/add`, formData);
+
+      const response = await axios.post(`${url}/album/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: token,
+        },
+      });
+
       if (response.data.success) {
         toast.success("Album Added");
         setName("");
@@ -30,25 +60,36 @@ const AddAlbum = () => {
         setColour("#ffffff");
         setImage(null);
       } else {
-        toast.error("Something went wrong");
+        toast.error(response.data.message || "Something went wrong");
       }
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);
-      toast.error("Error occurred");
+      if (error.response && error.response.status === 403) {
+        toast.error("Unauthorized. Please login again.");
+        sessionStorage.removeItem("adminToken");
+        navigate("/login");
+      } else {
+        toast.error("Error occurred");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  return loading ? (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin"></div>
-    </div>
-  ) : (
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-xl p-8 space-y-6">
         <h2 className="text-2xl font-bold text-gray-800 text-center">Add New Album</h2>
         <form onSubmit={onSubmitHandler} className="space-y-5">
+          {/* Upload Image */}
           <div>
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
               Upload Image
@@ -80,6 +121,7 @@ const AddAlbum = () => {
             </label>
           </div>
 
+          {/* Album Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Album Name
@@ -96,6 +138,7 @@ const AddAlbum = () => {
             />
           </div>
 
+          {/* Album Description */}
           <div>
             <label htmlFor="desc" className="block text-sm font-medium text-gray-700 mb-1">
               Album Description
@@ -112,6 +155,7 @@ const AddAlbum = () => {
             />
           </div>
 
+          {/* Background Colour Picker */}
           <div className="flex items-center space-x-4">
             <label htmlFor="colour" className="block text-sm font-medium text-gray-700">
               Background Colour
@@ -122,7 +166,7 @@ const AddAlbum = () => {
               type="color"
               value={colour}
               onChange={(e) => setColour(e.target.value)}
-              className="w-10 h-10 p-0 border-0"
+              className="w-10 h-10 p-0 border-0 cursor-pointer"
             />
             <div
               className="w-10 h-10 rounded-md border border-gray-300"
@@ -137,6 +181,7 @@ const AddAlbum = () => {
             ADD ALBUM
           </button>
         </form>
+        <ToastContainer />
       </div>
     </div>
   );

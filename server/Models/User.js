@@ -14,10 +14,18 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    // required: true, // Leave commented if using only OAuth for login
+    // Leave required commented if using only OAuth for users, but admin will use password
   },
   googleId: { type: String, unique: true, sparse: true },
   googleAccessToken: String,
+
+  // Admin-specific
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+
+  // User preferences and relations
   interests: [
     {
       type: mongoose.Schema.Types.ObjectId,

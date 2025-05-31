@@ -13,3 +13,11 @@ export const ensureAuthenticated = (req, res, next) => {
         return res.status(403).json({ message: 'Unauthorized, JWT token wrong or expired' });
     }
 };
+export const ensureAdmin = (req, res, next) => {
+  ensureAuthenticated(req, res, () => {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: 'Access denied: Admins only' });
+    }
+    next();
+  });
+};
