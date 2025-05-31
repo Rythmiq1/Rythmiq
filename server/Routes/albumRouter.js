@@ -6,7 +6,7 @@ const albumRouter = express.Router();
 import { ensureAdmin } from '../Middlewares/Auth.js';
 
 albumRouter.post("/add", ensureAdmin, upload.single('image'), addAlbum);
-albumRouter.get("/list", ensureAdmin, listAlbum);
+albumRouter.get("/list", listAlbum);
 albumRouter.delete("/remove", ensureAdmin, removeAlbum);
-albumRouter.get("/:albumId", ensureAdmin, getAlbumById);
+albumRouter.get("/:albumId", getAlbumById);
 export default albumRouter;
