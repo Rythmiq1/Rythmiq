@@ -28,7 +28,7 @@ const SocketRoom = () => {
   const [showRoomPanel, setShowRoomPanel] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const userId = sessionStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
   const audioRef = useRef();
 
   

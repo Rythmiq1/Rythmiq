@@ -13,7 +13,7 @@ const LikedSongs = ({ onSongSelect }) => {
         const res = await fetch(`${BASE_URL}/auth/get-liked`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': sessionStorage.getItem('token'),
+            'Authorization': localStorage.getItem('token'),
           },
         });
         if (!res.ok) throw new Error('Couldn’t load liked songs');

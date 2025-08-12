@@ -67,9 +67,9 @@ function Login_signup() {
             handleSuccess(message);
 
             // Store user data in localStorage on successful signup
-            sessionStorage.setItem('token', jwtToken);
-            sessionStorage.setItem('loggedInUser', name);
-            sessionStorage.setItem('userId', id);
+            localStorage.setItem('token', jwtToken);
+            localStorage.setItem('loggedInUser', name);
+            localStorage.setItem('userId', id);
 
             setTimeout(() => {
                 navigate('/interest');
@@ -122,9 +122,9 @@ const handleLogin = async (e) => {
             handleSuccess(message);
 
             // Store user data in localStorage on successful login
-            sessionStorage.setItem('token', jwtToken);
-            sessionStorage.setItem('loggedInUser', name);
-            sessionStorage.setItem('userId', userId);
+            localStorage.setItem('token', jwtToken);
+            localStorage.setItem('loggedInUser', name);
+            localStorage.setItem('userId', userId);
             console.log(jwtToken);
             console.log(userId);
             setTimeout(() => {

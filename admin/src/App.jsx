@@ -13,7 +13,7 @@ const App = () => {
   const location = useLocation();
 
   const checkAuth = () => {
-    const token = sessionStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
     return typeof token === "string" && token.length > 10;
   };
 

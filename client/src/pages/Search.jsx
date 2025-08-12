@@ -26,7 +26,7 @@ const Search = ({ onSongSelect }) => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       toast.info('Please log in to search for songs.');
       return;

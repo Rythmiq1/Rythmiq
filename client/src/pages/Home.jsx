@@ -22,7 +22,7 @@ function Home({ onSongSelect, recommendations }) {
           axios.get(`${BASE_URL}/song/list`),
           axios.get(`${BASE_URL}/song/last5`),
           axios.get(`${BASE_URL}/auth/get-liked`, {
-            headers: { Authorization: sessionStorage.getItem('token') },
+            headers: { Authorization: localStorage.getItem('token') },
           }),
         ]);
 
@@ -53,7 +53,7 @@ function Home({ onSongSelect, recommendations }) {
   };
 
   const handleLikeToggle = async (songId) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Please log in to like songs');
       return;

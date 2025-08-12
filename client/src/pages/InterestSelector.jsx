@@ -17,9 +17,9 @@ const InterestSelector = () => {
     const uid = urlParams.get('userId');
     const name = urlParams.get('name');
 
-    if (token) sessionStorage.setItem('token', token);
-    if (uid) sessionStorage.setItem('userId', uid);
-    if (name) sessionStorage.setItem('name', name);
+    if (token) localStorage.setItem('token', token);
+    if (uid) localStorage.setItem('userId', uid);
+    if (name) localStorage.setItem('name', name);
 
     // Clean URL after storing
     if (token || uid || name) {
@@ -29,7 +29,7 @@ const InterestSelector = () => {
 
   useEffect(() => {
     const fetchArtists = async () => {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (!token) {
         setErrorMessage('No token found. Please log in again.');
         return;
@@ -76,8 +76,8 @@ const InterestSelector = () => {
   };
 
   const handleSubmit = async () => {
-    const token = sessionStorage.getItem('token');
-    const storedUserId = sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
 
     if (!token || !storedUserId) {
       setErrorMessage('Authentication error. Please log in again.');
@@ -127,7 +127,7 @@ const InterestSelector = () => {
     return copy;
   };
 
-  const userId = sessionStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
 
   if (!userId) {
     return (

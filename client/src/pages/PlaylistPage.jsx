@@ -15,7 +15,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
     useEffect(() => {
         const fetchPlaylist = async () => {
             try {
-                const token = sessionStorage.getItem('token');
+                const token = localStorage.getItem('token');
                 const response = await axios.get(`${BASE_URL}/playlist/${id}`, {
                     headers: { Authorization: token },
                 });
@@ -34,7 +34,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
 
         const fetchLikedSongs = async () => {
             try {
-                const token = sessionStorage.getItem('token');
+                const token = localStorage.getItem('token');
                 const response = await axios.get(`${BASE_URL}/auth/get-liked`, {
                     headers: { Authorization: token },
                 });
@@ -56,7 +56,7 @@ const PlaylistPage = ({ setCurrentSong }) => {
     };
 
     const handleLikeToggle = async (songId) => {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         if (!token) {
             toast.error('User is not authenticated. Please log in.');
             return;

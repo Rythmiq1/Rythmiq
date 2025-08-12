@@ -6,7 +6,7 @@ const History = ({ setCurrentSong }) => {
 
   useEffect(() => {
     const loadHistory = () => {
-      const history = JSON.parse(sessionStorage.getItem('songHistory')) || [];
+      const history = JSON.parse(localStorage.getItem('songHistory')) || [];
       setSongHistory(history);
     };
     loadHistory();
@@ -20,13 +20,13 @@ const History = ({ setCurrentSong }) => {
     setCurrentSong(song);
     const updated = [song, ...songHistory.filter(s => s._id !== song._id)];
     setSongHistory(updated);
-    sessionStorage.setItem('songHistory', JSON.stringify(updated));
+    localStorage.setItem('songHistory', JSON.stringify(updated));
   };
 
   const deleteSong = (song) => {
     const updated = songHistory.filter(s => s._id !== song._id);
     setSongHistory(updated);
-    sessionStorage.setItem('songHistory', JSON.stringify(updated));
+    localStorage.setItem('songHistory', JSON.stringify(updated));
   };
 
   return (

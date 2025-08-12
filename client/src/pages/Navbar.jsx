@@ -27,7 +27,7 @@ function Navbar({ notificationCount, setNotificationCount, notifications, onMobi
   };
 
   const handleLogout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     setLoggedInUser("");
     setUserdata({});
     navigate("/login");
@@ -43,17 +43,17 @@ function Navbar({ notificationCount, setNotificationCount, notifications, onMobi
     const id = params.get("userId");
 
     if (token && name) {
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("loggedInUser", name);
-      sessionStorage.setItem("userId", id);
+      localStorage.setItem("token", token);
+      localStorage.setItem("loggedInUser", name);
+      localStorage.setItem("userId", id);
       setLoggedInUser(name);
     } else {
-      const storedUser = sessionStorage.getItem("loggedInUser");
+      const storedUser = localStorage.getItem("loggedInUser");
       if (storedUser) setLoggedInUser(storedUser);
     }
 
     const getUser = async () => {
-      const storedToken = sessionStorage.getItem("token");
+      const storedToken = localStorage.getItem("token");
       if (storedToken) {
         try {
           const response = await axios.get(`${BASE_URL}/login/success`, {

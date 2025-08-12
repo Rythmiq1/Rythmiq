@@ -28,7 +28,7 @@ const Artists = () => {
     // Fetch followed artists
     const fetchFollowedArtists = async () => {
       try {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         if (!token) {
           toast.error('Please log in to follow artists');
           return;
@@ -56,7 +56,7 @@ const Artists = () => {
   }, []);
 
   const handleFollowUnfollow = async (artistId, index) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('User is not authenticated. Please log in.');
       return;

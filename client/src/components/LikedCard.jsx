@@ -10,7 +10,7 @@ const LikedCard = ({ song, isLiked, onSelect, onToggleLike, onDeleteLike }) => {
     }, [isLiked]);
 
     const handleLike = async () => {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         if (!token) {
             toast.error('User is not authenticated. Please log in.');
             return;

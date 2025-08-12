@@ -43,7 +43,7 @@ const AlbumPage = ({ setCurrentSong }) => {
     // Fetch liked songs
     const fetchLikedSongs = async () => {
         try {
-            const token = sessionStorage.getItem('token');
+            const token =localStorage.getItem('token');
             const response = await axios.get(`${BASE_URL}/auth/get-liked`, {
                 headers: {
                     Authorization: token,

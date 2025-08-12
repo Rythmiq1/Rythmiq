@@ -18,7 +18,7 @@ const AddAlbum = () => {
 
   // Helper to get the token or redirect to login
   const getTokenOrRedirect = () => {
-    const token = sessionStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
     if (!token) {
       toast.error("You must be logged in as admin to access this page.");
       navigate("/login"); // adjust if your login route is different
@@ -66,7 +66,7 @@ const AddAlbum = () => {
       console.error(error.response ? error.response.data : error.message);
       if (error.response && error.response.status === 403) {
         toast.error("Unauthorized. Please login again.");
-        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         navigate("/login");
       } else {
         toast.error("Error occurred");

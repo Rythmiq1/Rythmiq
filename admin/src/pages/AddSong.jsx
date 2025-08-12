@@ -25,7 +25,7 @@ const AddSong = () => {
 
   // Helper to get token or redirect
   const getTokenOrRedirect = () => {
-    const token = sessionStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
     if (!token) {
       toast.error("You must be logged in as admin to view this page.");
       navigate("/login"); // adjust path if your login route is different
@@ -69,7 +69,7 @@ const AddSong = () => {
         console.error(error.response ? error.response.data : error.message);
         if (error.response && error.response.status === 403) {
           toast.error("Unauthorized. Please login again.");
-          sessionStorage.removeItem("adminToken");
+          localStorage.removeItem("adminToken");
           navigate("/login");
         } else {
           toast.error("An error occurred while fetching data.");
@@ -121,7 +121,7 @@ const AddSong = () => {
       console.error(error.response ? error.response.data : error.message);
       if (error.response && error.response.status === 403) {
         toast.error("Unauthorized. Please login again.");
-        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         navigate("/login");
       } else {
         toast.error("Error Occurred");

@@ -36,7 +36,7 @@ const Share = () => {
         {},
         {
           headers: {
-            Authorization: `${sessionStorage.getItem('token')}`,
+            Authorization: `${localStorage.getItem('token')}`,
           },
         }
       );
