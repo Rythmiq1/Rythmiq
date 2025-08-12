@@ -13,7 +13,7 @@ const ListAlbum = () => {
 
   // Helper to get token or redirect if missing
   const getTokenOrRedirect = () => {
-    const token = sessionStorage.getItem("adminToken");
+    const token = localStorage.getItem("adminToken");
     if (!token) {
       toast.error("You must be logged in as admin to view albums.");
       navigate("/login");
@@ -40,7 +40,7 @@ const ListAlbum = () => {
       console.error(error.response ? error.response.data : error.message);
       if (error.response && error.response.status === 403) {
         toast.error("Unauthorized. Please login again.");
-        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         navigate("/login");
       } else {
         toast.error("Error occurred while fetching albums.");
@@ -68,7 +68,7 @@ const ListAlbum = () => {
       console.error(error.response ? error.response.data : error.message);
       if (error.response && error.response.status === 403) {
         toast.error("Unauthorized. Please login again.");
-        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         navigate("/login");
       } else {
         toast.error("Error occurred while removing album.");
@@ -97,7 +97,7 @@ const ListAlbum = () => {
       console.error(error.response ? error.response.data : error.message);
       if (error.response && error.response.status === 403) {
         toast.error("Unauthorized. Please login again.");
-        sessionStorage.removeItem("adminToken");
+        localStorage.removeItem("adminToken");
         navigate("/login");
       } else {
         toast.error("Error occurred while removing song.");

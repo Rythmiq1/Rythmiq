@@ -10,7 +10,7 @@ const CreatePlaylist = () => {
   const [selectedSongs, setSelectedSongs] = useState([]);
   const [availableSongs, setAvailableSongs] = useState([]);
   const [image, setImage] = useState(null);
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (!token) return toast.info('Please log in to create a playlist.');

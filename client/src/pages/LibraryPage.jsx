@@ -18,12 +18,12 @@ const LibraryPage = ({ setCurrentSong }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const userId = sessionStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
         const [playlistsResponse, likedSongsResponse, savedPlaylistsResponse] = await Promise.all([
           axios.get(`${BASE_URL}/playlist/my-playlists`, { headers: { Authorization: token } }),
@@ -57,7 +57,7 @@ const LibraryPage = ({ setCurrentSong }) => {
 
   const handleRemovePlaylist = async (playlistId) => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (!token) {
         toast.error('User is not authenticated. Please log in.');
         return;
@@ -81,7 +81,7 @@ const LibraryPage = ({ setCurrentSong }) => {
   };
 
   const handleLikeToggle = async (songId) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('User is not authenticated. Please log in.');
       return;

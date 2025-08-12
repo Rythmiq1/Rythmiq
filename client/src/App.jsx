@@ -35,7 +35,7 @@ const App = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const userId = sessionStorage.getItem('userId');
+  const userId = localStorage.getItem('userId');
   const location = useLocation();
   const isAuthRoute = ['/login', '/interest'].includes(location.pathname);
   const isRoomPage = location.pathname === '/room';
@@ -43,14 +43,14 @@ const App = () => {
   useEffect(() => {
     if (!currentSong) return;
 
-    const history = JSON.parse(sessionStorage.getItem('songHistory')) || [];
+    const history = JSON.parse(localStorage.getItem('songHistory')) || [];
     const idx = history.findIndex(s => s._id === currentSong._id);
     if (idx !== -1) history.splice(idx, 1);
     const newHist = [currentSong, ...history];
 
-    sessionStorage.setItem('songHistory', JSON.stringify(newHist));
+    localStorage.setItem('songHistory', JSON.stringify(newHist));
 
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     axios.post(`${BASE_URL}/auth/recommendations`, { songHistory: newHist }, {
       headers: token ? { Authorization: token } : {}
     })

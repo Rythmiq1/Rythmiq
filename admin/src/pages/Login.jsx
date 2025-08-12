@@ -23,8 +23,8 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Save JWT token in sessionStorage
-        sessionStorage.setItem("adminToken", data.token);
+        // Save JWT token in localStorage
+        localStorage.setItem("adminToken", data.token);
         toast.success("Login successful!");
         navigate("/add-song");
       } else {
