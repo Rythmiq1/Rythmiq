@@ -151,16 +151,17 @@ io.on('connection', (socket) => {
 
   socket.on('joinRoom', ({ roomId, userId }) => {
     socket.join(roomId);  
-
+    
     if (!rooms[roomId]) {
       rooms[roomId] = { 
         isPlaying: false, 
         song: null, 
         currentTime: 0, 
         users: [],
+        chat: [],
       };
     }
-
+    
     if (!rooms[roomId].users.find(user => user.userId === userId)) {
       rooms[roomId].users.push({ userId, socketId: socket.id });
     }
@@ -168,6 +169,7 @@ io.on('connection', (socket) => {
     // Send the current room state to the user who joined
     io.to(socket.id).emit('roomState', rooms[roomId]);
 
+    io.to(socket.id).emit('chatHistory', rooms[roomId].chat);
     // Broadcast the user joining to the room
     io.to(roomId).emit('userJoined', { userId, users: rooms[roomId].users });
   });
@@ -227,6 +229,30 @@ io.on('connection', (socket) => {
       console.log(`Room ${roomId} does not exist for syncTime event.`);
     }
   });
+
+socket.on('sendMessage', async ({ roomId, userId, message }) => {
+  if (!rooms[roomId]) return;
+
+  try {
+    // Query the user's name from the database
+    const user = await Userdb.findById(userId).select('name');
+    const username = user ? user.name : 'Unknown'; // fallback if not found
+
+    const newMessage = {
+      userId,
+      username,         // Include user's name here
+      message,
+      timestamp: new Date().toISOString(),
+    };
+
+    rooms[roomId].chat.push(newMessage);
+
+    io.to(roomId).emit('newMessage', newMessage);
+  } catch (err) {
+    console.error('Error fetching user for chat message:', err);
+  }
+});
+
 
   // Handle user disconnection
   socket.on('disconnect', () => {
