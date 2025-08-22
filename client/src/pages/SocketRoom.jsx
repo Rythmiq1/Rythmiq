@@ -28,6 +28,10 @@ const SocketRoom = () => {
   const [showRoomPanel, setShowRoomPanel] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+const [chatInput, setChatInput] = useState('');
+  const [showChatPanel, setShowChatPanel] = useState(false);
+
   const userId = localStorage.getItem('userId');
   const audioRef = useRef();
 
@@ -87,55 +91,73 @@ const SocketRoom = () => {
     setIsPlaying(false);
   };
 
-  useEffect(() => {
-    if (!userId) return;
+useEffect(() => {
+  if (!userId) return;
 
-    socket.emit('join-room', userId);
+  socket.emit('join-room', userId);
 
-    fetch(`${BASE_URL}/song/list`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data.songs)) setMusicList(data.songs);
-      })
-      .catch(err => setError(err.message));
+  fetch(`${BASE_URL}/song/list`)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data.songs)) setMusicList(data.songs);
+    })
+    .catch(err => setError(err.message));
 
-    socket.on('userJoined', ({ users }) => setUsers(users));
+  socket.on('userJoined', ({ users }) => setUsers(users));
 
-    socket.on('playSong', ({ song, newTime }) => {
-    
-      setSelectedSong(song);
-      setIsPlaying(true);
-      setCurrentTime(newTime || 0);
-      if (audioRef.current) {
-        audioRef.current.src = song.file;
-        audioRef.current.currentTime = newTime || 0;
-        audioRef.current.play();
-      }
-    });
+  socket.on('playSong', ({ song, newTime }) => {
+    setSelectedSong(song);
+    setIsPlaying(true);
+    setCurrentTime(newTime || 0);
+    if (audioRef.current) {
+      audioRef.current.src = song.file;
+      audioRef.current.currentTime = newTime || 0;
+      audioRef.current.play();
+    }
+  });
 
-    socket.on('pauseSong', ({ currentTime: ts }) => {
-      setIsPlaying(false);
-      setCurrentTime(ts);
-      if (audioRef.current) {
-        audioRef.current.currentTime = ts;
-        audioRef.current.pause();
-      }
-    });
+  socket.on('pauseSong', ({ currentTime: ts }) => {
+    setIsPlaying(false);
+    setCurrentTime(ts);
+    if (audioRef.current) {
+      audioRef.current.currentTime = ts;
+      audioRef.current.pause();
+    }
+  });
 
-    socket.on('updateTime', ({ newTime }) => {
-      setCurrentTime(newTime);
-      if (audioRef.current) audioRef.current.currentTime = newTime;
-    });
+  socket.on('updateTime', ({ newTime }) => {
+    setCurrentTime(newTime);
+    if (audioRef.current) audioRef.current.currentTime = newTime;
+  });
 
-    return () => {
-      socket.off('userJoined');
-      socket.off('playSong');
-      socket.off('pauseSong');
-      socket.off('updateTime');
-    };
-  }, [userId]);
+  // Chat event listeners outside of other listeners
+  socket.on('chatHistory', (history) => {
+    setChatMessages(history);
+  });
 
-  
+  socket.on('newMessage', (message) => {
+    setChatMessages(prev => [...prev, message]);
+  });
+
+  // Clean up listeners on unmount or userId change
+  return () => {
+    socket.off('userJoined');
+    socket.off('playSong');
+    socket.off('pauseSong');
+    socket.off('updateTime');
+    socket.off('chatHistory');
+    socket.off('newMessage');
+  };
+}, [userId]);
+
+
+  const sendMessage = () => {
+  if (!chatInput.trim() || !roomId || !userId) return;
+  console.log('Sending message:', chatInput);
+  socket.emit('sendMessage', { roomId, userId, message: chatInput.trim() });
+  setChatInput('');
+};
+
   const createRoom = () => {
     if (!userId) return alert('Login required');
     const id = 'room-' + Math.random().toString(36).substr(2, 9);
@@ -172,6 +194,14 @@ const SocketRoom = () => {
         <h1 className="text-4xl font-extrabold text-white text-center drop-shadow-lg mb-8">
           Music Room
         </h1>
+        {/* Toggle Chat Button */}
+<button
+  onClick={() => setShowChatPanel(prev => !prev)}
+  className="fixed bottom-24 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg focus:outline-none"
+  title="Toggle Chat"
+>
+  💬
+</button>
 
        
         <div className="flex justify-center space-x-6 mb-8">
@@ -339,6 +369,40 @@ const SocketRoom = () => {
           </div>
         )}
       </div>
+        {showChatPanel && roomId && (
+  <div className="fixed bottom-24 right-6 z-40 max-w-xs w-80 max-h-96 bg-white bg-opacity-90 backdrop-blur-xl rounded-xl p-4 shadow-2xl flex flex-col">
+    <h2 className="text-gray-900 text-xl font-bold mb-3 text-center">Room Chat</h2>
+    <div className="flex-1 overflow-y-auto mb-4 px-2 space-y-2 bg-gray-50 rounded-md">
+      {chatMessages.length === 0 ? (
+        <p className="text-gray-600 text-center my-3">No messages yet</p>
+      ) : (
+        chatMessages.map((msg, idx) => (
+          <div key={idx} className="text-gray-900 text-sm">
+            <strong>{msg.username || msg.userId}:</strong> {msg.message}
+
+            <span className="text-gray-500 text-xs ml-2">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+          </div>
+        ))
+      )}
+    </div>
+    <div className="flex space-x-2">
+      <input
+        type="text"
+        value={chatInput}
+        onChange={(e) => setChatInput(e.target.value)}
+        className="flex-1 p-2 rounded-md text-gray-900 border border-gray-300"
+        placeholder="Type your message..."
+        onKeyDown={e => e.key === 'Enter' && sendMessage()}
+      />
+      <button
+        onClick={sendMessage}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-md"
+      >
+        Send
+      </button>
+    </div>
+  </div>
+)}
 
       
       <div className="fixed bottom-0 left-0 w-full bg-gradient-to-r from-gray-900/80 to-black/80 backdrop-blur-lg py-3 px-6 flex items-center justify-between space-x-4 shadow-inner">
